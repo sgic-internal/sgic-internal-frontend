@@ -7,21 +7,6 @@ The Defect Tracker is a tool used in Software Company to track and monitor all t
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-**Clone the application**
-
-```bash
-  git clone https://github.com/sgic-team2/defecttracker.git
-  cd defecttracker
-```
-
-## Steps to Setup the React Front end app (hrms)
-
-First go to the `defecttracker` folder -
-
-```bash
-cd defecttracker
-```
-
 Then type the following command to install the dependencies and start the application -
 
 ```bash
