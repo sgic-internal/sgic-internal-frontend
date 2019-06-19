@@ -1,0 +1,65 @@
+{
+  "name": "defecttracker",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "https://sgic-team2.github.io/defecttracker",
+  "dependencies": {
+    "@fullcalendar/core": "^4.1.0",
+    "@progress/kendo-inputs-react-wrapper": "^2018.3.1017",
+    "@progress/kendo-ui": "^2019.2.517",
+    "antd": "^3.19.2",
+    "axios": "^0.18.0",
+    "bootstrap": "^4.3.1",
+    "chart.js": "^2.8.0",
+    "gg-editor": "^2.0.4",
+    "gh-pages": "^2.0.1",
+    "jquery": "^3.4.1",
+    "lodash": "^4.17.11",
+    "matchmedia-polyfill": "^0.3.2",
+    "node-sass": "^4.12.0",
+    "primeicons": "^1.0.0",
+    "primereact": "^3.1.3",
+    "react": "^16.8.6",
+    "react-chartjs-2": "^2.7.6",
+    "react-color": "^2.17.3",
+    "react-data-export": "^0.5.0",
+    "react-dom": "^16.5.2",
+    "react-highlight-words": "^0.16.0",
+    "react-redux": "^7.0.3",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "3.0.0",
+    "reactstrap": "^8.0.0",
+    "redux-thunk": "^2.3.0",
+    "reqwest": "^2.0.5",
+    "update": "^0.7.4",
+    "xlsx": "^0.14.3"
+  },
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.6.5",
+    "redux": "^4.0.1",
+    "redux-devtools": "^3.5.0"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

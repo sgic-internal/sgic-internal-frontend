@@ -1,0 +1,76 @@
+.login-form {
+  max-width: 300px;
+}
+.login-form-forgot {
+  float: right;
+}
+.login-form-button {
+  width: 100%;
+}
+
+.login-bg{
+  background-color: #0747A6;
+  height: -webkit-fill-available;
+  padding: 1px;
+}
+
+.mysection {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  background-color:blue;
+  margin-left: 350px;
+  margin-right: 350px;
+}
+
+.mysection1 {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  background-color:#0747A6;
+  margin-top: 250px;
+  margin-bottom: 100px;
+}
+
+.logd
+{
+  margin: 70px auto 0 auto;
+    width: fit-content;
+    
+}
+
+.login-card{
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 5px;
+}
+
+.h1
+{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.logcd
+{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  background-color:#89C4F4;
+}
+
+.carde
+{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  background-color:white;
+  margin-left: 350px;
+  margin-right: 350px;
+}
+
+.divd
+{
+  align-items: center
+}

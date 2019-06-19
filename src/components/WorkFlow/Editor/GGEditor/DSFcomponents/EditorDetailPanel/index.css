@@ -1,0 +1,8 @@
+.detailPanel {
+  flex: 1;
+  background: #fafafa;
+}
+
+.detailPanel .ant-card {
+  background: #fafafa;
+}

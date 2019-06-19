@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/defecttracker/static/css/main.1981fe87.chunk.css",
+    "main.js": "/defecttracker/static/js/main.4bfd6062.chunk.js",
+    "main.js.map": "/defecttracker/static/js/main.4bfd6062.chunk.js.map",
+    "runtime~main.js": "/defecttracker/static/js/runtime~main.1aacb891.js",
+    "runtime~main.js.map": "/defecttracker/static/js/runtime~main.1aacb891.js.map",
+    "static/css/2.1988482e.chunk.css": "/defecttracker/static/css/2.1988482e.chunk.css",
+    "static/js/2.2684d3da.chunk.js": "/defecttracker/static/js/2.2684d3da.chunk.js",
+    "static/js/2.2684d3da.chunk.js.map": "/defecttracker/static/js/2.2684d3da.chunk.js.map",
+    "index.html": "/defecttracker/index.html",
+    "precache-manifest.d1ae24ed331916603b62c27169e368da.js": "/defecttracker/precache-manifest.d1ae24ed331916603b62c27169e368da.js",
+    "service-worker.js": "/defecttracker/service-worker.js",
+    "static/css/2.1988482e.chunk.css.map": "/defecttracker/static/css/2.1988482e.chunk.css.map",
+    "static/css/main.1981fe87.chunk.css.map": "/defecttracker/static/css/main.1981fe87.chunk.css.map",
+    "static/media/Logo1.png": "/defecttracker/static/media/Logo1.a6c87088.png",
+    "static/media/primereact.min.css": "/defecttracker/static/media/line.567f5738.gif",
+    "static/media/theme.css": "/defecttracker/static/media/open-sans-v15-latin-regular.cffb686d.woff2",
+    "static/media/primeicons.css": "/defecttracker/static/media/primeicons.b8eccb10.eot",
+    "static/media/user.png": "/defecttracker/static/media/user.f07d66e0.png"
+  }
+}
