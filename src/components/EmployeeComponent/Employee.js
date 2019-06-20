@@ -4,68 +4,87 @@ import React from "react";
 import EmployeeView from "./EmployeeViewModal";
 import EmployeeEdit from "./EmployeeEditModal";
 
-const data = [
-  {
-    key: "1",
-    EmployeeId: "0001",
-    name: "Rammiya Narayanasamy",
-    role: "Software Engineer",
-    emailid: "ramminarayanan7@gmai.com",
-    contactno: "0764345676",
-    edit: <EmployeeEdit />,
-    delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-    view: <EmployeeView />
-  },
-  {
-    key: "2",
-    EmployeeId: "0002",
-    name: "Saranya Narayanasamy",
-    role: "Software Engineer",
-    emailid: "saranyanarayanan7@gmail.com",
-    contactno: "0764345676",
-    edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
-    delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-    view: (
-      <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
-    )
-  },
-  {
-    key: "3",
-    EmployeeId: "0003",
-    name: "Abira Thavalingam",
-    role: "Software Engineer",
-    emailid: "abithavan@gmail.com",
-    contactno: "0764345676",
-    edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
-    delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-    view: (
-      <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
-    )
-  },
-  {
-    key: "4",
-    EmployeeId: "0004",
-    name: "Piriyanka Arulantham",
-    role: "Software Engineer",
-    emailid: "piriyasiva@gmail.com",
-    contactno: "0764345676",
-    edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
-    delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-    view: (
-      <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
-    )
-  }
-];
+// const tableData = [
+//   {
+//     key: "1",
+//     empId: "0001",
+//     name: "Rammiya Narayanasamy",
+//     role: "Software Engineer",
+//     emailid: "ramminarayanan7@gmai.com",
+//     contactno: "0764345676",
+//     edit: <EmployeeEdit />,
+//     delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
+//     view: <EmployeeView />
+//   },
+//   {
+//     key: "2",
+//     EmployeeId: "0002",
+//     name: "Saranya Narayanasamy",
+//     role: "Software Engineer",
+//     emailid: "saranyanarayanan7@gmail.com",
+//     contactno: "0764345676",
+//     edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
+//     delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
+//     view: (
+//       <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
+//     )
+//   },
+//   {
+//     key: "3",
+//     EmployeeId: "0003",
+//     name: "Abira Thavalingam",
+//     role: "Software Engineer",
+//     emailid: "abithavan@gmail.com",
+//     contactno: "0764345676",
+//     edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
+//     delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
+//     view: (
+//       <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
+//     )
+//   },
+//   {
+//     key: "4",
+//     EmployeeId: "0004",
+//     name: "Piriyanka Arulantham",
+//     role: "Software Engineer",
+//     emailid: "piriyasiva@gmail.com",
+//     contactno: "0764345676",
+//     edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
+//     delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
+//     view: (
+//       <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
+//     )
+//   }
+// ];
 
 export default class App extends React.Component {
   state = {
-    searchText: ""
+    searchText: "",
+    employees: []
   };
 
   state1 = {
     filteredInfo: null,
     sortedInfo: null
   };
+
+  //fetching the employee with get all employee
+  async getAllEmployees() {
+    const url = "http://localhost:8080/employeeservice/GetAllemployee";
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data);
+    this.setState({ employees: data });
+    console.log(this.state.employees);
+
+    // data.forEach(element => {
+    //     console.log(element.severity);
+    // });
+  }
+
+  componentDidMount() {
+    this.getAllEmployees();
+  }
 
   handleChange = (pagination, filters, sorter) => {
     console.log("Various parameters", pagination, filters, sorter);
@@ -131,7 +150,7 @@ export default class App extends React.Component {
         highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
         searchWords={[this.state.searchText]}
         autoEscape
-        textToHighlight={text.toString()}
+        textToHighlight={text}
       />
     )
   });
@@ -153,56 +172,69 @@ export default class App extends React.Component {
     const columns = [
       {
         title: "Emp Id",
-        dataIndex: "EmployeeId",
-        key: "EmployeeId",
+        dataIndex: "empId",
+        key: "empId",
         width: "10%",
         filteredValue: filteredInfo.EmployeeId || null,
         onFilter: (value, record) => record.EmployeeId.includes(value),
         sorter: (a, b) => a.EmployeeId.length - b.EmployeeId.length,
-        sortOrder: sortedInfo.columnKey === "EmployeeId" && sortedInfo.order
+        sortOrder: sortedInfo.columnKey === "empId" && sortedInfo.order
       },
       {
         title: "Employee Name",
-        dataIndex: "name",
-        key: "name",
+        dataIndex: "firstName",
+        key: "firstName",
         width: "25%",
-        ...this.getColumnSearchProps("name")
+        ...this.getColumnSearchProps("firstName")
       },
 
       {
-        title: "Role",
-        dataIndex: "role",
-        key: "role",
+        title: "Designation",
+        dataIndex: "designation",
+        key: "designation",
         width: "25%",
-        ...this.getColumnSearchProps("role")
+        ...this.getColumnSearchProps("designation")
       },
 
       {
         title: "Email Id",
-        dataIndex: "emailid",
-        key: "emailid"
+        dataIndex: "email",
+        key: "email",
+        ...this.getColumnSearchProps("email")
       },
 
       {
         title: "Edit",
-        dataIndex: "edit",
+        render: () => (
+          <a>
+            <EmployeeEdit />
+          </a>
+        ),
         key: "edit",
         width: "7%"
       },
       {
         title: "Delete",
-        dataIndex: "delete",
+        render: () => (
+          <a>
+            <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />
+          </a>
+        ),
         key: "delete",
         width: "8%"
       },
       {
         title: "More Details",
-        dataIndex: "view",
+        render: () => (
+          <a>
+            <EmployeeView />
+          </a>
+        ),
         key: "view",
 
         width: "8%"
       }
     ];
-    return <Table columns={columns} dataSource={data} />;
+    return <Table columns={columns} dataSource={this.state.employees} />;
   }
 }
