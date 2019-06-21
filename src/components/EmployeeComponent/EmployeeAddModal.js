@@ -1,6 +1,7 @@
 import { Modal, Button, Form, Icon, Input, Select, Row, Col } from "antd";
 import React from "react";
 import axios from 'axios';
+import Employee from './Employee';
 
 //import EmployeeDataService from './EmployeeDataService';
 
@@ -22,10 +23,12 @@ export default class App extends React.Component {
 
 
     this.state = {
+
       employeeId: '',
       employeeName: '',
       employeeDesignation: 'USER',
       employeeEmail: ''
+
     };
   }
 
@@ -65,14 +68,21 @@ export default class App extends React.Component {
     axios.post('http://localhost:8080/employeeservice/createemployee', serverport)
       .then(res => console.log(res.data));
 
+    window.location.reload();
+
     this.setState({
       employeeId: '',
       employeeName: '',
       employeeDesignation: 'USER',
       employeeEmail: '',
-      visible: false
+      visible: false,
+
 
     });
+    return <Employee />;
+
+
+
   };
 
   // post integration finishes
