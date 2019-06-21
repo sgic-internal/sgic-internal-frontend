@@ -1,10 +1,26 @@
 import { Modal, Button, Form, Icon, Input, Select, Row, Col } from "antd";
 import React from "react";
+import { CreateEmployee } from "./fetch/CreateEmployee";
 
 const { Option } = Select;
 
 export default class App extends React.Component {
-  state = { visible: false };
+  constructor() {
+    super();
+    this.state = {
+      visible: false,
+      employeeID: "",
+      employeeName: ""
+    };
+  }
+
+  //onchange function
+  doChange = event => {
+    this.setState({
+      [event.target.id]: event.target.value
+    });
+    console.log(this.state.employeeID);
+  };
 
   showModal = () => {
     this.setState({
@@ -52,12 +68,24 @@ export default class App extends React.Component {
             <Row>
               <Col span={6} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Id">
-                  <Input placeholder="Employee Id" />
+                  <Input
+                    placeholder="Employee Id"
+                    value={this.state.employeeID}
+                    onChange={e => this.doChange(e)}
+                    id="empID"
+                    name="empID"
+                  />
                 </Form.Item>
               </Col>
               <Col span={18} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Name">
-                  <Input placeholder="Employee Name" />
+                  <Input
+                    placeholder="Employee Name"
+                    value={this.state.employeeName}
+                    onChange={event => this.doChange(event)}
+                    id="empName"
+                    name="empName"
+                  />
                 </Form.Item>
               </Col>
             </Row>
