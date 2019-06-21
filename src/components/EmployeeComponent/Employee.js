@@ -1,9 +1,8 @@
-import { Table, Input, Button, Icon } from 'antd';
+import { Table, Input, Button, Icon, message } from 'antd';
 import Highlighter from 'react-highlight-words';
 import React from 'react';
 import EmployeeView from './EmployeeViewModal';
 import EmployeeEdit from './EmployeeEditModal';
-import axios from 'axios';
 
 // const tableData = [
 //   {
@@ -67,8 +66,6 @@ export default class App extends React.Component {
       patients: []
     };
   }
-  
-
 	state1 = {
 		filteredInfo: null,
 		sortedInfo: null
