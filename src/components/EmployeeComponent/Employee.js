@@ -250,7 +250,7 @@ export default class App extends React.Component {
         width: "7%"
       },
       {
-        title: "empId",
+        title: "Delete",
         dataIndex: "empId",
         key: "empId",
         ...this.getColumnSearchProps("empId"),
