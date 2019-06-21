@@ -1,8 +1,8 @@
-import { Table, Input, Button, Icon, message } from 'antd';
-import Highlighter from 'react-highlight-words';
-import React from 'react';
-import EmployeeView from './EmployeeViewModal';
-import EmployeeEdit from './EmployeeEditModal';
+import { Table, Input, Button, Icon } from "antd";
+import Highlighter from "react-highlight-words";
+import React from "react";
+import EmployeeView from "./EmployeeViewModal";
+import EmployeeEdit from "./EmployeeEditModal";
 // import axios from 'axios';
 
 // const tableData = [
@@ -62,7 +62,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchText: '',
+      searchText: "",
       employees: [],
       patients: []
     };
@@ -73,10 +73,9 @@ export default class App extends React.Component {
     sortedInfo: null
   };
 
-
   //fetching the employee with get all employee
   async getAllEmployees() {
-    const url = 'http://localhost:8080/employeeservice/GetAllemployee';
+    const url = "http://localhost:8080/employeeservice/GetAllemployee";
     const response = await fetch(url);
     const data = await response.json();
     console.log(data);
@@ -95,15 +94,15 @@ export default class App extends React.Component {
     this.getAllEmployees();
   }
 
-  handleDelete = (empId) => {
+  handleDelete = empId => {
     // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
     //     .then(console.log('Deleted'))
     //     .catch(err => console.log(err))
-    fetch('http://localhost:8080/employeeservice/DeleteById/' + empId, {
-      method: 'DELETE',
+    fetch("http://localhost:8080/employeeservice/DeleteById/" + empId, {
+      method: "DELETE",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(this.state)
     });
@@ -117,25 +116,32 @@ export default class App extends React.Component {
   };
 
   handleChange = (pagination, filters, sorter) => {
-    console.log('Various parameters', pagination, filters, sorter);
+    console.log("Various parameters", pagination, filters, sorter);
     this.setState({
       filteredInfo: filters,
       sortedInfo: sorter
     });
   };
 
-  getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters
+    }) => (
       <div style={{ padding: 8 }}>
         <Input
-          ref={(node) => {
+          ref={node => {
             this.searchInput = node;
           }}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
-          style={{ width: 188, marginBottom: 8, display: 'block' }}
+          style={{ width: 188, marginBottom: 8, display: "block" }}
         />
         <Button
           type="primary"
@@ -145,22 +151,32 @@ export default class App extends React.Component {
           style={{ width: 90, marginRight: 8 }}
         >
           Search
-				</Button>
-        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+        </Button>
+        <Button
+          onClick={() => this.handleReset(clearFilters)}
+          size="small"
+          style={{ width: 90 }}
+        >
           Reset
-				</Button>
+        </Button>
       </div>
     ),
-    filterIcon: (filtered) => <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />,
-    onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownVisibleChange: (visible) => {
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: visible => {
       if (visible) {
         setTimeout(() => this.searchInput.select());
       }
     },
-    render: (text) => (
+    render: text => (
       <Highlighter
-        highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+        highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
         searchWords={[this.state.searchText]}
         autoEscape
         textToHighlight={text}
@@ -173,9 +189,9 @@ export default class App extends React.Component {
     this.setState({ searchText: selectedKeys[0] });
   };
 
-  handleReset = (clearFilters) => {
+  handleReset = clearFilters => {
     clearFilters();
-    this.setState({ searchText: '' });
+    this.setState({ searchText: "" });
   };
 
   // handleClick(param, e) {
@@ -191,76 +207,76 @@ export default class App extends React.Component {
     filteredInfo = filteredInfo || {};
     const columns = [
       {
-        title: 'Emp Id',
-        dataIndex: 'empId',
-        key: 'empId',
-        width: '10%',
+        title: "Emp Id",
+        dataIndex: "empId",
+        key: "empId",
+        width: "10%",
         filteredValue: filteredInfo.empId || null,
         onFilter: (value, record) => record.empId.includes(value),
         sorter: (a, b) => a.EmployeeId.length - b.empId.length,
-        sortOrder: sortedInfo.columnKey === 'empId' && sortedInfo.order
+        sortOrder: sortedInfo.columnKey === "empId" && sortedInfo.order
       },
       {
-        title: 'Employee Name',
-        dataIndex: 'name',
-        key: 'firstName',
-        width: '25%',
-        ...this.getColumnSearchProps('firstName')
-      },
-
-      {
-        title: 'Designation',
-        dataIndex: 'designation',
-        key: 'designation',
-        width: '25%',
-        ...this.getColumnSearchProps('designation')
+        title: "Employee Name",
+        dataIndex: "name",
+        key: "firstName",
+        width: "25%",
+        ...this.getColumnSearchProps("firstName")
       },
 
       {
-        title: 'Email Id',
-        dataIndex: 'email',
-        key: 'email',
-        ...this.getColumnSearchProps('email')
+        title: "Designation",
+        dataIndex: "designation",
+        key: "designation",
+        width: "25%",
+        ...this.getColumnSearchProps("designation")
       },
 
       {
-        title: 'Edit',
+        title: "Email Id",
+        dataIndex: "email",
+        key: "email",
+        ...this.getColumnSearchProps("email")
+      },
+
+      {
+        title: "Edit",
         render: () => (
           <a>
             <EmployeeEdit />
           </a>
         ),
-        key: 'edit',
-        width: '7%'
+        key: "edit",
+        width: "7%"
       },
       {
-        title: 'empId',
-        dataIndex: 'empId',
-        key: 'empId',
-        ...this.getColumnSearchProps('empId'),
+        title: "Delete",
+        dataIndex: "empId",
+        key: "empId",
+        ...this.getColumnSearchProps("empId"),
         render: (text, data = this.state.patients) => (
           <a>
             <Icon
               type="delete"
-              style={{ fontSize: '18px', color: 'red' }}
+              style={{ fontSize: "18px", color: "red" }}
               onClick={this.handleDelete.bind(this, data.empId)}
             />
           </a>
         ),
-        key: 'delete',
-        width: '8%'
+        key: "delete",
+        width: "8%"
       },
 
       {
-        title: 'More Details',
+        title: "More Details",
         render: () => (
           <a>
             <EmployeeView />
           </a>
         ),
-        key: 'view',
+        key: "view",
 
-        width: '8%'
+        width: "8%"
       }
     ];
     return <Table columns={columns} dataSource={this.state.employees} />;

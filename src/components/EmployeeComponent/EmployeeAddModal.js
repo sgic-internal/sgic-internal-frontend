@@ -1,34 +1,30 @@
 import { Modal, Button, Form, Icon, Input, Select, Row, Col } from "antd";
 import React from "react";
-import axios from 'axios';
-// import Employee from './Employee';
+import axios from "axios";
+import Employee from "./Employee";
 
 //import EmployeeDataService from './EmployeeDataService';
 
 const { Option } = Select;
 
-
 export default class App extends React.Component {
-
   //post integration
 
   constructor(props) {
-
     super(props);
     this.onChangeEmployeeId = this.onChangeEmployeeId.bind(this);
     this.onChangeEmployeeName = this.onChangeEmployeeName.bind(this);
     this.onChangeEmployeeEmail = this.onChangeEmployeeEmail.bind(this);
-    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(this);
+    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
+      this
+    );
     this.handleOk = this.handleOk.bind(this);
 
-
     this.state = {
-
-      employeeId: '',
-      employeeName: '',
-      employeeDesignation: 'USER',
-      employeeEmail: ''
-
+      employeeId: "",
+      employeeName: "",
+      employeeDesignation: "USER",
+      employeeEmail: ""
     };
   }
 
@@ -48,14 +44,12 @@ export default class App extends React.Component {
       employeeDesignation: `${value}`
     });
     //console.log(this.state.employeeDesignation)
-
   }
   onChangeEmployeeEmail(e) {
     this.setState({
       employeeEmail: e.target.value
     });
   }
-
 
   handleOk = e => {
     // e.preventDefault();
@@ -65,25 +59,21 @@ export default class App extends React.Component {
       name: this.state.employeeName,
       designation: this.state.employeeDesignation,
       email: this.state.employeeEmail
-    }
-    axios.post('http://localhost:8080/employeeservice/createemployee', serverport)
+    };
+    axios
+      .post("http://localhost:8080/employeeservice/createemployee", serverport)
       .then(res => console.log(res.data));
 
     window.location.reload();
 
     this.setState({
-      employeeId: '',
-      employeeName: '',
-      employeeDesignation: 'USER',
-      employeeEmail: '',
-      visible: false,
-
-
+      employeeId: "",
+      employeeName: "",
+      employeeDesignation: "USER",
+      employeeEmail: "",
+      visible: false
     });
-    // return <Employee />;
-
-
-
+    return <Employee />;
   };
 
   // post integration finishes
@@ -95,36 +85,12 @@ export default class App extends React.Component {
     });
   };
 
-   async getAllEmployees() {
-    const url = 'http://localhost:8080/employeeservice/GetAllemployee';
-    const response = await fetch(url);
-    const data = await response.json();
-    console.log(data);
-    this.setState({
-      employees: data,
-      empId: data
-    });
-    console.log(this.state.employees);
-
-    // data.forEach(element => {
-    //     console.log(element.severity);
-    // });
-  }
-
-  componentDidMount() {
-    this.getAllEmployees();
-  }
-
-
   handleCancel = e => {
     console.log(e);
     this.setState({
       visible: false
     });
   };
-
-
-
 
   render() {
     return (
@@ -139,11 +105,12 @@ export default class App extends React.Component {
           onCancel={this.handleCancel}
           width="550px"
         >
-          <Form >
+          <Form>
             <Row>
               <Col span={6} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Id">
-                  <Input placeholder="Employee Id"
+                  <Input
+                    placeholder="Employee Id"
                     value={this.state.employeeId}
                     onChange={this.onChangeEmployeeId}
                   />
@@ -151,7 +118,8 @@ export default class App extends React.Component {
               </Col>
               <Col span={18} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Name">
-                  <Input placeholder="Employee Name"
+                  <Input
+                    placeholder="Employee Name"
                     value={this.state.employeeName}
                     onChange={this.onChangeEmployeeName}
                   />
@@ -159,52 +127,44 @@ export default class App extends React.Component {
               </Col>
             </Row>
 
-
             <Row>
-              <Col span={6} style={{ padding: "5px" }} >
-
-
+              <Col span={6} style={{ padding: "5px" }}>
                 <Form.Item label="Designation">
                   <Select
                     placeholder="Select Designation"
                     optionFilterProp="children"
-
-
-
                     filterOption={(input, option) =>
-                      option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      option.props.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
                     }
                     //value={this.state.employeeDesignation}
                     onChange={this.onChangeEmployeeDesignation}
                   >
                     <Option value="ADMIN"> ADMIN</Option>
-                    <Option value="USER" > USER</Option>
-                    <Option value="HR" >HR</Option>
-                    <Option value="PM" >PM</Option>
-                    <Option value="QAL" > QAL</Option>
-                    <Option value="TECL" > TECL</Option>
-                    <Option value="QA" > QA</Option>
-                    <Option value="DEV" >DEV</Option>
-                    <Option value="ASSOCQA" > ASSOCQA</Option>
-                    <Option value="ASSOCDEV" >ASSOCDEV</Option>
+                    <Option value="USER"> USER</Option>
+                    <Option value="HR">HR</Option>
+                    <Option value="PM">PM</Option>
+                    <Option value="QAL"> QAL</Option>
+                    <Option value="TECL"> TECL</Option>
+                    <Option value="QA"> QA</Option>
+                    <Option value="DEV">DEV</Option>
+                    <Option value="ASSOCQA"> ASSOCQA</Option>
+                    <Option value="ASSOCDEV">ASSOCDEV</Option>
                   </Select>
                 </Form.Item>
-
               </Col>
-
 
               <Col span={18} style={{ padding: "5px" }}>
                 <Form.Item label="Email">
-                  <Input placeholder="Email"
+                  <Input
+                    placeholder="Email"
                     value={this.state.employeeEmail}
                     onChange={this.onChangeEmployeeEmail}
                   />
                 </Form.Item>
               </Col>
-
             </Row>
-
-
 
             {/* <Col span={7} style={{ padding: "5px" }}>
                 <Form.Item label="Gender">
@@ -214,11 +174,11 @@ export default class App extends React.Component {
                   </Select>
                 </Form.Item>
               </Col> */}
-            { /* <Col span={9} style={{ padding: "5px" }}>
+            {/* <Col span={9} style={{ padding: "5px" }}>
                 <Form.Item label="Contact No">
                   <Input placeholder="Contact No" />
                 </Form.Item>
-              </Col> */ }
+              </Col> */}
 
             {/* <Row>
 
@@ -232,7 +192,7 @@ export default class App extends React.Component {
             </Row> */}
           </Form>
         </Modal>
-      </div >
+      </div>
     );
   }
 }
