@@ -3,7 +3,7 @@ import Highlighter from "react-highlight-words";
 import React from "react";
 import EmployeeView from "./EmployeeViewModal";
 import EmployeeEdit from "./EmployeeEditModal";
-import axios from "axios";
+// import axios from 'axios';
 
 // const tableData = [
 //   {
@@ -218,7 +218,7 @@ export default class App extends React.Component {
       },
       {
         title: "Employee Name",
-        dataIndex: "firstName",
+        dataIndex: "name",
         key: "firstName",
         width: "25%",
         ...this.getColumnSearchProps("firstName")
