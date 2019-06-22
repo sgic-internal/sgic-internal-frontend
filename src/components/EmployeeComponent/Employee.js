@@ -75,7 +75,7 @@ export default class App extends React.Component {
 
   //fetching the employee with get all employee
   async getAllEmployees() {
-    const url = "http://localhost:8080/employeeservice/GetAllemployee";
+    const url = "http://localhost:8080/employeeservice/getallemployee";
     const response = await fetch(url);
     const data = await response.json();
     console.log(data);
@@ -98,7 +98,7 @@ export default class App extends React.Component {
     // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
     //     .then(console.log('Deleted'))
     //     .catch(err => console.log(err))
-    fetch("http://localhost:8080/employeeservice/DeleteById/" + empId, {
+    fetch("http://localhost:8080/employeeservice/deletebyid/" + empId, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
