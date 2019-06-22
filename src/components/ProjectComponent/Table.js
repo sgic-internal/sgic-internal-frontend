@@ -1,4 +1,4 @@
-import { Table, Input, Button, Icon, Popconfirm, message } from "antd";
+import { Table, Input, Button, Icon, Popconfirm, message,Divider } from "antd";
 import Highlighter from "react-highlight-words";
 import React from "react";
 import EditModel from "./EditModel";
@@ -42,6 +42,11 @@ export default class App extends React.Component {
     console.log(this.state.handleSubmit);
     event.preventDefault();
   };
+  // showModal = () => {
+  //   this.setState({
+  //     visible: true,
+  //   });
+  // };
   componentDidMount() {
     // fetch api method
 
@@ -182,62 +187,149 @@ export default class App extends React.Component {
       },
 
       {
-        title: "ConfigId",
+        title: "Config Id",
         dataIndex: "configId",
         key: "configId",
         width: "20%"
       },
       // {
-      //   title: 'Abbrevation',
-      //   dataIndex: 'abbrevation',
-      //   key: 'Abbrevation',
-      //   width: '20%',
+      //   title: 'Action',
+      //   dataIndex: 'action',
+      //   key: 'action',
+      //   render: (text, record , data = this.state.patients) => (
+      //     <span>
+      //       <Icon type="edit" style={{ fontSize: "18px", color: "blue" }} onClick={this.showModal}/>
+      //       <Divider
+      //     type="vertical"
+      //     />
+          
+      //     <Popconfirm
+          
+      //     title="Are you sure want to delete this Entry ?"
+          
+      //     icon={<Icon
+      //     type="question-circle-o"
+      //     style={{
+      //     color: 
+      //     "red" }} 
+      //     />}
+          
+      //     onConfirm={confirm}
+      //     onCancel={cancel}
+      //     okText="Yes"
+      //     cancelText="No">
+          
+      //     <a
+      //     href="#">
+          
+      //     <Icon
+      //     type="delete"
+      //     style={{
+      //     color: 
+      //     "red",fontSize: "18px" 
+      //   }} 
+      //   onClick={this.handleDelete.bind(this, data.projectId)}
+      //     />
+          
+      //     </a>
+          
+      //     </Popconfirm>
+      //     </span>
+      //   ),
 
       // },
-
       {
-        title: "Edit ",
-        dataIndex: "edit",
-        key: "edit",
-        width: "10%",
+        title: 'Action',
+        dataIndex: 'action',
+        key: 'action',
         render: (text, record) => (
           <span>
-            <a>
-              <EditModel />
-            </a>
+            <Icon type="edit" style={{ fontSize: "18px", color: "blue" }} onClick={this.showModal}/>
+            <Divider
+          type="vertical"
+          />
+          
+          <Popconfirm
+          
+          title="Are you sure want to delete this Entry ?"
+          
+          icon={<Icon
+          type="question-circle-o"
+          style={{
+          color: 
+          "red" }} 
+          />}
+          
+          onConfirm={confirm}
+          
+          onCancel={cancel}
+          
+          okText="Yes"
+          
+          cancelText="No"
+          
+          >
+          
+          <a
+          href="#">
+          
+          <Icon
+          type="delete"
+          style={{
+          color: 
+          "red",fontSize: "18px" }} 
+          />
+          
+          </a>
+          
+          </Popconfirm>
           </span>
-        )
+        ),
+
       },
+      // {
+      //   title: "Edit ",
+      //   dataIndex: "edit",
+      //   key: "edit",
+      //   width: "10%",
+      //   render: (text, record) => (
+      //     <span>
+      //       <a>
+      //         <EditModel />
+      //       </a>
+      //     </span>
+      //   )
+      // },
+      // {
+      //   title: "Delete ",
+      //   dataIndex: "delete",
+      //   key: "delete",
+      //   width: "10%",
+      //   render: (text, data = this.state.patients) => (
+      //     <span>
+      //       <Popconfirm
+      //         title="Are you sure delete this task?"
+      //         onConfirm={confirm}
+      //         onCancel={cancel}
+      //         okText="Yes"
+      //         cancelText="No"
+      //       >
+      //         <a href="#">
+      //           <Icon
+      //             type="delete"
+      //             style={{
+      //               color: "red",
+      //               fontSize: "18px"
+      //             }}
+      //             onClick={this.handleDelete.bind(this, data.projectId)}
+      //           />
+      //         </a>
+      //       </Popconfirm>
+      //     </span>
+      //   )
+      // },
       {
-        title: "Delete ",
-        dataIndex: "delete",
-        key: "delete",
-        width: "10%",
-        render: (text, data = this.state.patients) => (
-          <span>
-            <Popconfirm
-              title="Are you sure delete this task?"
-              onConfirm={confirm}
-              onCancel={cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <a href="#">
-                <Icon
-                  type="delete"
-                  style={{
-                    color: "red",
-                    fontSize: "18px"
-                  }}
-                  onClick={this.handleDelete.bind(this, data.projectId)}
-                />
-              </a>
-            </Popconfirm>
-          </span>
-        )
-      },
-      {
-        title: "View More ",
+        title: "More ",
         dataIndex: "viewmore",
         key: "viewmore",
         width: "10%",

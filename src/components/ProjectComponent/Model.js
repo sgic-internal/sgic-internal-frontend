@@ -5,12 +5,9 @@ import {
   Row,
   Col,
   Input,
-  Checkbox,
   DatePicker,
-  TimePicker
 } from "antd";
 import React from "react";
-import react, { Component } from "react";
 import axios from "axios";
 
 function onChange(e) {
@@ -25,7 +22,6 @@ export default class Model extends React.Component {
       type: "",
       startDate: "",
       endDate: "",
-
       duration: "",
       status: "",
       configId: "",
@@ -154,11 +150,11 @@ export default class Model extends React.Component {
           width="600px"
         >
           <Form layout="vertical">
-            <Row>
-              <Col span={24} style={{ padding: "5px" }}>
+            <Row gutter={16}>
+              <Col span={24}>
                 <Form.Item label="Project Name">
                   <Input
-                    placeholder="ProjectName"
+                    placeholder="Project Name"
                     value={this.state.projectName}
                     onChange={this.onChangeprojectName}
                   />
@@ -166,8 +162,8 @@ export default class Model extends React.Component {
               </Col>
             </Row>
 
-            <Row>
-              <Col span={8} style={{ padding: "5px" }}>
+            <Row gutter={16}>
+              <Col span={8} >
                 <Form.Item label="Type">
                   <Input
                     placeholder="Type"
@@ -177,52 +173,31 @@ export default class Model extends React.Component {
                 </Form.Item>{" "}
               </Col>
 
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Start Date" style={{ marginBottom: 0 }}>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      width: "24px",
-                      textAlign: "center"
-                    }}
-                  />
-                  <Form.Item
-                    style={{
-                      display: "inline-block",
-                      width: "calc(90% - 12px)"
-                    }}
-                  >
-                    <DatePicker onChange={this.onChangeStartDate} />
+              <Col span={8}>
+                <Form.Item label="Start Date">
+                  <Form.Item>
+                    <DatePicker 
+                    placeholder="Start Date"
+                    onChange={this.onChangeStartDate} />
                   </Form.Item>
                 </Form.Item>
               </Col>
 
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="End Date" style={{ marginBottom: 0 }}>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      width: "24px",
-                      textAlign: "center"
-                    }}
-                  />
-                  <Form.Item
-                    style={{
-                      display: "inline-block",
-                      width: "calc(90% - 12px)"
-                    }}
-                  >
+              <Col span={8} >
+                <Form.Item label="End Date">
+                  <Form.Item>
                     <DatePicker
-                      // value={this.state.endDate}
+                     placeholder="End Date"
                       onChange={this.onChangeEndDate}
+                      
                     />
                   </Form.Item>
                 </Form.Item>
               </Col>
             </Row>
 
-            <Row>
-              <Col span={8} style={{ padding: "5px" }}>
+            <Row gutter={16}>
+              <Col span={8}>
                 <Form.Item label="Duration">
                   <Input
                     placeholder="Duration"
@@ -232,7 +207,7 @@ export default class Model extends React.Component {
                 </Form.Item>{" "}
               </Col>
 
-              <Col span={8} style={{ padding: "5px" }}>
+              <Col span={8} >
                 <Form.Item label="Status">
                   <Input
                     placeholder="Status"
@@ -242,10 +217,10 @@ export default class Model extends React.Component {
                 </Form.Item>{" "}
               </Col>
 
-              <Col span={8} style={{ padding: "5px" }}>
+              <Col span={8}>
                 <Form.Item label="Config Id">
                   <Input
-                    placeholder="ConfigId"
+                    placeholder="Config Id"
                     value={this.state.configId}
                     onChange={this.onChangeconfigId}
                   />
@@ -253,38 +228,6 @@ export default class Model extends React.Component {
               </Col>
             </Row>
 
-            {/* <Row>
-              <Col>
-                <div>
-
-                  <p>
-
-                    <Checkbox
-                      style={{ marginLeft: '10px' }}
-
-                      onClick={this.toggleDisable}
-                      onChange={onChange}
-
-                    >Edit
-            {!this.state.disabled}
-                    </Checkbox>
-
-                  </p>
-                </div>
-              </Col>
-
-
-              <Col span={24} style={{ padding: "5px" }}>
-
-                <Form.Item>
-                  <Input
-                    disabled={this.state.disabled}
-                    onChange={this.onChange}
-                    placeholder="Abbrevation" />
-                </Form.Item>{" "}
-              </Col>
-
-            </Row> */}
           </Form>
         </Modal>
       </div>

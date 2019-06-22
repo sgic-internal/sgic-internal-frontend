@@ -53,14 +53,15 @@ export default class Model extends React.Component {
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          width="600px"
           okText="Update"
         >
           <Form layout="vertical">
-            <Row>
-              <Col span={24} style={{ padding: "5px" }}>
+            <Row gutter={16}>
+              <Col span={24}>
                 <Form.Item label="Project Name">
                   <Input
-                    placeholder="ProjectName"
+                    placeholder="Project Name"
                     value={this.state.projectName}
                     onChange={this.onChangeprojectName}
                   />
@@ -68,7 +69,7 @@ export default class Model extends React.Component {
               </Col>
             </Row>
 
-            <Row>
+            <Row gutter={16}>
               <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Type">
                   <Input
@@ -80,50 +81,25 @@ export default class Model extends React.Component {
               </Col>
 
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Start Date" style={{ marginBottom: 0 }}>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      width: "24px",
-                      textAlign: "center"
-                    }}
-                  />
-                  <Form.Item
-                    style={{
-                      display: "inline-block",
-                      width: "calc(90% - 12px)"
-                    }}
-                  >
-                    <DatePicker onChange={this.onChangeStartDate} />
+                <Form.Item label="Start Date">
+                  <Form.Item>
+                    <DatePicker onChange={this.onChangeStartDate} 
+                    placeholder="Start Date"/>
                   </Form.Item>
                 </Form.Item>
               </Col>
 
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="End Date" style={{ marginBottom: 0 }}>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      width: "24px",
-                      textAlign: "center"
-                    }}
-                  />
-                  <Form.Item
-                    style={{
-                      display: "inline-block",
-                      width: "calc(90% - 12px)"
-                    }}
-                  >
-                    <DatePicker
-                      // value={this.state.endDate}
-                      onChange={this.onChangeEndDate}
-                    />
+                <Form.Item label="End Date">
+                  <Form.Item>
+                    <DatePicker onChange={this.onChangeEndDate} 
+                    placeholder="End Date"/>
                   </Form.Item>
                 </Form.Item>
               </Col>
             </Row>
 
-            <Row>
+            <Row  gutter={16}>
               <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Duration">
                   <Input
@@ -147,7 +123,7 @@ export default class Model extends React.Component {
               <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Config Id">
                   <Input
-                    placeholder="ConfigId"
+                    placeholder="Config Id"
                     value={this.state.configId}
                     onChange={this.onChangeconfigId}
                   />
