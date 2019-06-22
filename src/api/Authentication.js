@@ -4,11 +4,11 @@ import {loginUser, userAuthenticationSuccess, userAuthenticationError} from '../
 function userLogin(loginCredential) {
     return(dispatch) => {
        // dispatch(fetchProductsPending());
-   console.log(loginCredential);
-        axios.post("http://localhost:8010/api/auth/signin", loginCredential).then(function (res) {
+   console.log(loginCredential.username);
+        axios.get("http://localhost:8080/login/getByUserMail/"+ loginCredential.username).then(function (res) {
             console.log(res);
             
-            //dispatch(fetchProductsSuccess(cancelLeaveRequests));
+            dispatch(userAuthenticationSuccess(res.data));
             return res;
         })
         .catch(function (error) {
