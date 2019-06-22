@@ -113,7 +113,7 @@ export default class Model extends React.Component {
       configId: this.state.configId
     };
     axios
-      .post("http://localhost:8080/project_service/createproject", projectData)
+      .post("http://localhost:8081/project_service/createproject", projectData)
       .then(res => console.log(res.data));
 
     this.setState({
