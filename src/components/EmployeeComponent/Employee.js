@@ -75,7 +75,7 @@ export default class App extends React.Component {
 
   //fetching the employee with get all employee
   async getAllEmployees() {
-    const url = "http://localhost:8080/employeeservice/getallemployee";
+    const url = "http://localhost:8084/employeeservice/getallemployee";
     const response = await fetch(url);
     const data = await response.json();
     console.log(data);
@@ -219,9 +219,9 @@ export default class App extends React.Component {
       {
         title: "Employee Name",
         dataIndex: "name",
-        key: "firstName",
+        key: "name",
         width: "25%",
-        ...this.getColumnSearchProps("firstName")
+        ...this.getColumnSearchProps("name")
       },
 
       {
