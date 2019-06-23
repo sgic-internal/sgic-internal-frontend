@@ -83,8 +83,10 @@ export default class Model extends React.Component {
               <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Start Date">
                   <Form.Item>
-                    <DatePicker onChange={this.onChangeStartDate} 
-                    placeholder="Start Date"/>
+                    <DatePicker
+                      onChange={this.onChangeStartDate}
+                      placeholder="Start Date"
+                    />
                   </Form.Item>
                 </Form.Item>
               </Col>
@@ -92,15 +94,17 @@ export default class Model extends React.Component {
               <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="End Date">
                   <Form.Item>
-                    <DatePicker onChange={this.onChangeEndDate} 
-                    placeholder="End Date"/>
+                    <DatePicker
+                      onChange={this.onChangeEndDate}
+                      placeholder="End Date"
+                    />
                   </Form.Item>
                 </Form.Item>
               </Col>
             </Row>
 
-            <Row  gutter={16}>
-              <Col span={8} style={{ padding: "5px" }}>
+            <Row gutter={16}>
+              <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Duration">
                   <Input
                     placeholder="Duration"
@@ -110,7 +114,7 @@ export default class Model extends React.Component {
                 </Form.Item>{" "}
               </Col>
 
-              <Col span={8} style={{ padding: "5px" }}>
+              <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Status">
                   <Input
                     placeholder="Status"
@@ -119,7 +123,7 @@ export default class Model extends React.Component {
                   />
                 </Form.Item>{" "}
               </Col>
-
+              {/* 
               <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Config Id">
                   <Input
@@ -128,7 +132,7 @@ export default class Model extends React.Component {
                     onChange={this.onChangeconfigId}
                   />
                 </Form.Item>{" "}
-              </Col>
+              </Col> */}
             </Row>
           </Form>
         </Modal>

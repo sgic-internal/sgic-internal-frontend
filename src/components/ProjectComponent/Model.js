@@ -1,12 +1,4 @@
-import {
-  Modal,
-  Button,
-  Form,
-  Row,
-  Col,
-  Input,
-  DatePicker,
-} from "antd";
+import { Modal, Button, Form, Row, Col, Input, DatePicker } from "antd";
 import React from "react";
 import axios from "axios";
 
@@ -123,7 +115,7 @@ export default class Model extends React.Component {
       endDate: "",
       duration: "",
       status: "",
-      configId: "",
+
       visible: false
     });
   };
@@ -163,7 +155,7 @@ export default class Model extends React.Component {
             </Row>
 
             <Row gutter={16}>
-              <Col span={8} >
+              <Col span={8}>
                 <Form.Item label="Type">
                   <Input
                     placeholder="Type"
@@ -176,20 +168,20 @@ export default class Model extends React.Component {
               <Col span={8}>
                 <Form.Item label="Start Date">
                   <Form.Item>
-                    <DatePicker 
-                    placeholder="Start Date"
-                    onChange={this.onChangeStartDate} />
+                    <DatePicker
+                      placeholder="Start Date"
+                      onChange={this.onChangeStartDate}
+                    />
                   </Form.Item>
                 </Form.Item>
               </Col>
 
-              <Col span={8} >
+              <Col span={8}>
                 <Form.Item label="End Date">
                   <Form.Item>
                     <DatePicker
-                     placeholder="End Date"
+                      placeholder="End Date"
                       onChange={this.onChangeEndDate}
-                      
                     />
                   </Form.Item>
                 </Form.Item>
@@ -197,7 +189,7 @@ export default class Model extends React.Component {
             </Row>
 
             <Row gutter={16}>
-              <Col span={8}>
+              <Col span={12}>
                 <Form.Item label="Duration">
                   <Input
                     placeholder="Duration"
@@ -207,7 +199,7 @@ export default class Model extends React.Component {
                 </Form.Item>{" "}
               </Col>
 
-              <Col span={8} >
+              <Col span={12}>
                 <Form.Item label="Status">
                   <Input
                     placeholder="Status"
@@ -217,7 +209,7 @@ export default class Model extends React.Component {
                 </Form.Item>{" "}
               </Col>
 
-              <Col span={8}>
+              {/* <Col span={8}>
                 <Form.Item label="Config Id">
                   <Input
                     placeholder="Config Id"
@@ -225,9 +217,8 @@ export default class Model extends React.Component {
                     onChange={this.onChangeconfigId}
                   />
                 </Form.Item>{" "}
-              </Col>
+              </Col> */}
             </Row>
-
           </Form>
         </Modal>
       </div>
