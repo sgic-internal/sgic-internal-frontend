@@ -114,7 +114,7 @@ export default class DefectTypeConfic extends React.Component {
     this.setState({ visible: false })
   }
 
-  deleteDefect = id => {
+  deleteDefect(id) {
 
     //this.showEditModal();
 
@@ -292,13 +292,23 @@ export default class DefectTypeConfic extends React.Component {
 
 
             <Divider type="vertical" />
-            {/* <Popconfirm
-              title="Are you sure, Do you want to delete this ?"
-              icon={<Icon type="delete" style={{ color: 'red' }} />}
-            > */}
 
-            <Icon onClick={this.deleteDefect.bind(this, data.id)} type="delete" style={{ fontSize: '17px', color: 'red' }} />
-            {/* </Popconfirm> */}
+            {/* <Popconfirm
+    title="Are you sure？"
+    icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+  >
+    <a href="#">Delete</a>
+  </Popconfirm> */}
+
+            <Popconfirm
+              title="Are you sure, Do you want to delete this ?"
+              icon={<Icon type="delete" style={{ color: 'red' }}
+
+              />}
+              onConfirm={this.deleteDefect.bind(this, data.id)}
+            >
+              <Icon type="delete" style={{ fontSize: '17px', color: 'red' }} />
+            </Popconfirm>
 
           </span>
         ),
