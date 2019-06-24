@@ -39,7 +39,7 @@ export default class DefectTypeConfic extends React.Component {
     visible: false,
     visibleEditModal: false,
     DefectType: [],
-    def:[]
+    def: []
   };
 
   constructor(props) {
@@ -48,19 +48,20 @@ export default class DefectTypeConfic extends React.Component {
     this.onChangeValue = this.onChangeValue.bind(this);
     this.handleOk = this.handleOk.bind(this);
     this.handleEditOk = this.handleEditOk.bind(this);
-    
+    this.deleteDefect = this.deleteDefect.bind(this);
+
     this.state = {
       name: '',
       value: '',
-      id:''
+      id: ''
     }
-    this.componentWillMount = this.componentWillMount.bind(this);
+    // this.componentWillMount = this.componentWillMount.bind(this);
   };
 
   componentDidMount() {
     this.componentWillMount()
-    setInterval(this.componentWillMount,1500);
- 
+    //setInterval(this.componentWillMount);
+
   }
   onChangeName(e) {
     this.setState({
@@ -72,62 +73,112 @@ export default class DefectTypeConfic extends React.Component {
       value: e.target.value
     })
   };
-  
-  componentWillMount(){
-
-    //Simple Axios
-    const url ='http://localhost:8081/defectservice/defecttypes';
+  getdefectType() {
+    const url = 'http://localhost:8081/defectservice/defecttypes';
     axios.get(url)
 
-    .then(response => this.setState({
-      DefectType: response.data,
-    }))
-    .catch(function (error){
-      console.log(error);
-    });
-    
+      .then(response => this.setState({
+        DefectType: response.data,
+      }))
+      .catch(function (error) {
+        console.log(error);
+      });
+
   }
-  
+  componentDidMount() {
+
+    //Simple Axios
+    this.getdefectType()
+  }
+
   showModal = () => {
     this.setState({
       visible: true,
     });
   };
-  
+
   editDefect = (id) => {
     this.showEditModal();
-    this.setState({id:id})
+    this.setState({ id: id })
     console.log(id);
     axios.get('http://localhost:8081/defectservice/defecttype/' + id)
-    .then(response => {
-        this.setState({ 
-          name: response.data.name, 
-          value: response.data.value 
+      .then(response => {
+        this.setState({
+          name: response.data.name,
+          value: response.data.value
         });
-    })
-    .catch(function (error) {
+      })
+      .catch(function (error) {
         console.log(error);
-    })
-    this.setState({visible: false})
+      })
+    this.setState({ visible: false })
   }
+
+  deleteDefect = id => {
+
+    //this.showEditModal();
+
+    // this.setState({ id: id })
+    // console.log(id);
+    // axios.get('http://localhost:8081/defectservice/defecttype/' + id)
+    //   .then(response => {
+    //     this.setState({
+    //       name: response.data.name,
+    //       value: response.data.value
+    //     });
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   })
+    // this.setState({ visible: false })
+    console.log(id)
+    fetch(`http://localhost:8081/defectservice/defecttype/` + id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(this.state)
+    })
+    console.log(id);
+    const DefectType = this.state.DefectType.filter(DefectType => {
+      return DefectType.id !== id;
+    });
+    this.setState({
+      DefectType
+    })
+
+    // axios.delete(`http://localhost:8081/defectservice/defecttype/${id}`)
+    //   .then(response => {
+    //     console.log(response)
+    //     this.setState({
+    //       name: response.data.name,
+    //       value: response.data.value
+    //     });
+    //   })
+    //   .catch(err => console.log(err))
+
+  }
+
+
+
   showEditModal = () => {
     console.log("showEditModal clicked");
     this.setState({
       visibleEditModal: true,
     });
-  
+
 
   };
 
   handleOk = e => {
-
+    this.getdefectType();
     const obj = {
       name: this.state.name,
       value: this.state.value
     }
     axios.post('http://localhost:8081/defectservice/defecttype/', obj)
-        .then(res => console.log(res.data));
-    
+      .then(res => this.getdefectType());
+
     this.setState({
       name: '',
       value: '',
@@ -141,8 +192,8 @@ export default class DefectTypeConfic extends React.Component {
       value: this.state.value
     }
     axios.put(`http://localhost:8081/defectservice/defecttype/${id}`, obj)
-        .then(res => console.log(res.data));
-    
+      .then(res => this.getdefectType());
+
     this.setState({
       name: '',
       value: '',
@@ -164,7 +215,7 @@ export default class DefectTypeConfic extends React.Component {
     this.setState({
       visibleEditModal: false,
     });
-    
+
   };
 
   state = {
@@ -208,12 +259,12 @@ export default class DefectTypeConfic extends React.Component {
   render() {
 
     const columns = [
-      {
-        title: 'Defect Id',
-        dataIndex: 'id',
-        key: 'id',
+      // {
+      //   title: 'Defect Id',
+      //   dataIndex: 'id',
+      //   key: 'id',
 
-      },
+      // },
       {
         title: 'DefectType',
         dataIndex: 'name',
@@ -233,32 +284,32 @@ export default class DefectTypeConfic extends React.Component {
       // },
       {
         title: 'Action',
-        
-        render: (text, data=this.state.def) => (
+        key: 'Action',
+        render: (text, data = this.state.def) => (
           <span>
 
-            <Icon  onClick={this.editDefect.bind(this, data.id)} type="edit" style={{fontSize:'17px', color:'blue'}} />
+            <Icon onClick={this.editDefect.bind(this, data.id)} type="edit" style={{ fontSize: '17px', color: 'blue' }} />
 
 
             <Divider type="vertical" />
-            <Popconfirm
-              title="Are you sure, Do you want to delete this ?" 
+            {/* <Popconfirm
+              title="Are you sure, Do you want to delete this ?"
               icon={<Icon type="delete" style={{ color: 'red' }} />}
-            >
+            > */}
 
-              <a href="#"><Icon type="delete" style={{fontSize:'17px', color:'red'}} /></a>
-            </Popconfirm>
+            <Icon onClick={this.deleteDefect.bind(this, data.id)} type="delete" style={{ fontSize: '17px', color: 'red' }} />
+            {/* </Popconfirm> */}
 
           </span>
         ),
       },
     ];
 
-  
+
     return (
-      
+
       <React.Fragment>
-        
+
         <div
           style={{
             padding: 24,
@@ -299,16 +350,16 @@ export default class DefectTypeConfic extends React.Component {
 
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} >
                 <Form.Item label="TypeName">
-                  <Input type="text" 
-                      className="form-control" 
-                      value={this.state.name}
-                      onChange={this.onChangeName}/>
+                  <Input type="text"
+                    className="form-control"
+                    value={this.state.name}
+                    onChange={this.onChangeName} />
                 </Form.Item>
                 <Form.Item label="Description">
-                  <Input type="text" 
-                      className="form-control" 
-                      value={this.state.value}
-                      onChange={this.onChangeValue}/>
+                  <Input type="text"
+                    className="form-control"
+                    value={this.state.value}
+                    onChange={this.onChangeValue} />
                 </Form.Item>
 
 
@@ -345,16 +396,16 @@ export default class DefectTypeConfic extends React.Component {
               }}>
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
                 <Form.Item label="TypeName">
-                  <Input  type="text" 
-                      className="form-control" 
-                      value={this.state.name}
-                      onChange={this.onChangeName} />
+                  <Input type="text"
+                    className="form-control"
+                    value={this.state.name}
+                    onChange={this.onChangeName} />
                 </Form.Item>
                 <Form.Item label="Description">
-                  <Input type="text" 
-                      className="form-control" 
-                      value={this.state.value}
-                      onChange={this.onChangeValue} />
+                  <Input type="text"
+                    className="form-control"
+                    value={this.state.value}
+                    onChange={this.onChangeValue} />
                 </Form.Item>
 
 
