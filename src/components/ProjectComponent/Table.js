@@ -2,9 +2,10 @@ import { Table, Icon, Popconfirm, message, Input, Search } from "antd";
 import Highlighter from "react-highlight-words";
 import React from "react";
 import EditModel from "./EditModel";
-import ViewModel from "./ViewModel";
+// import ViewModel from "./ViewModel";
 import axios from "axios";
-import Searchbar from "./Search";
+// import Searchbar from "./Search";
+import Model from "./Model";
 
 function confirm(e) {
   console.log(e);
@@ -46,22 +47,25 @@ export default class App extends React.Component {
   };
   componentDidMount() {
     // fetch api method
-
     // this.getAllProjects();
-
     // axios method
+    this.getAllProjects();
+  }
+
+  getAllProjects() {
     axios
       .get(`http://localhost:8081/project_service/GetAllproject`)
       .then(res => {
+        const projects = res.data;
         // const projects = res.data;
         this.setState({ projects: res.data });
-        console.log(this.state.projects);
+        this.getAllProjects();
+        // console.log(this.state.projects);
       })
       .catch(function(error) {
         console.log(error);
       });
   }
-
   render() {
     // <Searchbar />;
     const columns = [
@@ -113,12 +117,12 @@ export default class App extends React.Component {
         width: "20%"
       },
 
-      {
-        title: "ConfigId",
-        dataIndex: "configId",
-        key: "configId",
-        width: "20%"
-      },
+      // {
+      //   title: "ConfigId",
+      //   dataIndex: "configId",
+      //   key: "configId",
+      //   width: "20%"
+      // },
       // {
       //   title: 'Abbrevation',
       //   dataIndex: 'abbrevation',
@@ -167,20 +171,20 @@ export default class App extends React.Component {
             </Popconfirm>
           </span>
         )
-      },
-      {
-        title: "View More ",
-        dataIndex: "viewmore",
-        key: "viewmore",
-        width: "10%",
-        render: (text, record) => (
-          <span>
-            <a>
-              <ViewModel />
-            </a>
-          </span>
-        )
       }
+      //   {
+      //     title: "View More ",
+      //     dataIndex: "viewmore",
+      //     key: "viewmore",
+      //     width: "10%",
+      //     render: (text, record) => (
+      //       <span>
+      //         <a>
+      //           <ViewModel />
+      //         </a>
+      //       </span>
+      //     )
+      //   }
     ];
 
     return <Table columns={columns} dataSource={this.state.projects} />;

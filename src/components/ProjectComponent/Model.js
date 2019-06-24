@@ -2,32 +2,40 @@ import { Modal, Button, Form, Row, Col, Input, DatePicker } from "antd";
 import React from "react";
 import axios from "axios";
 
-function onChange(e) {
-  console.log(`checked = ${e.target.checked}`);
-}
+// function onChange(e) {
+//   console.log(`checked = ${e.target.checked}`);
+// }
 export default class Model extends React.Component {
   constructor(props) {
     super(props);
-
-    this.setState({
-      projectName: "",
-      type: "",
-      startDate: "",
-      endDate: "",
-      duration: "",
-      status: "",
-      configId: "",
-      visible: false
-    });
+    this.onChangeprojectId = this.onChangeprojectId.bind(this);
     this.onChangeprojectName = this.onChangeprojectName.bind(this);
     this.onChangeType = this.onChangeType.bind(this);
     this.onChangeStartDate = this.onChangeStartDate.bind(this);
     this.onChangeEndDate = this.onChangeEndDate.bind(this);
     this.onChangeDuration = this.onChangeDuration.bind(this);
     this.onChangeStatus = this.onChangeStatus.bind(this);
-    this.onChangeconfigId = this.onChangeconfigId.bind(this);
+    // this.onChangeconfigId = this.onChangeconfigId.bind(this);
+    this.handleOk = this.handleOk.bind(this);
+
+    this.state = {
+      projectId: "",
+      projectName: "",
+      type: "",
+      startDate: "",
+      endDate: "",
+      duration: "",
+      status: "",
+      // configId: "",
+      visible: false
+    };
   }
 
+  onChangeprojectId(e) {
+    this.setState({
+      projectId: e.target.value
+    });
+  }
   onChangeprojectName(e) {
     this.setState({
       projectName: e.target.value
@@ -64,11 +72,11 @@ export default class Model extends React.Component {
       status: e.target.value
     });
   }
-  onChangeconfigId(e) {
-    this.setState({
-      configId: e.target.value
-    });
-  }
+  // onChangeconfigId(e) {
+  //   this.setState({
+  //     configId: e.target.value
+  //   });
+  // }
 
   state = {
     disabled: true,
@@ -96,19 +104,21 @@ export default class Model extends React.Component {
     e.preventDefault();
 
     const projectData = {
+      projectId: this.state.projectId,
       projectName: this.state.projectName,
       type: this.state.type,
       startDate: this.state.startDate,
       endDate: this.state.endDate,
       duration: this.state.duration,
-      status: this.state.status,
-      configId: this.state.configId
+      status: this.state.status
+      // configId: this.state.configId
     };
     axios
       .post("http://localhost:8081/project_service/createproject", projectData)
       .then(res => console.log(res.data));
 
     this.setState({
+      projectId: "",
       projectName: "",
       type: "",
       startDate: "",
@@ -142,6 +152,18 @@ export default class Model extends React.Component {
           width="600px"
         >
           <Form layout="vertical">
+            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item label="Project Id">
+                  <Input
+                    placeholder="Project Id"
+                    value={this.state.projectId}
+                    onChange={this.onChangeprojectId}
+                  />
+                </Form.Item>{" "}
+              </Col>
+            </Row>
+
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item label="Project Name">
