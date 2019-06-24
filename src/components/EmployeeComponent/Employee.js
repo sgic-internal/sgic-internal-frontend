@@ -98,7 +98,7 @@ export default class App extends React.Component {
     // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
     //     .then(console.log('Deleted'))
     //     .catch(err => console.log(err))
-    fetch("http://localhost:8080/employeeservice/deletebyid/" + empId, {
+    fetch("http://localhost:8084/employeeservice/deletebyid/" + empId, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
