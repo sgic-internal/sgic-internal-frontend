@@ -5,7 +5,7 @@ function userLogin(loginCredential) {
     return(dispatch) => {
        // dispatch(fetchProductsPending());
    console.log(loginCredential.username);
-        axios.get("http://localhost:8080/login/getByUserMail/"+ loginCredential.username).then(function (res) {
+        axios.get("http://localhost:8082/login/getByUserMail/"+ loginCredential.username).then(function (res) {
             console.log(res);
             
             dispatch(userAuthenticationSuccess(res.data));
