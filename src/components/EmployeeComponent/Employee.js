@@ -1,66 +1,40 @@
-import { Table, Input, Button, Icon } from "antd";
+import {
+  Table,
+  Input,
+  Button,
+  Icon,
+  Modal,
+  Form,
+  Select,
+  Row,
+  Col
+} from "antd";
 import Highlighter from "react-highlight-words";
 import React from "react";
 import EmployeeView from "./EmployeeViewModal";
-import EmployeeEdit from "./EmployeeEditModal";
+import axios from "axios";
 // import axios from 'axios';
 
-// const tableData = [
-//   {
-//     key: "1",
-//     empId: "0001",
-//     name: "Rammiya Narayanasamy",
-//     role: "Software Engineer",
-//     emailid: "ramminarayanan7@gmai.com",
-//     contactno: "0764345676",
-//     edit: <EmployeeEdit />,
-//     delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-//     view: <EmployeeView />
-//   },
-//   {
-//     key: "2",
-//     EmployeeId: "0002",
-//     name: "Saranya Narayanasamy",
-//     role: "Software Engineer",
-//     emailid: "saranyanarayanan7@gmail.com",
-//     contactno: "0764345676",
-//     edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
-//     delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-//     view: (
-//       <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
-//     )
-//   },
-//   {
-//     key: "3",
-//     EmployeeId: "0003",
-//     name: "Abira Thavalingam",
-//     role: "Software Engineer",
-//     emailid: "abithavan@gmail.com",
-//     contactno: "0764345676",
-//     edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
-//     delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-//     view: (
-//       <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
-//     )
-//   },
-//   {
-//     key: "4",
-//     EmployeeId: "0004",
-//     name: "Piriyanka Arulantham",
-//     role: "Software Engineer",
-//     emailid: "piriyasiva@gmail.com",
-//     contactno: "0764345676",
-//     edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
-//     delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-//     view: (
-//       <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
-//     )
-//   }
-// ];
+const { Option } = Select;
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+    this.onChangeEmployeeId = this.onChangeEmployeeId.bind(this);
+    this.onChangeEmployeeName = this.onChangeEmployeeName.bind(this);
+    this.onChangeEmployeeEmail = this.onChangeEmployeeEmail.bind(this);
+    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
+      this
+    );
+    this.handleOk = this.handleOk.bind(this);
+
+    this.state = {
+      employeeId: "",
+      employeeName: "",
+      employeeDesignation: "USER",
+      employeeEmail: ""
+    };
+
     this.state = {
       searchText: "",
       employees: [],
@@ -68,14 +42,73 @@ export default class App extends React.Component {
     };
   }
 
+  onChangeEmployeeId(e) {
+    this.setState({
+      employeeId: e.target.value
+    });
+  }
+  onChangeEmployeeName(e) {
+    this.setState({
+      employeeName: e.target.value
+    });
+  }
+
+  onChangeEmployeeDesignation(value) {
+    this.setState({
+      employeeDesignation: `${value}`
+    });
+    //console.log(this.state.employeeDesignation)
+  }
+  onChangeEmployeeEmail(e) {
+    this.setState({
+      employeeEmail: e.target.value
+    });
+  }
+
   state1 = {
     filteredInfo: null,
     sortedInfo: null
   };
 
+  state = { visible: false };
+
+  showModal = () => {
+    this.setState({
+      visible: true
+    });
+  };
+
+  handleOk = empId => {
+    console.log(empId);
+    const obj = {
+      empId: this.state.employeeId,
+      name: this.state.employeeName,
+      designation: this.state.employeeDesignation,
+      email: this.state.employeeEmail
+    };
+    axios
+      .put("http://localhost:8084/employeeservice/update/" + empId, obj)
+      .then(response => this.getAllEmployees());
+    this.setState({
+      employeeId: "",
+      employeeName: "",
+      employeeDesignation: "",
+      employeeEmail: "",
+      visible: false
+    });
+  };
+
+  handleCancel = e => {
+    console.log(e);
+
+    this.setState({
+      visible: false
+    });
+  };
+
   //fetching the employee with get all employee
   async getAllEmployees() {
-    const url = "http://localhost:8080/employeeservice/GetAllemployee";
+    const url = "http://localhost:8084/employeeservice/getallemployee";
     const response = await fetch(url);
     const data = await response.json();
     console.log(data);
@@ -98,7 +131,7 @@ export default class App extends React.Component {
     // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
     //     .then(console.log('Deleted'))
     //     .catch(err => console.log(err))
-    fetch("http://localhost:8080/employeeservice/DeleteById/" + empId, {
+    fetch("http://localhost:8084/employeeservice/deletebyid/" + empId, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -121,6 +154,28 @@ export default class App extends React.Component {
       filteredInfo: filters,
       sortedInfo: sorter
     });
+  };
+
+  handleEdit = empId => {
+    this.showModal();
+    console.log(empId);
+    this.setState({
+      empId: empId
+    });
+    axios
+      .get("http://localhost:8084/employeeservice/getempolyeebyid/" + empId)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          employeeId: response.data.empId,
+          employeeName: response.data.name,
+          employeeDesignation: response.data.designation,
+          employeeEmail: response.data.email
+        });
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   };
 
   getColumnSearchProps = dataIndex => ({
@@ -202,7 +257,8 @@ export default class App extends React.Component {
   //     }
 
   render() {
-    let { sortedInfo, filteredInfo } = this.state1;
+    // For Table functions
+    let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
     filteredInfo = filteredInfo || {};
     const columns = [
@@ -211,17 +267,18 @@ export default class App extends React.Component {
         dataIndex: "empId",
         key: "empId",
         width: "10%",
-        filteredValue: filteredInfo.empId || null,
-        onFilter: (value, record) => record.empId.includes(value),
-        sorter: (a, b) => a.EmployeeId.length - b.empId.length,
+        // //  ...this.getColumnSearchProps("empId")
+        // filteredValue: filteredInfo.empId || null,
+        // onFilter: (value, record) => record.empId.includes(value),
+        sorter: (a, b) => a.empId.length - b.empId.length,
         sortOrder: sortedInfo.columnKey === "empId" && sortedInfo.order
       },
       {
         title: "Employee Name",
         dataIndex: "name",
-        key: "firstName",
+        key: "name",
         width: "25%",
-        ...this.getColumnSearchProps("firstName")
+        ...this.getColumnSearchProps("name")
       },
 
       {
@@ -241,9 +298,14 @@ export default class App extends React.Component {
 
       {
         title: "Edit",
-        render: () => (
+        render: (text, data = this.state.patients) => (
           <a>
-            <EmployeeEdit />
+            <Icon
+              type="edit"
+              onClick={this.handleEdit.bind(this, data.empId)}
+              style={{ fontSize: "18px", color: "green" }}
+            />
+            {/* <EmployeeEdit /> */}
           </a>
         ),
         key: "edit",
@@ -279,6 +341,74 @@ export default class App extends React.Component {
         width: "8%"
       }
     ];
-    return <Table columns={columns} dataSource={this.state.employees} />;
+    return (
+      <React.Fragment>
+        <div>
+          <Modal
+            title="Edit Employee"
+            visible={this.state.visible}
+            onOk={this.handleOk.bind(this, this.state.empId)}
+            onCancel={this.handleCancel}
+            width="500px"
+          >
+            <Form>
+              <Row>
+                <Col span={8} style={{ padding: "5px" }}>
+                  <Form.Item label="Employee Id">
+                    <Input
+                      placeholder="Employee Id"
+                      value={this.state.employeeId}
+                      onChange={this.onChangeEmployeeId}
+                      disabled
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={16} style={{ padding: "5px" }}>
+                  <Form.Item label="Employee Name">
+                    <Input
+                      placeholder="Employee Name"
+                      value={this.state.employeeName}
+                      onChange={this.onChangeEmployeeName}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={8} style={{ padding: "5px" }}>
+                  <Form.Item label="Role">
+                    <Select
+                      placeholder="Role"
+                      onChange={this.onChangeEmployeeDesignation}
+                      value={this.state.employeeDesignation}
+                    >
+                      <Option value="ADMIN"> ADMIN</Option>
+                      <Option value="USER"> USER</Option>
+                      <Option value="HR">HR</Option>
+                      <Option value="PM">PM</Option>
+                      <Option value="QAL"> QAL</Option>
+                      <Option value="TECL"> TECL</Option>
+                      <Option value="QA"> QA</Option>
+                      <Option value="DEV">DEV</Option>
+                      <Option value="ASSOCQA"> ASSOCQA</Option>
+                      <Option value="ASSOCDEV">ASSOCDEV</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={12} style={{ padding: "5px" }}>
+                  <Form.Item label="Email Id">
+                    <Input
+                      placeholder="Email Id"
+                      value={this.state.employeeEmail}
+                      onChange={this.onChangeEmployeeEmail}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          </Modal>
+        </div>
+        <Table columns={columns} dataSource={this.state.employees} />
+      </React.Fragment>
+    );
   }
 }

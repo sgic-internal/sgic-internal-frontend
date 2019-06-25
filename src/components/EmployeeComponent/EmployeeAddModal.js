@@ -61,7 +61,7 @@ export default class App extends React.Component {
       email: this.state.employeeEmail
     };
     axios
-      .post("http://localhost:8080/employeeservice/createemployee", serverport)
+      .post("http://localhost:8084/employeeservice/createemployee", serverport)
       .then(res => console.log(res.data));
 
     window.location.reload();
