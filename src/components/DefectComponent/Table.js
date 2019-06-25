@@ -20,14 +20,14 @@ import {
   Typography, Divider
 } from 'antd';
 import moment from 'moment';
-
+import axios from 'axios';
 const TreeNode = TreeSelect.TreeNode;
 const Option = Select.Option;
 //import { Input } from 'antd';
 const { TextArea } = Input;
 const props = {
-  name: 'file',
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  name: 'files',
+  action: 'http://localhost:8081/defect/uploadMultipleFiles',
   headers: {
     authorization: 'authorization-text',
   }
@@ -111,17 +111,72 @@ const data = [
 ];
 
 export default class TableFilter extends React.Component {
-  state = {
-    filteredInfo: null,
-    sortedInfo: null,
-    visible: false,
-    visible1: false,
-    showModalView: false,
-    comments: [],
-    submitting: false,
-    value: '',
-  };
+  // state = {
+  //   filteredInfo: null,
+  //   sortedInfo: null,
+  //   visible: false,
+  //   visible1: false,
+  //   showModalView: false,
+  //   comments: [],
+  //   submitting: false,
+  //   value: '',
+  // };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+       
+        comments:"",
+        defectId:""
+       
+    };
+    this.onChange=this.onChange.bind(this);
+    this.onSubmit=this.onSubmit.bind(this);
+}
+
+onChange(e){
+      this.setState(
+        {
+          comments:e.target.value
+          
+        });
+  }
+  
+  onSubmit(e){
+      e.preventDefault();
+    
+      const commentsu={
+        comments:this.state.comments,
+        defectId:"1"
+          
+         
+         
+      }
+      //var myJSON = JSON.stringify(commentsu);
+      console.log(commentsu); 
+  
+      axios.post('http://localhost:8081/defect/comments' , commentsu)
+        .then(res => {
+          console.log(res);
+          console.log(res.data);
+        });
+      // fetch('http://localhost:8081/defect/comments', {
+      //   method: 'post',
+      //   body: JSON.stringify(commentsu)
+      // }).then(function(response) {
+      //   return response.json();
+      // });
+    
+    
+       
+        this.setState({
+  
+            comments:"",
+            defectId:""
+            
+    
+        });
+      }  
   showModal = () => {
     this.setState({
       visible: true,
@@ -176,64 +231,64 @@ export default class TableFilter extends React.Component {
       showModalView: false,
     });
   };
-  handleChange = (pagination, filters, sorter) => {
-    console.log('Various parameters', pagination, filters, sorter);
-    this.setState({
-      filteredInfo: filters,
-      sortedInfo: sorter,
-    });
-  };
+  // handleChange = (pagination, filters, sorter) => {
+  //   console.log('Various parameters', pagination, filters, sorter);
+  //   this.setState({
+  //     filteredInfo: filters,
+  //     sortedInfo: sorter,
+  //   });
+  // };
 
-  clearFilters = () => {
-    this.setState({ filteredInfo: null });
-  };
+  // clearFilters = () => {
+  //   this.setState({ filteredInfo: null });
+  // };
 
-  clearAll = () => {
-    this.setState({
-      filteredInfo: null,
-      sortedInfo: null,
-    });
-  };
+  // clearAll = () => {
+  //   this.setState({
+  //     filteredInfo: null,
+  //     sortedInfo: null,
+  //   });
+  // };
 
-  setAgeSort = () => {
-    this.setState({
-      sortedInfo: {
-        order: 'descend',
-        columnKey: 'age',
-      },
-    });
-  };
-  handleSubmit = () => {
-    if (!this.state.value) {
-      return;
-    }
+  // setAgeSort = () => {
+  //   this.setState({
+  //     sortedInfo: {
+  //       order: 'descend',
+  //       columnKey: 'age',
+  //     },
+  //   });
+  // };
+  // handleSubmit = () => {
+  //   if (!this.state.value) {
+  //     return;
+  //   }
 
-    this.setState({
-      submitting: true
-    });
+  //   this.setState({
+  //     submitting: true
+  //   });
 
-    setTimeout(() => {
-      this.setState({
-        submitting: false,
-        value: '',
-        comments: [
-          {
-            author: 'Han Solo',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            content: <p>{this.state.value}</p>,
-            datetime: moment().fromNow(),
-          },
-          ...this.state.comments,
-        ],
-      });
-    }, 1000);
-  };
+  //   setTimeout(() => {
+  //     this.setState({
+  //       submitting: false,
+  //       value: '',
+  //       comments: [
+  //         {
+  //           author: 'Han Solo',
+  //           avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+  //           content: <p>{this.state.value}</p>,
+  //           datetime: moment().fromNow(),
+  //         },
+  //         ...this.state.comments,
+  //       ],
+  //     });
+  //   }, 1000);
+  // };
 
-  handleChangeState = e => {
-    this.setState({
-      value: e.target.value
-    });
-  };
+  // handleChangeState = e => {
+  //   this.setState({
+  //     value: e.target.value
+  //   });
+  //};
 
   render() {
     const { comments, submitting, value } = this.state;
@@ -686,7 +741,7 @@ export default class TableFilter extends React.Component {
           </Row>
           <Divider/>
           <h3>Comments</h3>
-          {comments.length > 0 && <CommentList comments={comments} />}
+          {/* {comments.length > 0 && <CommentList comments={comments} />} */}
         <Comment
           avatar={
             <Avatar
@@ -696,10 +751,11 @@ export default class TableFilter extends React.Component {
           }
           content={
             <Editor
-              onChange={this.handleChangeState}
-              onSubmit={this.handleSubmit}
-              submitting={submitting}
-              value={value}
+            onChange={this.onChange}
+            onSubmit={this.onSubmit}
+            submitting={submitting}
+            value={this.state.comments}
+            name="comments"
             />
           }
         />
