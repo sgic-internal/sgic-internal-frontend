@@ -23,7 +23,7 @@ export default class App extends React.Component {
     this.state = {
       employeeId: "",
       employeeName: "",
-      employeeDesignation: "USER",
+      employeeDesignation: "",
       employeeEmail: ""
     };
   }
@@ -37,7 +37,7 @@ export default class App extends React.Component {
     this.setState({
       employeeName: e.target.value
     });
-  }
+    }
 
   onChangeEmployeeDesignation(value) {
     this.setState({
@@ -69,7 +69,7 @@ export default class App extends React.Component {
     this.setState({
       employeeId: "",
       employeeName: "",
-      employeeDesignation: "USER",
+      employeeDesignation: "",
       employeeEmail: "",
       visible: false
     });
@@ -114,6 +114,8 @@ export default class App extends React.Component {
                     value={this.state.employeeId}
                     onChange={this.onChangeEmployeeId}
                   />
+                  
+                  
                 </Form.Item>
               </Col>
               <Col span={18} style={{ padding: "5px" }}>
@@ -160,7 +162,7 @@ export default class App extends React.Component {
                   <Input
                     placeholder="Email"
                     value={this.state.employeeEmail}
-                    onChange={this.onChangeEmployeeEmail}
+                    onChange={this.onChangeEmployeeEmail} 
                   />
                 </Form.Item>
               </Col>
