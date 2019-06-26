@@ -2,9 +2,9 @@ import { Modal, Button, Form, Row, Col, Input, DatePicker } from "antd";
 import React from "react";
 import axios from "axios";
 
-// function onChange(e) {
-//   console.log(`checked = ${e.target.checked}`);
-// }
+function onChange(e) {
+  console.log(`checked = ${e.target.checked}`);
+}
 export default class Model extends React.Component {
   constructor(props) {
     super(props);
@@ -137,6 +137,7 @@ export default class Model extends React.Component {
     });
   };
 
+  
   render() {
     return (
       <div>
@@ -192,6 +193,7 @@ export default class Model extends React.Component {
                   <Form.Item>
                     <DatePicker
                       placeholder="Start Date"
+                      startDate={this.state.startDate}
                       onChange={this.onChangeStartDate}
                     />
                   </Form.Item>
@@ -203,6 +205,7 @@ export default class Model extends React.Component {
                   <Form.Item>
                     <DatePicker
                       placeholder="End Date"
+                      endDate={this.state.endDate}
                       onChange={this.onChangeEndDate}
                     />
                   </Form.Item>

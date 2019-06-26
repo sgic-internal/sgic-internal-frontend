@@ -1,16 +1,14 @@
-import { Table, Icon, Popconfirm, message, Input, Search } from "antd";
-import Highlighter from "react-highlight-words";
+import { Table, Icon, Popconfirm, message} from "antd";
 import React from "react";
 import EditModel from "./EditModel";
-// import ViewModel from "./ViewModel";
 import axios from "axios";
-// import Searchbar from "./Search";
-import Model from "./Model";
 
-function confirm(e) {
-  console.log(e);
-  message.success("Deleted Succesfully");
-}
+
+// function confirm(e) {
+//   console.log(e); 
+//   console.log(this.state.projectId);
+//   message.success("Deleted Succesfully");
+// }
 
 function cancel(e) {
   console.log(e);
@@ -25,9 +23,23 @@ export default class App extends React.Component {
 
   state = {
     searchText: "",
-    projects: []
+    projects: [],
+    projectId:''
   };
 
+  handleSubmit = event => {
+    console.log(this.state.handleSubmit);
+    event.preventDefault();
+  };
+  componentDidMount() {
+    // fetch api method
+    // this.getAllProjects();
+    // axios method
+    
+    // page refresh
+    this.getAllProjects();
+  }
+ //DELETE-METHOD 1 = WORKING
   handleDelete = projectId => {
     axios
       .delete(`http://localhost:8081/project_service/deleteById/` + projectId)
@@ -41,23 +53,12 @@ export default class App extends React.Component {
       projects
     });
   };
-  handleSubmit = event => {
-    console.log(this.state.handleSubmit);
-    event.preventDefault();
-  };
-  componentDidMount() {
-    // fetch api method
-    // this.getAllProjects();
-    // axios method
-    this.getAllProjects();
-  }
-
+  /*END OF DELETE METHOD = 1*/
   getAllProjects() {
     axios
       .get(`http://localhost:8081/project_service/GetAllproject`)
       .then(res => {
         const projects = res.data;
-        // const projects = res.data;
         this.setState({ projects: res.data });
         this.getAllProjects();
         // console.log(this.state.projects);
@@ -153,19 +154,25 @@ export default class App extends React.Component {
           <span>
             <Popconfirm
               title="Are you sure delete this task?"
-              onConfirm={confirm}
+              onConfirm={this.handleDelete.bind(this, data.projectId)}
+        
               onCancel={cancel}
               okText="Yes"
-              cancelText="No"
+              cancelText="No" 
+            
+
             >
               <a href="#">
                 <Icon
                   type="delete"
+                 
                   style={{
                     color: "red",
                     fontSize: "18px"
+                    
                   }}
-                  onClick={this.handleDelete.bind(this, data.projectId)}
+                  
+                  
                 />
               </a>
             </Popconfirm>

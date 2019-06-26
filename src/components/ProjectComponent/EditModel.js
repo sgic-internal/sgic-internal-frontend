@@ -8,6 +8,7 @@ export default class Model extends React.Component {
     disabled: true,
     visible: false
   };
+  
 
   toggleDisable = () => {
     this.setState({ disabled: !this.state.disabled });
@@ -39,6 +40,7 @@ export default class Model extends React.Component {
       visible: false
     });
   };
+  
   render() {
     return (
       <div>
@@ -70,7 +72,7 @@ export default class Model extends React.Component {
             </Row>
 
             <Row gutter={16}>
-              <Col span={8} style={{ padding: "5px" }}>
+              <Col span={8} >
                 <Form.Item label="Type">
                   <Input
                     placeholder="Type"
@@ -80,7 +82,7 @@ export default class Model extends React.Component {
                 </Form.Item>{" "}
               </Col>
 
-              <Col span={8} style={{ padding: "5px" }}>
+              <Col span={8} >
                 <Form.Item label="Start Date">
                   <Form.Item>
                     <DatePicker
@@ -91,7 +93,7 @@ export default class Model extends React.Component {
                 </Form.Item>
               </Col>
 
-              <Col span={8} style={{ padding: "5px" }}>
+              <Col span={8} >
                 <Form.Item label="End Date">
                   <Form.Item>
                     <DatePicker
