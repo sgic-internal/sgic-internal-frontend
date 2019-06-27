@@ -8,10 +8,39 @@ export default class Model extends React.Component {
     disabled: true,
     visible: false
   };
-  
 
   toggleDisable = () => {
     this.setState({ disabled: !this.state.disabled });
+  };
+  onChangeprojectId = e => {
+    console.log("checked = ", e.target.checked);
+    this.setState({
+      projectId: e.target.value
+    });
+  };
+  onChangeprojectName = e => {
+    console.log("checked = ", e.target.checked);
+    this.setState({
+      projectName: e.target.value
+    });
+  };
+  onChangeType = e => {
+    console.log("checked = ", e.target.checked);
+    this.setState({
+      type: e.target.value
+    });
+  };
+  onChangeDuration = e => {
+    console.log("checked = ", e.target.checked);
+    this.setState({
+      duration: e.target.value
+    });
+  };
+  onChangeStatus = e => {
+    console.log("checked = ", e.target.checked);
+    this.setState({
+      status: e.target.value
+    });
   };
 
   onChange = e => {
@@ -40,7 +69,7 @@ export default class Model extends React.Component {
       visible: false
     });
   };
-  
+
   render() {
     return (
       <div>
@@ -61,6 +90,17 @@ export default class Model extends React.Component {
           <Form layout="vertical">
             <Row gutter={16}>
               <Col span={24}>
+                <Form.Item label="Project Id">
+                  <Input
+                    placeholder="Project Id"
+                    value={this.state.projectId}
+                    onChange={this.onChangeprojectId}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={24}>
                 <Form.Item label="Project Name">
                   <Input
                     placeholder="Project Name"
@@ -72,7 +112,7 @@ export default class Model extends React.Component {
             </Row>
 
             <Row gutter={16}>
-              <Col span={8} >
+              <Col span={8}>
                 <Form.Item label="Type">
                   <Input
                     placeholder="Type"
@@ -82,7 +122,7 @@ export default class Model extends React.Component {
                 </Form.Item>{" "}
               </Col>
 
-              <Col span={8} >
+              <Col span={8}>
                 <Form.Item label="Start Date">
                   <Form.Item>
                     <DatePicker
@@ -93,7 +133,7 @@ export default class Model extends React.Component {
                 </Form.Item>
               </Col>
 
-              <Col span={8} >
+              <Col span={8}>
                 <Form.Item label="End Date">
                   <Form.Item>
                     <DatePicker

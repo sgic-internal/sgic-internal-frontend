@@ -1,14 +1,8 @@
-import { Table, Icon, Popconfirm, message} from "antd";
+import { Table, Icon, Popconfirm, message, Input, Button } from "antd";
+import Highlighter from "react-highlight-words";
 import React from "react";
 import EditModel from "./EditModel";
 import axios from "axios";
-
-
-// function confirm(e) {
-//   console.log(e); 
-//   console.log(this.state.projectId);
-//   message.success("Deleted Succesfully");
-// }
 
 function cancel(e) {
   console.log(e);
@@ -24,7 +18,7 @@ export default class App extends React.Component {
   state = {
     searchText: "",
     projects: [],
-    projectId:''
+    projectId: ""
   };
 
   handleSubmit = event => {
@@ -35,11 +29,11 @@ export default class App extends React.Component {
     // fetch api method
     // this.getAllProjects();
     // axios method
-    
+
     // page refresh
     this.getAllProjects();
   }
- //DELETE-METHOD 1 = WORKING
+  //DELETE-METHOD 1 = WORKING
   handleDelete = projectId => {
     axios
       .delete(`http://localhost:8081/project_service/deleteById/` + projectId)
@@ -67,35 +61,107 @@ export default class App extends React.Component {
         console.log(error);
       });
   }
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+          style={{ width: 188, marginBottom: 8, display: "block" }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          Search
+        </Button>
+        <Button
+          onClick={() => this.handleReset(clearFilters)}
+          size="small"
+          style={{ width: 90 }}
+        >
+          Reset
+        </Button>
+      </div>
+    ),
+
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select());
+      }
+    },
+    render: text => (
+      <Highlighter
+        highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+        searchWords={[this.state.searchText]}
+        autoEscape
+        textToHighlight={text}
+      />
+    )
+  });
+
+  handleSearch = (selectedKeys, confirm) => {
+    confirm();
+    this.setState({ searchText: selectedKeys[0] });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: "" });
+  };
   render() {
-    // <Searchbar />;
     const columns = [
       {
         title: "Project Id ",
         dataIndex: "projectId",
         key: "projectid",
-        width: "20%"
+        width: "20%",
+        ...this.getColumnSearchProps("projectId")
       },
       {
         title: "Project Name",
         dataIndex: "projectName",
         key: "projectName",
-        width: "20%"
-        //...this.getColumnSearchProps('projectname'),
+        width: "20%",
+        ...this.getColumnSearchProps("projectname")
       },
       {
         title: "Type ",
         dataIndex: "type",
         key: "type",
-        width: "20%"
-        //...this.getColumnSearchProps('type'),
+        width: "20%",
+        ...this.getColumnSearchProps("type")
       },
 
       {
         title: "Start Date",
         dataIndex: "startDate",
         key: "startDate",
-        width: "20%"
+        width: "20%",
+        ...this.getColumnSearchProps("startDate")
       },
 
       {
@@ -108,14 +174,16 @@ export default class App extends React.Component {
         title: "Duration",
         dataIndex: "duration",
         key: "duration",
-        width: "20%"
+        width: "20%",
+        ...this.getColumnSearchProps("duration")
       },
 
       {
         title: "Status",
         dataIndex: "status",
         key: "status",
-        width: "20%"
+        width: "20%",
+        ...this.getColumnSearchProps("status")
       },
 
       // {
@@ -123,13 +191,6 @@ export default class App extends React.Component {
       //   dataIndex: "configId",
       //   key: "configId",
       //   width: "20%"
-      // },
-      // {
-      //   title: 'Abbrevation',
-      //   dataIndex: 'abbrevation',
-      //   key: 'Abbrevation',
-      //   width: '20%',
-
       // },
 
       {
@@ -155,24 +216,17 @@ export default class App extends React.Component {
             <Popconfirm
               title="Are you sure delete this task?"
               onConfirm={this.handleDelete.bind(this, data.projectId)}
-        
               onCancel={cancel}
               okText="Yes"
-              cancelText="No" 
-            
-
+              cancelText="No"
             >
               <a href="#">
                 <Icon
                   type="delete"
-                 
                   style={{
                     color: "red",
                     fontSize: "18px"
-                    
                   }}
-                  
-                  
                 />
               </a>
             </Popconfirm>
