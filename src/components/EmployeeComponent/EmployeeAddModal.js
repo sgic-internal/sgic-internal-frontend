@@ -19,13 +19,48 @@ export default class App extends React.Component {
       this
     );
     this.handleOk = this.handleOk.bind(this);
-
     this.state = {
       employeeId: "",
       employeeName: "",
-      employeeDesignation: "",
-      employeeEmail: ""
+      employeeDesignation:"USER",
+      employeeEmail: "",
+      post:[],
+      getAllDesignation:[]
     };
+  }
+
+  state={
+    Id:null
+  }
+
+  // async getAllEmployees() {
+  //   const url = "http://localhost:8084/employeeservice/getAllDesignation";
+  //   const response = await fetch(url);
+  //   const data = await response.json();
+  //   console.log(data);
+  //   this.setState({
+  //     getAllDesignation: data
+  //   });
+  //   console.log(this.state.getAllDesignation);
+  // }
+
+  async getAllDesignation1() {
+    const url = `http://localhost:8084/employeeservice/getAllDesignation`;
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data);
+    // this.setState({
+    //   getAllDesignation: data
+    // });
+    // console.log(this.state.getAllDesignation);
+
+    // data.forEach(element => {
+    //     console.log(element.severity);
+    // });
+  }
+
+  componentDidMount(){
+    this.getAllDesignation1();
   }
 
   onChangeEmployeeId(e) {
@@ -43,7 +78,7 @@ export default class App extends React.Component {
     this.setState({
       employeeDesignation: `${value}`
     });
-    //console.log(this.state.employeeDesignation)
+    console.log(this.state.employeeDesignation)
   }
   onChangeEmployeeEmail(e) {
     this.setState({
@@ -57,7 +92,7 @@ export default class App extends React.Component {
     const serverport = {
       empId: this.state.employeeId,
       name: this.state.employeeName,
-      designation: this.state.employeeDesignation,
+      // designation: this.state.employeeDesignation,
       email: this.state.employeeEmail
     };
     axios
@@ -91,7 +126,24 @@ export default class App extends React.Component {
       visible: false
     });
   };
+  // componentDidMount(){
+  //   let ur=`http://localhost:8084/employeeservice/getAllDesignation`;
+  //   console.log(ur);
+  //   fetch(ur)
+  //   .then(resp =>resp.json())
+  //   .then(data =>{
+  //       console.log(data)
 
+  //       let designation=data.map((post)=>{
+  //           return(
+  //               <option value={post.Id}>{post.Id}</option>
+  //           )
+  //       })
+  //       this.setState({designation:designation});
+  //   }) 
+
+
+  // }
   render() {
     return (
       <div>
@@ -112,7 +164,7 @@ export default class App extends React.Component {
                   <Input
                     placeholder="Employee Id"
                     value={this.state.employeeId}
-                    onChange={this.onChangeEmployeeId}
+                    onChange={this.onChangeEmployeeId} 
                   />
                   
                   
@@ -140,10 +192,17 @@ export default class App extends React.Component {
                         .toLowerCase()
                         .indexOf(input.toLowerCase()) >= 0
                     }
-                    //value={this.state.employeeDesignation}
+                    value={this.state.employeeDesignation}
                     onChange={this.onChangeEmployeeDesignation}
                   >
-                    <Option value="ADMIN"> ADMIN</Option>
+
+            {this.state.getAllDesignation.map(e => (
+            <Option key={e.id} value={e.id}>
+                 {e.id}
+            </Option>
+                ))}
+
+                    {/* <Option value="ADMIN"> ADMIN</Option>
                     <Option value="USER"> USER</Option>
                     <Option value="HR">HR</Option>
                     <Option value="PM">PM</Option>
@@ -152,7 +211,7 @@ export default class App extends React.Component {
                     <Option value="QA"> QA</Option>
                     <Option value="DEV">DEV</Option>
                     <Option value="ASSOCQA"> ASSOCQA</Option>
-                    <Option value="ASSOCDEV">ASSOCDEV</Option>
+                    <Option value="ASSOCDEV">ASSOCDEV</Option> */}
                   </Select>
                 </Form.Item>
               </Col>
@@ -162,7 +221,7 @@ export default class App extends React.Component {
                   <Input
                     placeholder="Email"
                     value={this.state.employeeEmail}
-                    onChange={this.onChangeEmployeeEmail} 
+                    onChange={this.onChangeEmployeeEmail} type="email"
                   />
                 </Form.Item>
               </Col>
