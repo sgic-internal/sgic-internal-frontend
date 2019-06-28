@@ -19,6 +19,8 @@ import {
   message,
   Typography, Divider
 } from 'antd';
+import Lightbox from "react-image-lightbox";
+import 'react-image-lightbox/style.css';
 import moment from 'moment';
 import axios from 'axios';
 //import axios from "axios";
@@ -29,27 +31,28 @@ const { TextArea } = Input;
 const id=1;
 const props = {
   name: 'files',
-  action: 'http://localhost:8081/defect/uploadMultipleFiles?defectId='+id,
+  action: 'http://localhost:8081/defectservices/uploadMultipleFiles?defectId='+id,
   headers: {
-    authorization: 'authorization-text',
+    ContentType:'application/json',
   },
   multiple:true
 }
-function
-  confirm(e) {
 
-  console.log(e);
+function 
+confirm(e) {
 
-  message.success("Successfully Deleted");
+console.log(e);
+
+message.success("Successfully Deleted");
 
 }
 
-function
-  cancel(e) {
+function 
+cancel(e) {
 
-  console.log(e);
+console.log(e);
 
-  message.error("Click on No");
+message.error("Click on No");
 
 }
 const CommentList = ({ comments }) => (
@@ -74,134 +77,6 @@ const Editor = ({ onChange, onSubmit, submitting, value }) => (
   </div>
 );
 
-<<<<<<< HEAD
-const data = [
-  {
-    key: '1',
-    defectid: '001',
-    modulename: 'Thanushan',
-    severity: ['High'],
-    priority: ['Medium'],
-    type: 'UI',
-    status: 'Open',
-  },
-  {
-    key: '2',
-    defectid: '002',
-    modulename: 'Romi',
-    severity: ['Low'],
-    priority: ['High'],
-    type: 'Functionality',
-    status: 'Open',
-  },
-  {
-    key: '3',
-    defectid: '003',
-    modulename: 'Thuvi',
-    severity: ['High'],
-    priority: ['Low'],
-    type: 'Performance',
-    status: 'Open',
-  },
-  {
-    key: '4',
-    defectid: '004',
-    modulename: 'Guruji',
-    severity: ['Low'],
-    priority: ['High'],
-    type: 'UI',
-    status: 'Re-opened',
-  },
-];
-
-export default class TableFilter extends React.Component {
-  // state = {
-  //   filteredInfo: null,
-  //   sortedInfo: null,
-  //   visible: false,
-  //   visible1: false,
-  //   showModalView: false,
-  //   comments: [],
-  //   submitting: false,
-  //   value: '',
-  // };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      images: [],
-      comments: "",
-      defectId: "",
-      user: "",
-      status: "",
-      audit: '',
-      comment: [],
-      photoIndex: 0,
-      isOpen: false
-    };
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-  }
-
-  onChange(e) {
-    this.setState(
-      {
-        comments: e.target.value
-
-      });
-  }
-  attachment = () => {
-    axios.get("http://localhost:8081/defect/listFile/1")
-      .then(data => {
-        data.data.map(file => {
-          if (file.id == 1) {
-            console.log(file.fileDownloadUri)
-            this.setState({
-              images: [file.fileDownloadUri],
-              isOpen: true
-            })
-          }
-        })
-      });
-    // this.setState({
-    //   images:['//localhost:8081/defect/downloadFile/1'],
-    //   isOpen: true 
-    // })
-  }
-
-  onSubmit(e) {
-    e.preventDefault();
-
-    const commentsu = {
-      comments: this.state.comments,
-      defectId: "1"
-
-
-
-    }
-    //var myJSON = JSON.stringify(commentsu);
-    console.log(commentsu);
-
-    axios.post('http://localhost:8081/defect/comments', commentsu)
-      .then(res => {
-        console.log(res);
-        console.log(res.data);
-        this.getComment()
-      });
-    // fetch('http://localhost:8081/defect/comments', {
-    //   method: 'post',
-    //   body: JSON.stringify(commentsu)
-    // }).then(function(response) {
-    //   return response.json();
-    // });
-
-
-
-    this.setState({
-
-      comments: "",
-      defectId: ""
-=======
 // const data = [
 //   {
 //     key: '1',
@@ -281,12 +156,76 @@ class TableFilter extends React.Component {
           attachmentId: 1,
           dateAndTime: "2017-05-05"
         }
-      ]
+      ],
+      images: [],
+      comments: "",
+      defectId: "",
+      user: "",
+      status: "",
+      audit: '',
+      comment: [],
+      photoIndex: 0,
+      isOpen: false
       
     };
     this.deleteDefect = this.deleteDefect.bind(this);
     this.refreshDefect = this.refreshDefect.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
+  onChange(e) {
+    this.setState(
+      {
+        comments: e.target.value
+
+      });
+  }
+  attachment = () => {
+    axios.get("http://localhost:8081/defectservices/listFile/1")
+      .then(data => {
+        data.data.map(file => {
+          if (file.id == 1) {
+            console.log(file.fileDownloadUri)
+            this.setState({
+              images: [file.fileDownloadUri],
+              isOpen: true
+            })
+          }
+        })
+      });
+    // this.setState({
+    //   images:['//localhost:8081/defect/downloadFile/1'],
+    //   isOpen: true 
+    // })
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+
+    const commentsu = {
+      comments: this.state.comments,
+      defectId: "1"
+
+
+
+    }
+    //var myJSON = JSON.stringify(commentsu);
+    console.log(commentsu);
+
+    axios.post('http://localhost:8081/defectservices/comments', commentsu)
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+        this.getComment()
+      });
+
+      this.setState({
+
+        comments: "",
+        defectId: ""
+      });
+    }
+
 
 
   componentWillMount() {
@@ -302,35 +241,11 @@ class TableFilter extends React.Component {
 
   refreshDefect() {
     axios
-      .get("http://localhost:8080/defectservices/getAllDefects")
+      .get("http://localhost:8081/defectservices/getAllDefects")
       .then(response => {
         console.warn("Refresh Service is working");
         this.setState({ defect: response.data });
       });
-  }
-
->>>>>>> release2
-
-
-    });
-  }
-  onChange1 = (value) => {
-    console.log(`selected ${value}`);
-
-    const auditinfo = {
-      status: "Status changes to " + value,
-      user: "romi",
-      defectId: "1"
-    }
-
-    this.setState({
-
-      audit: auditinfo
-
-    });
-    console.log(this.state.audit)
-
-
   }
   onBlur() {
     console.log('blur');
@@ -343,6 +258,7 @@ class TableFilter extends React.Component {
   onSearch(val) {
     console.log('search:', val);
   }
+
   showModal = () => {
     this.setState({
       visible: true,
@@ -391,7 +307,7 @@ class TableFilter extends React.Component {
     console.log(defectList);
     axios({
       method: 'post',
-      url: 'http://localhost:8080/defectservices/saveDefect',
+      url: 'http://localhost:8081/defectservices/saveDefect',
       data: defectList,
       config: { headers: {'Content-Type': 'application/json' }}
       })
@@ -432,129 +348,59 @@ class TableFilter extends React.Component {
       showModalView: false,
     });
   };
-  // handleChange = (pagination, filters, sorter) => {
-  //   console.log('Various parameters', pagination, filters, sorter);
-  //   this.setState({
-  //     filteredInfo: filters,
-  //     sortedInfo: sorter,
-  //   });
-  // };
+  handleChange = (pagination, filters, sorter) => {
+    console.log('Various parameters', pagination, filters, sorter);
+    this.setState({
+      filteredInfo: filters,
+      sortedInfo: sorter,
+    });
+  };
 
-  // clearFilters = () => {
-  //   this.setState({ filteredInfo: null });
-  // };
+  clearFilters = () => {
+    this.setState({ filteredInfo: null });
+  };
 
-  // clearAll = () => {
-  //   this.setState({
-  //     filteredInfo: null,
-  //     sortedInfo: null,
-  //   });
-  // };
+  clearAll = () => {
+    this.setState({
+      filteredInfo: null,
+      sortedInfo: null,
+    });
+  };
 
-  // setAgeSort = () => {
-  //   this.setState({
-  //     sortedInfo: {
-  //       order: 'descend',
-  //       columnKey: 'age',
-  //     },
-  //   });
-  // };
-  // handleSubmit = () => {
-  //   if (!this.state.value) {
-  //     return;
-  //   }
+  setAgeSort = () => {
+    this.setState({
+      sortedInfo: {
+        order: 'descend',
+        columnKey: 'age',
+      },
+    });
+  };
+  handleSubmit = () => {
+    if (!this.state.value) {
+      return;
+    }
 
-  //   this.setState({
-  //     submitting: true
-  //   });
+    this.setState({
+      submitting: true
+    });
 
-  //   setTimeout(() => {
-  //     this.setState({
-  //       submitting: false,
-  //       value: '',
-  //       comments: [
-  //         {
-  //           author: 'Han Solo',
-  //           avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-  //           content: <p>{this.state.value}</p>,
-  //           datetime: moment().fromNow(),
-  //         },
-  //         ...this.state.comments,
-  //       ],
-  //     });
-  //   }, 1000);
-  // };
-
-  // handleChangeState = e => {
-  //   this.setState({
-  //     value: e.target.value
-  //   });
-  //};
-  remove = (id) => {
-    console.log(id)
-    // axios.delete('http://localhost:8081/defect/comments/'+ id)
-    // .then(res => {
-    //   console.log(res);
-    //   console.log(res.data);
-    // });
-    fetch('http://localhost:8081/defect/delete/' + id, {
-      method: 'DELETE',
-      // body: JSON.stringify(items),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => {
-      this.getComment();
-    }).catch(err => err);
-  }
-  componentDidMount() {
-    this.getComment()
-  }
-
-  getComment() {
-    axios.get('http://localhost:8081/defect/comments/1')
-      .then(resp => {
-
-        let Data = resp.data;
-
-        let comment = Data.map(e => {
-
-
-          // return <div><p>{e.comments}</p></div>
-          return <tr key={e.id}>
-            <td style={{ whiteSpace: 'nowrap', width: "20%" }}>{e.comments}</td>
-            <td></td>
-
-<<<<<<< HEAD
-            <td>{
-
-            }</td>
-
-            <td style={{ paddingLeft: '140px' }}>
-
-              <Icon type="minus-circle" style={{ color: 'red' }} onClick={() => this.remove(e.commentId)} />
-
-
-              {/* <Button size="sm" color="danger" onClick={() => this.remove(e.commentId)}>Delete</Button> */}
-
-            </td>
-          </tr>
-
-        });
-
-        this.setState({ comment });
-
-        console.log(comment);
+    setTimeout(() => {
+      this.setState({
+        submitting: false,
+        value: '',
+        comments: [
+          {
+            author: 'Han Solo',
+            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+            content: <p>{this.state.value}</p>,
+            datetime: moment().fromNow(),
+          },
+          ...this.state.comments,
+        ],
       });
-  }
+    }, 1000);
+  };
 
-  Preloader(props) {
-    return <img src="spinner.gif" />;
-  }
-  render() {
-    const { photoIndex, isOpen, images } = this.state;
-    const { comments, submitting, value } = this.state;
-=======
   handleChangeState = (event) => {
       const target = event.target;
       const inputName = target.name;        
@@ -581,13 +427,71 @@ class TableFilter extends React.Component {
     this.setState({assignTo: value});
   }
 
+  remove = (id) => {
+    console.log(id)
+    fetch('http://localhost:8081/defectservices/delete/'+id, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => {
+      this.getComment();
+    }).catch(err => err);
+  }
+
+  componentDidMount() {
+    this.getComment()
+  }
+  getComment() {
+    axios.get('http://localhost:8081/defectservices/comments/1')
+      .then(resp => {
+
+        let Data = resp.data;
+
+        let comment = Data.map(e => {
+
+
+          // return <div><p>{e.comments}</p></div>
+          return <tr key={e.id}>
+            <td style={{ whiteSpace: 'nowrap', width: "20%" }}>{e.comments}</td>
+            <td></td>
+
+
+            <td>{
+
+            }</td>
+
+            <td style={{ paddingLeft: '140px' }}>
+
+              <Icon type="minus-circle" style={{ color: 'red' }} onClick={() => this.remove(e.commentId)} />
+
+
+              {/* <Button size="sm" color="danger" onClick={() => this.remove(e.commentId)}>Delete</Button> */}
+
+            </td>
+          </tr>
+
+        });
+
+        this.setState({ comment });
+
+        console.log(comment);
+      });
+  }
+
+  Preloader(props) {
+    return <img src="spinner.gif" />;
+  }
+
+
+
 
 
 
     //fetching the employee with get all employee
      getAllDefect = () => {
        const _this = this;
-      axios.get('http://localhost:8080/defectservices/getAllDefects')
+      axios.get('http://localhost:8081/defectservices/getAllDefects')
       .then(function (response) {
         // handle success
         console.log(response);
@@ -611,10 +515,10 @@ class TableFilter extends React.Component {
 
 
     handleDelete = defectId => {
-      // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
+      // axios.get('http://localhost:8081/employeeservice/DeleteById/'+empId)
       //     .then(console.log('Deleted'))
       //     .catch(err => console.log(err))
-      fetch("http://localhost:8080/defectservices//deleteDefect/{defectId}" + defectId, {
+      fetch("http://localhost:8081/defectservices//deleteDefect/{defectId}" + defectId, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -634,7 +538,7 @@ class TableFilter extends React.Component {
    deleteDefect(defectId) {
     console.log(defectId);
     axios
-      .delete("http://localhost:8080/defectservices/deleteDefect/" + defectId)
+      .delete("http://localhost:8081/defectservices/deleteDefect/" + defectId)
       .then(response => {
         console.warn("Delete Service is working");
         //  this.refreshBook(response);
@@ -644,8 +548,9 @@ class TableFilter extends React.Component {
   }
   
   render() {
+    
+    const { photoIndex, isOpen, images } = this.state;
     const { comments, submitting, value, defect } = this.state;
->>>>>>> release2
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
     filteredInfo = filteredInfo || {};
@@ -732,49 +637,8 @@ class TableFilter extends React.Component {
         key: 'action',
         render: (text, data= this.state.defect,  record) => (
           <span>
-            <Icon type="edit" style={{ fontSize: "18px", color: "blue" }} onClick={this.showModal} />
+            <Icon type="edit" style={{ fontSize: "18px", color: "blue" }} onClick={this.showModal}/>
             <Divider
-<<<<<<< HEAD
-              type="vertical"
-            />
-
-            <Popconfirm
-
-              title="Are you sure want to delete this Entry ?"
-
-              icon={<Icon
-                type="question-circle-o"
-                style={{
-                  color:
-                    "red"
-                }}
-              />}
-
-              onConfirm={confirm}
-
-              onCancel={cancel}
-
-              okText="Yes"
-
-              cancelText="No"
-
-            >
-
-              <a
-                href="#">
-
-                <Icon
-                  type="delete"
-                  style={{
-                    color:
-                      "red", fontSize: "18px"
-                  }}
-                />
-
-              </a>
-
-            </Popconfirm>
-=======
           type="vertical"
           />
           
@@ -815,7 +679,6 @@ class TableFilter extends React.Component {
           </a>
           
           </Popconfirm>
->>>>>>> release2
           </span>
         ),
 
@@ -825,7 +688,7 @@ class TableFilter extends React.Component {
         key: 'more',
         render: (text, record) => (
           <span>
-            <Icon type="arrows-alt" style={{ fontSize: "18px", color: 'green' }} onClick={this.showModalView} />
+            <Icon type="arrows-alt" style={{fontSize: "18px", color: 'green'}} onClick={this.showModalView} />
           </span>
         ),
 
@@ -835,9 +698,9 @@ class TableFilter extends React.Component {
     return (
       <div>
         <Button type="primary" onClick={this.showModal1}>
-          Add Defect
+         Add Defect
         </Button>
-        <br /><br />
+        <br/><br/>
         {/* Add Defects Part */}
         <Modal
           title="Add Defects"
@@ -948,21 +811,22 @@ class TableFilter extends React.Component {
               </Select>
             </Form.Item>
 
-         {/*   <Form.Item label="Comments:  ">
+            <Form.Item label="Comments:  ">
               <TextArea
                 placeholder=""
                 autosize={{ minRows: 2, maxRows: 8 }}
               />
             </Form.Item>
-          
+            </Form>
 
           <Upload {...props}>
             <Button>
               <Icon type="upload" /> Click to Upload
-          </Button>
+    </Button>
+          </Upload>
 
-    </Upload>*/}
-          </Form>
+    
+          
         </Modal>
     <Table columns={columns}  dataSource={defect}  onChanger={this.handleChange} />
 
@@ -1017,13 +881,8 @@ class TableFilter extends React.Component {
 
 
                 <Form.Item label="Edit Type: ">
-<<<<<<< HEAD
-                  <Select defaultValue="UI" style={{ width: '100%' }} onChange={this.handleChangeState}>
-                    <Option value="UI">UI</Option>
-=======
                   <Select defaultValue="UI" style={{ width: '100%' }} onChange={this.onChange}>
                   <Option value="UI">UI</Option>
->>>>>>> release2
                     <Option value="Functionality">Functionality</Option>
                     <Option value="Enhancement">Enhancement</Option>
                     <Option value="performance">Performance</Option>
@@ -1096,7 +955,7 @@ class TableFilter extends React.Component {
         >
           <Row>
             <Col span={10} style={{ padding: '5px' }}>
-              <p><b>Module name:</b></p>
+            <p><b>Module name:</b></p>
               <p><b>Description:</b></p>
               <p><b>Steps to re-create:</b></p>
               <p><b>Severity:</b></p>
@@ -1111,7 +970,7 @@ class TableFilter extends React.Component {
               <p><b>Available Date:</b></p>
               <p><b>Comments:</b></p>
 
-
+              
               {/* <p label="Priority: "> </p>
               <br />
               <br />
@@ -1120,7 +979,7 @@ class TableFilter extends React.Component {
               <p label="Status: "></p> */}
             </Col>
             <Col span={14} style={{ padding: '5px' }}>
-              <p>Defect Dashboard</p>
+            <p>Defect Dashboard</p>
               <p>Samuel Gnanam IT Centre has devoted itself </p>
               <p>Lorem ipsum dolor sit amet consectetur.  </p>
               <p><Tag color="red">High</Tag></p>
@@ -1133,8 +992,8 @@ class TableFilter extends React.Component {
               <p>Sam</p>
               <p>05.05.2020</p>
               <p>05.10.2020</p>
-              {/* <p>Samuel Gnanam IT Centre has devoted itself to become the pioneer institution for Industrial Software Engineering Training in Jaffna, which helps and guide the IT graduates to reach heights in their IT career. SGIC is a charitable organization under the Trust of ‘Deshamanya A Y S Gnanam’, who is the founder of Anthony’s Group in Sri Lanka. Deshamanya A Y S Gnanam had done various philanthropic activities in Sri Lanka and his sons are following his footsteps.</p> */}
               <p>{this.state.comment}</p>
+
             </Col>
           </Row>
           <Row>
@@ -1162,29 +1021,9 @@ class TableFilter extends React.Component {
               )}
             </div>
           </Row>
-          <Divider />
+          <Divider/>
           <h3>Comments</h3>
-<<<<<<< HEAD
           {/* {comments.length > 0 && <CommentList comments={comments} />} */}
-          <Comment
-            avatar={
-              <Avatar
-                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                alt="Han Solo"
-              />
-            }
-            content={
-              <Editor
-                onChange={this.onChange}
-                onSubmit={this.onSubmit}
-                submitting={submitting}
-                value={this.state.comments}
-                name="comments"
-              />
-            }
-          />
-=======
-          {/* {comments.length > 0 && <CommentList comments={comments} />}
         <Comment
           avatar={
             <Avatar
@@ -1194,14 +1033,14 @@ class TableFilter extends React.Component {
           }
           content={
             <Editor
-              onChange={this.handleChangeState}
-              onSubmit={this.handleSubmit}
+              onChange={this.onChange}
+              onSubmit={this.onSubmit}
               submitting={submitting}
-              value={value}
+              value={this.state.comments}
+              name="comments"
             />
           }
-        /> */}
->>>>>>> release2
+        />
         </Modal>
       </div>
 
@@ -1210,4 +1049,3 @@ class TableFilter extends React.Component {
 }
 
 export default TableFilter;
-
