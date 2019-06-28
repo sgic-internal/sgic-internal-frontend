@@ -8,7 +8,8 @@
     "@progress/kendo-inputs-react-wrapper": "^2018.3.1017",
     "@progress/kendo-ui": "^2019.2.517",
     "antd": "^3.19.2",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
+
     "bootstrap": "^4.3.1",
     "chart.js": "^2.8.0",
     "gg-editor": "^2.0.4",
@@ -31,6 +32,7 @@
     "reactstrap": "^8.0.0",
     "redux-thunk": "^2.3.0",
     "reqwest": "^2.0.5",
+    "router": "^1.3.3",
     "update": "^0.7.4",
     "xlsx": "^0.14.3"
   },
