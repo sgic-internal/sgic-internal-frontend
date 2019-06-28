@@ -154,7 +154,8 @@ class TableFilter extends React.Component {
       ]
       
     };
-
+    this.deleteDefect = this.deleteDefect.bind(this);
+    this.refreshDefect = this.refreshDefect.bind(this);
   }
 
 
@@ -167,6 +168,17 @@ class TableFilter extends React.Component {
     this.forceUpdate();
     
   }
+
+
+  refreshDefect() {
+    axios
+      .get("http://localhost:8080/defectservices/getAllDefects")
+      .then(response => {
+        console.warn("Refresh Service is working");
+        this.setState({ defect: response.data });
+      });
+  }
+
 
   showModal = () => {
     this.setState({
@@ -386,7 +398,17 @@ class TableFilter extends React.Component {
       });
     };
 
-  
+   deleteDefect(defectId) {
+    console.log(defectId);
+    axios
+      .delete("http://localhost:8080/defectservices/deleteDefect/" + defectId)
+      .then(response => {
+        console.warn("Delete Service is working");
+        //  this.refreshBook(response);
+        this.forceUpdate();
+        // alert(" Defect deleted successfully");
+      });
+  }
   
   render() {
     const { comments, submitting, value, defect } = this.state;
@@ -474,7 +496,7 @@ class TableFilter extends React.Component {
       {
         title: 'Action',
         key: 'action',
-        render: (text, record) => (
+        render: (text, data= this.state.defect,  record) => (
           <span>
             <Icon type="edit" style={{ fontSize: "18px", color: "blue" }} onClick={this.showModal}/>
             <Divider
@@ -510,6 +532,8 @@ class TableFilter extends React.Component {
           style={{
           color: 
           "red",fontSize: "18px" }} 
+
+          onClick={() => this.deleteDefect(data.defectId)}
           
           />
           
