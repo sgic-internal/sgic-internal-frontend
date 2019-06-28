@@ -3,65 +3,150 @@ import React from 'react';
 import { Table, Divider, Modal, Button, Icon, Form, Input, Col, Row, Popconfirm } from 'antd';
 import { SketchPicker } from 'react-color';
 import reactCSS from 'reactcss';
+import axios from 'axios';
 
-const data = [
-  {
-    key: '1',
-    name: 'New',
-    Description: 'New',
-    Colour: "#4bcffa",
-  },
-  {
-    key: '2',
-    name: 'Open',
-    Description: 'Open',
-    Colour: "#0be881",
-  },
-  {
-    key: '3',
-    name: 'Closed',
-    Description: 'Low',
-    Colour: "#ffdd59",
-  },
-  {
-    key: '4',
-    name: 'Fixed',
-    Description: 'Low',
-    Colour: "#d3f261",
-  },
-  {
-    key: '5',
-    name: 'Reopened',
-    Description: 'Reopened',
-    Colour: "#faad14",
-  },
-  {
-    key: '6',
-    name: 'Rejected',
-    Description: 'Rejected',
-    Colour: "red",
-  },
-  {
-    key: '7',
-    name: 'Deffered',
-    Description: 'Deffered',
-    Colour: "#13c2c2",
-  },
+// const data = [
+//   {
+//     key: '1',
+//     name: 'New',
+//     Description: 'New',
+//     Colour: "#4bcffa",
+//   },
+//   {
+//     key: '2',
+//     name: 'Open',
+//     Description: 'Open',
+//     Colour: "#0be881",
+//   },
+//   {
+//     key: '3',
+//     name: 'Closed',
+//     Description: 'Low',
+//     Colour: "#ffdd59",
+//   },
+//   {
+//     key: '4',
+//     name: 'Fixed',
+//     Description: 'Low',
+//     Colour: "#d3f261",
+//   },
+//   {
+//     key: '5',
+//     name: 'Reopened',
+//     Description: 'Reopened',
+//     Colour: "#faad14",
+//   },
+//   {
+//     key: '6',
+//     name: 'Rejected',
+//     Description: 'Rejected',
+//     Colour: "red",
+//   },
+//   {
+//     key: '7',
+//     name: 'Deffered',
+//     Description: 'Deffered',
+//     Colour: "#13c2c2",
+//   },
 
-];
+// ];
 
 export default class StatusConfig extends React.Component {
   state = {
     visible: false,
-    visibleEditModal: false
+    visibleEditModal: false,
+    DefectStatus:[],
+    def:[]
   };
 
+  constructor(props) {
+    super(props);
+    this.onChangeName = this.onChangeName.bind(this);
+    this.onChangeValue = this.onChangeValue.bind(this);
+    this.handleOk = this.handleOk.bind(this);
+    this.handleEditOk = this.handleEditOk.bind(this);
+    this.deleteDefect=this.deleteDefect.bind(this);
+    this.state = {
+    name: '',
+    value: '',
+    id:''
+    }
+    this.componentWillMount = this.componentWillMount.bind(this);
+    };
+
+    onChangeName(e) {
+      this.setState({
+      name: e.target.value
+      })
+      };
+      onChangeValue(e) {
+      this.setState({
+      value: e.target.value
+      })
+      };
+
+      getdefectStatus() {
+        const url = 'http://localhost:8081/defectservice/defectstatuses';
+        axios.get(url)
+        .then(response => this.setState({
+        DefectStatus: response.data,
+        }))
+        .catch(function (error) {
+        console.log(error);
+        });
+        }
+    componentWillMount(){
+      //Simple Axios
+      const url ='http://localhost:8081/defectservice/defectstatuses';
+      axios.get(url)
+      
+      .then(response => this.setState({
+      DefectStatus: response.data,
+      }))
+      .catch(function (error){
+      console.log(error);
+      });
+      }
   showModal = () => {
     this.setState({
       visible: true,
     });
   };
 
+  editStatus = (id) => {
+    this.showEditModal();
+    this.setState({id:id})
+    console.log(id);
+    axios.get('http://localhost:8081/defectservice/defectstatus/' + id)
+    .then(response => {
+        this.setState({ 
+          name: response.data.name, 
+          value: response.data.value 
+        });
+    })
+    .catch(function (error) {
+        console.log(error);
+    })
+    this.setState({visible: false})
+  }
+  deleteDefect = id => {
+
+    console.log(id)
+    fetch(`http://localhost:8081/defectservice/defectstatus/` + id, {
+    method: "DELETE",
+    headers: {
+    "Content-Type": "application/json"
+    },
+    body: JSON.stringify(this.state)
+    })
+    console.log(id);
+    const DefectStatus = this.state.DefectStatus.filter(DefectStatus => {
+    return DefectStatus.id !== id;
+    });
+    this.setState({
+    DefectStatus
+    })
+  }
   showEditModal = () => {
     console.log("showEditModal clicked");
     this.setState({
@@ -69,12 +154,36 @@ export default class StatusConfig extends React.Component {
     });
   };
 
+  
   handleOk = e => {
-    console.log(e);
+
+    const obj = {
+    name: this.state.name,
+    value: this.state.value
+    }
+    axios.post('http://localhost:8081/defectservice/defectstatus/', obj)
+    .then(res => this.getdefectStatus());
     this.setState({
-      visible: false,
-    });
-  };
+    name: '',
+    value: '',
+    visible: false
+    })
+    };
+
+    handleEditOk = (id) => {
+      const obj = {
+        name: this.state.name,
+        value: this.state.value
+      }
+      axios.put(`http://localhost:8081/defectservice/defectstatus/${id}`, obj)
+          .then(res => this.getdefectStatus());
+      
+      this.setState({
+        name: '',
+        value: '',
+        visibleEditModal: false
+      })
+    };
 
   handleCancel = e => {
     console.log(e);
@@ -100,6 +209,8 @@ export default class StatusConfig extends React.Component {
     },
   };
 
+  
+    
   handleClick = () => {
     this.setState({ displayColorPicker: !this.state.displayColorPicker })
   };
@@ -139,29 +250,35 @@ export default class StatusConfig extends React.Component {
       },
       {
         title: 'Description',
-        dataIndex: 'Description',
-        key: 'Description',
+        dataIndex: 'value',
+        key: 'value',
       },
-      {
-        title: 'Colour',
-        key: 'Colour',
-        dataIndex: 'Colour',
-        render: (colour) => <Icon type="border" style={{ color: colour, background: colour }} />,
-      },
+      // {
+      //   title: 'Colour',
+      //   key: 'Colour',
+      //   dataIndex: 'Colour',
+      //   render: (colour) => <Icon type="border" style={{ color: colour, background: colour }} />,
+      // },
       {
         title: 'Action',
-        key: 'action',
-        render: () => (
+        //key: 'action',
+        render: (text, data=this.state.def) => (
           <span>
 
-            <a onClick={this.showEditModal}><Icon type="edit" style={{fontSize:'17px', color:'blue'}} /></a>
+            <a onClick={this.editStatus.bind(this, data.id)}><Icon type="edit" style={{fontSize:'17px', color:'blue'}} /></a>
             <Divider type="vertical" />
-            <Popconfirm
+
+
+
+                          <Popconfirm
               title="Are you sure, Do you want to delete this ?"
-              icon={<Icon type="delete" style={{ color: 'red' }} />}
-            >
-              <a href="#"><Icon type="delete" style={{fontSize:'17px', color:'red'}} /></a>
-            </Popconfirm>
+              icon={<Icon type="delete" style={{ color: 'red' }}
+              />}
+              onConfirm={this.deleteDefect.bind(this, data.id)}
+              >
+              <Icon type="delete" style={{ fontSize: '17px', color: 'red' }} />
+              </Popconfirm>
+
 
           </span>
         ),
@@ -174,7 +291,7 @@ export default class StatusConfig extends React.Component {
           width: '36px',
           height: '14px',
           borderRadius: '2px',
-          background: `rgba(${this.state.color.r}, ${this.state.color.g}, ${this.state.color.b}, ${this.state.color.a})`,
+          /*{background: `rgba(${this.state.color.r}, ${this.state.color.g}, ${this.state.color.b}, ${this.state.color.a})`,}*/
         },
         swatch: {
           padding: '5px',
@@ -235,16 +352,24 @@ export default class StatusConfig extends React.Component {
 
               }}>
 
-              <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
+              <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }}>
                 <Form.Item label="Name">
-                  <Input />
+                  <Input type="text" 
+                      className="form-control" 
+                      value={this.state.name}
+                      onChange={this.onChangeName}
+                    />
                 </Form.Item>
                 <Form.Item label="Description">
-                  <Input />
+                  <Input type="text" 
+                    className="form-control" 
+                    value={this.state.value}
+                    onChange={this.onChangeValue}
+                  />
                 </Form.Item>
 
 
-                <Form.Item label="Colour">
+                {/* <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color} />
                   </div>
@@ -253,7 +378,7 @@ export default class StatusConfig extends React.Component {
                     <SketchPicker color={this.state.color} onChange={this.handleChange} />
                   </div> : null}
 
-                </Form.Item>
+                </Form.Item> */}
 
 
               </Form>
@@ -264,7 +389,7 @@ export default class StatusConfig extends React.Component {
           <Modal
             title="Edit Status"
             visible={this.state.visibleEditModal}
-            onOk={this.handleOk}
+            onOk={this.handleEditOk.bind(this, this.state.id)}
             onCancel={this.handleEditPriorityCancel}
             style={{ padding: "60px", }}
           >
@@ -277,14 +402,20 @@ export default class StatusConfig extends React.Component {
               }}>
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
                 <Form.Item label="Name">
-                  <Input />
+                <Input type="text" 
+                      className="form-control" 
+                      value={this.state.name}
+                      onChange={this.onChangeName}/>
                 </Form.Item>
                 <Form.Item label="Description">
-                  <Input />
+                <Input type="text" 
+                      className="form-control" 
+                      value={this.state.value}
+                      onChange={this.onChangeValue}/>
                 </Form.Item>
 
 
-                <Form.Item label="Colour">
+                {/* <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color} />
                   </div>
@@ -292,14 +423,14 @@ export default class StatusConfig extends React.Component {
                     <div style={styles.cover} onClick={this.handleClose} />
                     <SketchPicker color={this.state.color} onChange={this.handleChange} />
                   </div> : null}
-                </Form.Item>
+                </Form.Item> */}
 
 
               </Form>
             </div>
 
           </Modal>
-          <Table columns={columns} dataSource={data} />
+          <Table columns={columns} dataSource={this.state.DefectStatus} />
 
           <Icon type="square" />
         </div>
