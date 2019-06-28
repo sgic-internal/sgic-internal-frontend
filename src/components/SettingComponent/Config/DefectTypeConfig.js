@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Table, Divider, Modal, Button, Icon, Form, Input, Popconfirm } from 'antd';
 import { SketchPicker } from 'react-color';
@@ -40,6 +39,7 @@ export default class DefectTypeConfic extends React.Component {
     visibleEditModal: false,
     DefectType: [],
     def: []
+
   };
 
   constructor(props) {
@@ -58,6 +58,7 @@ export default class DefectTypeConfic extends React.Component {
     // this.componentWillMount = this.componentWillMount.bind(this);
   };
 
+
   componentDidMount() {
     this.componentWillMount()
     //setInterval(this.componentWillMount);
@@ -74,7 +75,7 @@ export default class DefectTypeConfic extends React.Component {
     })
   };
   getdefectType() {
-    const url = 'http://localhost:8081/defectservice/defecttypes';
+    const url = 'http://localhost:8081/defectservices/defecttypes';
     axios.get(url)
 
       .then(response => this.setState({
@@ -101,7 +102,9 @@ export default class DefectTypeConfic extends React.Component {
     this.showEditModal();
     this.setState({ id: id })
     console.log(id);
-    axios.get('http://localhost:8081/defectservice/defecttype/' + id)
+
+    axios.get('http://localhost:8081/defectservices/defecttype/' + id)
+
       .then(response => {
         this.setState({
           name: response.data.name,
@@ -132,7 +135,9 @@ export default class DefectTypeConfic extends React.Component {
     //   })
     // this.setState({ visible: false })
     console.log(id)
-    fetch(`http://localhost:8081/defectservice/defecttype/` + id, {
+
+    fetch(`http://localhost:8081/defectservices/defecttype/` + id, {
+
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -176,7 +181,9 @@ export default class DefectTypeConfic extends React.Component {
       name: this.state.name,
       value: this.state.value
     }
-    axios.post('http://localhost:8081/defectservice/defecttype/', obj)
+
+    axios.post('http://localhost:8081/defectservices/defecttype/', obj)
+
       .then(res => this.getdefectType());
 
     this.setState({
@@ -191,7 +198,9 @@ export default class DefectTypeConfic extends React.Component {
       name: this.state.name,
       value: this.state.value
     }
-    axios.put(`http://localhost:8081/defectservice/defecttype/${id}`, obj)
+
+    axios.put(`http://localhost:8081/defectservices/defecttype/${id}`, obj)
+
       .then(res => this.getdefectType());
 
     this.setState({

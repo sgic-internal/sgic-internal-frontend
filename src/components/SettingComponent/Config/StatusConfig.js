@@ -97,7 +97,9 @@ export default class StatusConfig extends React.Component {
         }
     componentWillMount(){
       //Simple Axios
-      const url ='http://localhost:8081/defectservice/defectstatuses';
+
+      const url ='http://localhost:8081/defectservices/defectstatuses';
+
       axios.get(url)
       
       .then(response => this.setState({
@@ -117,7 +119,9 @@ export default class StatusConfig extends React.Component {
     this.showEditModal();
     this.setState({id:id})
     console.log(id);
-    axios.get('http://localhost:8081/defectservice/defectstatus/' + id)
+
+    axios.get('http://localhost:8081/defectservices/defectstatus/' + id)
+
     .then(response => {
         this.setState({ 
           name: response.data.name, 
@@ -132,7 +136,9 @@ export default class StatusConfig extends React.Component {
   deleteDefect = id => {
 
     console.log(id)
-    fetch(`http://localhost:8081/defectservice/defectstatus/` + id, {
+
+    fetch(`http://localhost:8081/defectservices/defectstatus/` + id, {
+
     method: "DELETE",
     headers: {
     "Content-Type": "application/json"
@@ -161,7 +167,9 @@ export default class StatusConfig extends React.Component {
     name: this.state.name,
     value: this.state.value
     }
-    axios.post('http://localhost:8081/defectservice/defectstatus/', obj)
+
+    axios.post('http://localhost:8081/defectservices/defectstatus/', obj)
+
     .then(res => this.getdefectStatus());
     this.setState({
     name: '',
@@ -175,7 +183,9 @@ export default class StatusConfig extends React.Component {
         name: this.state.name,
         value: this.state.value
       }
-      axios.put(`http://localhost:8081/defectservice/defectstatus/${id}`, obj)
+
+      axios.put(`http://localhost:8081/defectservices/defectstatus/${id}`, obj)
+
           .then(res => this.getdefectStatus());
       
       this.setState({

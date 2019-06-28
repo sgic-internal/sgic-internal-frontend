@@ -19,6 +19,8 @@ import {
   message,
   Typography, Divider
 } from 'antd';
+import Lightbox from "react-image-lightbox";
+import 'react-image-lightbox/style.css';
 import moment from 'moment';
 import axios from 'axios';
 //import axios from "axios";
@@ -26,13 +28,16 @@ const TreeNode = TreeSelect.TreeNode;
 const Option = Select.Option;
 //import { Input } from 'antd';
 const { TextArea } = Input;
+const id=1;
 const props = {
-  name: 'file',
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  name: 'files',
+  action: 'http://localhost:8081/defectservices/uploadMultipleFiles?defectId='+id,
   headers: {
-    authorization: 'authorization-text',
-  }
+    ContentType:'application/json',
+  },
+  multiple:true
 }
+
 function 
 confirm(e) {
 
@@ -151,12 +156,76 @@ class TableFilter extends React.Component {
           attachmentId: 1,
           dateAndTime: "2017-05-05"
         }
-      ]
+      ],
+      images: [],
+      comments: "",
+      defectId: "",
+      user: "",
+      status: "",
+      audit: '',
+      comment: [],
+      photoIndex: 0,
+      isOpen: false
       
     };
     this.deleteDefect = this.deleteDefect.bind(this);
     this.refreshDefect = this.refreshDefect.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
+  onChange(e) {
+    this.setState(
+      {
+        comments: e.target.value
+
+      });
+  }
+  attachment = () => {
+    axios.get("http://localhost:8081/defectservices/listFile/1")
+      .then(data => {
+        data.data.map(file => {
+          if (file.id == 1) {
+            console.log(file.fileDownloadUri)
+            this.setState({
+              images: [file.fileDownloadUri],
+              isOpen: true
+            })
+          }
+        })
+      });
+    // this.setState({
+    //   images:['//localhost:8081/defect/downloadFile/1'],
+    //   isOpen: true 
+    // })
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+
+    const commentsu = {
+      comments: this.state.comments,
+      defectId: "1"
+
+
+
+    }
+    //var myJSON = JSON.stringify(commentsu);
+    console.log(commentsu);
+
+    axios.post('http://localhost:8081/defectservices/comments', commentsu)
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+        this.getComment()
+      });
+
+      this.setState({
+
+        comments: "",
+        defectId: ""
+      });
+    }
+
 
 
   componentWillMount() {
@@ -172,13 +241,23 @@ class TableFilter extends React.Component {
 
   refreshDefect() {
     axios
-      .get("http://localhost:8080/defectservices/getAllDefects")
+      .get("http://localhost:8081/defectservices/getAllDefects")
       .then(response => {
         console.warn("Refresh Service is working");
         this.setState({ defect: response.data });
       });
   }
+  onBlur() {
+    console.log('blur');
+  }
 
+  onFocus() {
+    console.log('focus');
+  }
+
+  onSearch(val) {
+    console.log('search:', val);
+  }
 
   showModal = () => {
     this.setState({
@@ -228,7 +307,7 @@ class TableFilter extends React.Component {
     console.log(defectList);
     axios({
       method: 'post',
-      url: 'http://localhost:8080/defectservices/saveDefect',
+      url: 'http://localhost:8081/defectservices/saveDefect',
       data: defectList,
       config: { headers: {'Content-Type': 'application/json' }}
       })
@@ -348,13 +427,71 @@ class TableFilter extends React.Component {
     this.setState({assignTo: value});
   }
 
+  remove = (id) => {
+    console.log(id)
+    fetch('http://localhost:8081/defectservices/delete/'+id, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => {
+      this.getComment();
+    }).catch(err => err);
+  }
+
+  componentDidMount() {
+    this.getComment()
+  }
+  getComment() {
+    axios.get('http://localhost:8081/defectservices/comments/1')
+      .then(resp => {
+
+        let Data = resp.data;
+
+        let comment = Data.map(e => {
+
+
+          // return <div><p>{e.comments}</p></div>
+          return <tr key={e.id}>
+            <td style={{ whiteSpace: 'nowrap', width: "20%" }}>{e.comments}</td>
+            <td></td>
+
+
+            <td>{
+
+            }</td>
+
+            <td style={{ paddingLeft: '140px' }}>
+
+              <Icon type="minus-circle" style={{ color: 'red' }} onClick={() => this.remove(e.commentId)} />
+
+
+              {/* <Button size="sm" color="danger" onClick={() => this.remove(e.commentId)}>Delete</Button> */}
+
+            </td>
+          </tr>
+
+        });
+
+        this.setState({ comment });
+
+        console.log(comment);
+      });
+  }
+
+  Preloader(props) {
+    return <img src="spinner.gif" />;
+  }
+
+
+
 
 
 
     //fetching the employee with get all employee
      getAllDefect = () => {
        const _this = this;
-      axios.get('http://localhost:8080/defectservices/getAllDefects')
+      axios.get('http://localhost:8081/defectservices/getAllDefects')
       .then(function (response) {
         // handle success
         console.log(response);
@@ -378,10 +515,10 @@ class TableFilter extends React.Component {
 
 
     handleDelete = defectId => {
-      // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
+      // axios.get('http://localhost:8081/employeeservice/DeleteById/'+empId)
       //     .then(console.log('Deleted'))
       //     .catch(err => console.log(err))
-      fetch("http://localhost:8080/defectservices//deleteDefect/{defectId}" + defectId, {
+      fetch("http://localhost:8081/defectservices//deleteDefect/{defectId}" + defectId, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -401,7 +538,7 @@ class TableFilter extends React.Component {
    deleteDefect(defectId) {
     console.log(defectId);
     axios
-      .delete("http://localhost:8080/defectservices/deleteDefect/" + defectId)
+      .delete("http://localhost:8081/defectservices/deleteDefect/" + defectId)
       .then(response => {
         console.warn("Delete Service is working");
         //  this.refreshBook(response);
@@ -411,6 +548,8 @@ class TableFilter extends React.Component {
   }
   
   render() {
+    
+    const { photoIndex, isOpen, images } = this.state;
     const { comments, submitting, value, defect } = this.state;
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
@@ -672,21 +811,22 @@ class TableFilter extends React.Component {
               </Select>
             </Form.Item>
 
-         {/*   <Form.Item label="Comments:  ">
+            <Form.Item label="Comments:  ">
               <TextArea
                 placeholder=""
                 autosize={{ minRows: 2, maxRows: 8 }}
               />
             </Form.Item>
-          
+            </Form>
 
           <Upload {...props}>
             <Button>
               <Icon type="upload" /> Click to Upload
-          </Button>
+    </Button>
+          </Upload>
 
-    </Upload>*/}
-          </Form>
+    
+          
         </Modal>
     <Table columns={columns}  dataSource={defect}  onChanger={this.handleChange} />
 
@@ -852,13 +992,38 @@ class TableFilter extends React.Component {
               <p>Sam</p>
               <p>05.05.2020</p>
               <p>05.10.2020</p>
-              <p>Samuel Gnanam IT Centre has devoted itself to become the pioneer institution for Industrial Software Engineering Training in Jaffna, which helps and guide the IT graduates to reach heights in their IT career. SGIC is a charitable organization under the Trust of ‘Deshamanya A Y S Gnanam’, who is the founder of Anthony’s Group in Sri Lanka. Deshamanya A Y S Gnanam had done various philanthropic activities in Sri Lanka and his sons are following his footsteps.</p>
+              <p>{this.state.comment}</p>
 
             </Col>
           </Row>
+          <Row>
+            <div>
+              <Button type="primary" onClick={this.attachment}>
+              View Attachments
+              </Button>
+              {isOpen && (
+                <Lightbox
+                  mainSrc={images[photoIndex]}
+                  nextSrc={images[(photoIndex + 1) % images.length]}
+                  prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+                  onCloseRequest={() => this.setState({ isOpen: false })}
+                  onMovePrevRequest={() =>
+                    this.setState({
+                      photoIndex: (photoIndex + images.length - 1) % images.length,
+                    })
+                  }
+                  onMoveNextRequest={() =>
+                    this.setState({
+                      photoIndex: (photoIndex + 1) % images.length,
+                    })
+                  }
+                />
+              )}
+            </div>
+          </Row>
           <Divider/>
           <h3>Comments</h3>
-          {/* {comments.length > 0 && <CommentList comments={comments} />}
+          {/* {comments.length > 0 && <CommentList comments={comments} />} */}
         <Comment
           avatar={
             <Avatar
@@ -868,13 +1033,14 @@ class TableFilter extends React.Component {
           }
           content={
             <Editor
-              onChange={this.handleChangeState}
-              onSubmit={this.handleSubmit}
+              onChange={this.onChange}
+              onSubmit={this.onSubmit}
               submitting={submitting}
-              value={value}
+              value={this.state.comments}
+              name="comments"
             />
           }
-        /> */}
+        />
         </Modal>
       </div>
 
@@ -883,4 +1049,3 @@ class TableFilter extends React.Component {
 }
 
 export default TableFilter;
-
