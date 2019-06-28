@@ -183,9 +183,8 @@ class HeaderComponent extends React.Component {
     }
 
     logout = () => {
-        this
-            .props
-            .history
+        this .props
+            //.history
             .push('/login')
     }
 
