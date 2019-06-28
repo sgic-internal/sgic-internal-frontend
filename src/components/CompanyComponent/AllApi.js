@@ -1,18 +1,13 @@
 import React from "react";
 import { Modal, Button, Icon, Form, Input, Radio, DatePicker } from "antd";
 import { InputNumber } from "antd";
-// import moment from "moment";
 import { Row, Col } from "antd";
 import "./index.css";
 import axios from "axios";
-// import AllApi from ".AllApi";
-
-//import { getFieldDecorator } from "antd";
-
-// const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY"];
 
 const { TextArea } = Input;
 //dropdown for Lisence period s Function
+
 function onChange(value) {
   console.log("changed", value);
 }
@@ -47,10 +42,6 @@ export default class AddCompany extends React.Component {
       [name]: value
     });
   }
-
-  // function onChange(date, dateString) {
-  //   console.log(date, dateString);
-  // }
 
   showModal = () => {
     this.setState({
@@ -93,7 +84,7 @@ export default class AddCompany extends React.Component {
     };
     console.log(saveCompany);
     axios
-      .post("http://localhost:8083/productservice/Company", saveCompany)
+      .post("http://localhost:8083/productservice/SaveCompany", saveCompany)
       .then(res => {
         if (res.status === 200) {
           alert("Company Successfylly Added...!");
@@ -129,18 +120,6 @@ export default class AddCompany extends React.Component {
       })
     );
   }
-
-  //-------------------------------------------------------------------------------------------------
-
-  // this.setState({ loading: true });
-  // setTimeout(() => {
-  //   this.setState({ loading: false, visible: false });
-  // }, 1000);
-
-  // handleCancel = () => {
-  //   this.setState({ visible: false });
-  // };
-
   //Rendering Pattern
   render() {
     const { visible, loading } = this.state;
@@ -262,32 +241,6 @@ export default class AddCompany extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-            {/* <Row>
-              <Col span={12} style={{ padding: "5px" }}>
-                <Form.Item label="Start Date">
-                  <DatePicker
-                    // onChange={event => this.onChange(event)}
-                    onChange={onChange}
-                    defaultValue={moment("01/01/2015", dateFormatList[0])}
-                    format={dateFormatList}
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={12} style={{ padding: "5px" }}>
-                <Form.Item label="End Date">
-                  <DatePicker
-                    // onChange={event => this.onChange(event)}
-                    onChange={onChange}
-                    defaultValue={moment("01/01/2016", dateFormatList[0])}
-                    format={dateFormatList}
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-            </Row> */}
-
             <Form.Item label="E-mail">
               <Input
                 prefix={

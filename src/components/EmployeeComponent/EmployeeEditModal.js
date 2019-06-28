@@ -76,31 +76,31 @@ export default class App extends React.Component {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={7} style={{ padding: "5px" }}>
+              {/* <Col span={7} style={{ padding: "5px" }}>
                 <Form.Item label="Gender">
                   <Select placeholder="Gender">
                     <Option value="male">Male</Option>
                     <Option value="female">Female</Option>
                   </Select>
                 </Form.Item>
-              </Col>
-              <Col span={9} style={{ padding: "5px" }}>
+              </Col> */}
+              {/* <Col span={9} style={{ padding: "5px" }}>
                 <Form.Item label="Contact No">
                   <Input placeholder="Contact No" />
                 </Form.Item>
-              </Col>
-            </Row>
-            <Row>
+              </Col> */}
+              {/* </Row>
+            <Row> */}
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Email Id">
                   <Input placeholder="Email Id" />
                 </Form.Item>
               </Col>
-              <Col span={9} style={{ padding: "5px", marginTop: "44px" }}>
+              {/* <Col span={9} style={{ padding: "5px", marginTop: "44px" }}>
                 <Button>
                   <Icon type="upload" /> Upload Picture
                 </Button>
-              </Col>
+              </Col> */}
             </Row>
           </Form>
         </Modal>
