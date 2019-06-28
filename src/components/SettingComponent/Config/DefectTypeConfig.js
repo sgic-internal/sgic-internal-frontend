@@ -39,6 +39,7 @@ export default class DefectTypeConfic extends React.Component {
     visibleEditModal: false,
     DefectType: [],
     def: []
+
   };
 
   constructor(props) {
@@ -56,6 +57,7 @@ export default class DefectTypeConfic extends React.Component {
     }
     // this.componentWillMount = this.componentWillMount.bind(this);
   };
+
 
   componentDidMount() {
     this.componentWillMount()
@@ -100,7 +102,9 @@ export default class DefectTypeConfic extends React.Component {
     this.showEditModal();
     this.setState({ id: id })
     console.log(id);
+
     axios.get('http://localhost:8081/defectservices/defecttype/' + id)
+
       .then(response => {
         this.setState({
           name: response.data.name,
@@ -131,7 +135,9 @@ export default class DefectTypeConfic extends React.Component {
     //   })
     // this.setState({ visible: false })
     console.log(id)
+
     fetch(`http://localhost:8081/defectservices/defecttype/` + id, {
+
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -175,7 +181,9 @@ export default class DefectTypeConfic extends React.Component {
       name: this.state.name,
       value: this.state.value
     }
+
     axios.post('http://localhost:8081/defectservices/defecttype/', obj)
+
       .then(res => this.getdefectType());
 
     this.setState({
@@ -190,7 +198,9 @@ export default class DefectTypeConfic extends React.Component {
       name: this.state.name,
       value: this.state.value
     }
+
     axios.put(`http://localhost:8081/defectservices/defecttype/${id}`, obj)
+
       .then(res => this.getdefectType());
 
     this.setState({
@@ -380,6 +390,7 @@ export default class DefectTypeConfic extends React.Component {
                     <div style={styles.cover} onClick={this.handleClose} />
                     <SketchPicker color={this.state.color} onChange={this.handleChange} />
                   </div> : null}
+
                 </Form.Item> */}
 
 
