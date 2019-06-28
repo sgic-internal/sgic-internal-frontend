@@ -5,6 +5,22 @@ import axios from "axios";
 function onChange(e) {
   console.log(`checked = ${e.target.checked}`);
 }
+const formValid = ({ formErrors, ...rest }) => {
+  let valid = true;
+
+  // validate form errors being empty
+  Object.values(formErrors).forEach(val => {
+    val.length > 0 && (valid = false);
+  });
+
+  // validate the form was filled out
+  Object.values(rest).forEach(val => {
+    val === null && (valid = false);
+  });
+
+  return valid;
+};
+
 export default class Model extends React.Component {
   constructor(props) {
     super(props);
@@ -26,11 +42,40 @@ export default class Model extends React.Component {
       endDate: "",
       duration: "",
       status: "",
+      visible: false,
+      formErrors: {
+        projectId: "",
+        projectName: "",
+        type: "",
+        startDate: "",
+        endDate:"",
+        duration:"",
+        status:""
+
+
+      }
       // configId: "",
-      visible: false
+     
     };
   }
 
+  handleSubmit = e => {
+    e.preventDefault();
+
+    if (formValid(this.state)) {
+      console.log(`
+        --SUBMITTING--
+        Project Name: ${this.state.projectName}
+        Type : ${this.state.type}
+        startDate: ${this.state.startDate}
+        endDate: ${this.state.endDate}
+        duration:${this.state.duration}
+        status:${this.state.status}
+      `);
+    } else {
+      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+    }
+  };
   onChangeprojectId(e) {
     this.setState({
       projectId: e.target.value
@@ -137,8 +182,37 @@ export default class Model extends React.Component {
     });
   };
 
-  
+  handleChange = e => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    let formErrors = { ...this.state.formErrors };
+
+    switch (name) {
+      case "projectName":
+        formErrors.projectName =
+          value.length < 3 ? "minimum 3 characaters required" : "";
+        break;
+      case "type":
+        formErrors.type =
+          value.length < 3 ? "minimum 3 characaters required" : "";
+        break;
+      // case "email":
+      //   formErrors.email = emailRegex.test(value)
+      //     ? ""
+      //     : "invalid email address";
+      //   break;
+      // case "password":
+      //   formErrors.password =
+      //     value.length < 6 ? "minimum 6 characaters required" : "";
+      //   break;
+      default:
+        break;
+    }
+
+    this.setState({ formErrors, [name]: value }, () => console.log(this.state));
+  }; 
   render() {
+    const { formErrors } = this.state;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>
@@ -152,7 +226,8 @@ export default class Model extends React.Component {
           onCancel={this.handleCancel}
           width="600px"
         >
-          <Form layout="vertical">
+          {/* <Form layout="vertical"> */}
+          <form layout="vertical"onSubmit={this.handleSubmit} noValidate>
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item label="Project Id">
@@ -244,7 +319,7 @@ export default class Model extends React.Component {
                 </Form.Item>{" "}
               </Col> */}
             </Row>
-          </Form>
+          </form>
         </Modal>
       </div>
     );

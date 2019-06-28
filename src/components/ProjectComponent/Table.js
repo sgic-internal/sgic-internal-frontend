@@ -13,21 +13,39 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
-  }
+    // this.handleEdit= this.handleEdit.bind(this);
+    // this.handleReset= this.handleReset.bind(this);
+    // this.handleSearch=this.handleSearch.bind(this);
+    // this.handleSubmit=this.handleSubmit.bind(this);
 
+    
+  }
   state = {
     searchText: "",
     projects: [],
-    projectId: ""
+    projectId: this.props.projectId,
+    projectName:this.props.projectName,
+    duration:this.props.duration,
+    status:this.props.status,
+    startDate:this.props.startDate,
+    endDate:this.props.endDate,
+    type:this.props.type
   };
+  
 
   handleSubmit = event => {
     console.log(this.state.handleSubmit);
     event.preventDefault();
   };
+  showEditModal = () => {
+    console.log("showEditModal");
+    this.setState({
+      visibleEditModal:true,
+    });
+  }
   componentDidMount() {
     // fetch api method
-    // this.getAllProjects();
+
     // axios method
 
     // page refresh
@@ -35,8 +53,7 @@ export default class App extends React.Component {
   }
   //DELETE-METHOD 1 = WORKING
   handleDelete = projectId => {
-    axios
-      .delete(`http://localhost:8081/project_service/deleteById/` + projectId)
+    axios.delete(`http://localhost:8081/project_service/deleteById/` + projectId)
       .then(console.log(projectId))
       .catch(err => console.log(err));
 
@@ -47,15 +64,39 @@ export default class App extends React.Component {
       projects
     });
   };
+  // handleEditOk = (projectId) => {
+  //   const obj = {
+  //     projectId:this.state.projectId,
+  //     projectName:this.state.projectName,
+  //     duration:this.state.duration,
+  //     status:this.state.status,
+  //     startDate:this.state.startDate,
+  //     endDate:this.state.endDate,
+  //     type:this.state.type
+  //   }
+  // }
   /*END OF DELETE METHOD = 1*/
+
+ 
+
   getAllProjects() {
+    const obj = {
+      projectName:this.state.projectName,
+      duration:this.state.duration,
+      status:this.state.status,
+      startDate:this.state.startDate,
+      endDate:this.state.endDate,
+      type:this.state.type
+    
+      
+    }
     axios
       .get(`http://localhost:8081/project_service/GetAllproject`)
       .then(res => {
-        const projects = res.data;
+        //const projects = res.data;
         this.setState({ projects: res.data });
-        this.getAllProjects();
-        // console.log(this.state.projects);
+
+        console.log(this.state.projects);
       })
       .catch(function(error) {
         console.log(error);
@@ -132,6 +173,8 @@ export default class App extends React.Component {
     clearFilters();
     this.setState({ searchText: "" });
   };
+
+ 
   render() {
     const columns = [
       {
@@ -198,10 +241,10 @@ export default class App extends React.Component {
         dataIndex: "edit",
         key: "edit",
         width: "10%",
-        render: (text, record) => (
+        render: (text, data = this.state.patients) => (
           <span>
             <a>
-              <EditModel />
+              <EditModel projectProps= {data.projectId}/>
             </a>
           </span>
         )
