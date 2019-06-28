@@ -20,7 +20,8 @@ import {
   Typography, Divider
 } from 'antd';
 import moment from 'moment';
-
+import axios from 'axios';
+//import axios from "axios";
 const TreeNode = TreeSelect.TreeNode;
 const Option = Select.Option;
 //import { Input } from 'antd';
@@ -71,46 +72,47 @@ const Editor = ({ onChange, onSubmit, submitting, value }) => (
   </div>
 );
 
-const data = [
-  {
-    key: '1',
-    defectid: '001',
-    modulename: 'Thanushan',
-    severity: ['High'],
-    priority: ['Medium'],
-    type: 'UI',
-    status: 'Open',
-  },
-  {
-    key: '2',
-    defectid: '002',
-    modulename: 'Romi',
-    severity: ['Low'],
-    priority: ['High'],
-    type: 'Functionality',
-    status: 'Open',
-  },
-  {
-    key: '3',
-    defectid: '003',
-    modulename: 'Thuvi',
-    severity: ['High'],
-    priority: ['Low'],
-    type: 'Performance',
-    status: 'Open',
-  },
-  {
-    key: '4',
-    defectid: '004',
-    modulename: 'Guruji',
-    severity:['Low'],
-    priority: ['High'],
-    type: 'UI',
-    status: 'Re-opened',
-  },
-];
+// const data = [
+//   {
+//     key: '1',
+//     defectid: '001',
+//     modulename: 'Thanushan',
+//     severity: ['High'],
+//     priority: ['Medium'],
+//     type: 'UI',
+//     status: 'Open',
+//   },
+//   {
+//     key: '2',
+//     defectid: '002',
+//     modulename: 'Romi',
+//     severity: ['Low'],
+//     priority: ['High'],
+//     type: 'Functionality',
+//     status: 'Open',
+//   },
+//   {
+//     key: '3',
+//     defectid: '003',
+//     modulename: 'Thuvi',
+//     severity: ['High'],
+//     priority: ['Low'],
+//     type: 'Performance',
+//     status: 'Open',
+//   },
+//   {
+//     key: '4',
+//     defectid: '004',
+//     modulename: 'Guruji',
+//     severity:['Low'],
+//     priority: ['High'],
+//     type: 'UI',
+//     status: 'Re-opened',
+//   },
+// ];
 
-export default class TableFilter extends React.Component {
+class TableFilter extends React.Component {
+ 
   state = {
     filteredInfo: null,
     sortedInfo: null,
@@ -121,6 +123,19 @@ export default class TableFilter extends React.Component {
     submitting: false,
     value: '',
   };
+  
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      searchText: "",
+      defect: [],
+      moduleId: ''
+      
+    };
+
+  }
 
   showModal = () => {
     this.setState({
@@ -234,47 +249,83 @@ export default class TableFilter extends React.Component {
       value: e.target.value
     });
   };
+  componentWillMount() {
+    this.getAllDefect();
+   
 
+  }
+  componentDidMount(){
+    this.forceUpdate();
+    
+  }
+
+    //fetching the employee with get all employee
+     getAllDefect = () => {
+       const _this = this;
+      axios.get('http://localhost:8080/defectservices/getAllDefects')
+      .then(function (response) {
+        // handle success
+        console.log(response);
+        var data = response.data;
+        for(let a = 0; a<data.length; a++){
+          _this.state.defect.push({defectId: data[a].defectId,
+                                  moduleId: data[a].moduleId,
+                                  severityId: data[a].severityId,
+                                  priorityId: data[a].priorityId,
+                                  typeId: data[a].typeId,
+                                  statusId: data[a].statusId});
+          }
+          console.log(_this.state.defect);
+          
+      });
+      
+      this.setState({ state: this.state });
+    
+    }
+
+
+  
+  
   render() {
-    const { comments, submitting, value } = this.state;
+    const { comments, submitting, value, defect } = this.state;
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
     filteredInfo = filteredInfo || {};
     const columns = [
       {
         title: 'Defect Id',
-        dataIndex: 'defectid',
-        key: 'defectid',
+        dataIndex: 'defectId',
+        key: 'defectId',
         //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
-        filteredValue: filteredInfo.defectid || null,
-        onFilter: (value, record) => record.defectid.includes(value),
-        sorter: (a, b) => a.defectid.length - b.defectid.length,
-        sortOrder: sortedInfo.columnKey === 'defectid' && sortedInfo.order,
+        filteredValue: filteredInfo.defectId || null,
+        onFilter: (value, record) => record.defectId.includes(value),
+        sorter: (a, b) => a.defectId.length - b.defectId.length,
+        sortOrder: sortedInfo.columnKey === 'defectId' && sortedInfo.order,
       },
       {
         title: 'Module Name',
-        dataIndex: 'modulename',
-        key: 'modulename',
+        dataIndex: 'moduleId',
+        key: 'moduleId',
         //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
-        filteredValue: filteredInfo.modulename || null,
-        onFilter: (value, record) => record.modulename.includes(value),
-        sorter: (a, b) => a.modulename.length - b.modulename.length,
-        sortOrder: sortedInfo.columnKey === 'modulename' && sortedInfo.order,
+        filteredValue: filteredInfo.moduleId || null,
+        onFilter: (value, record) => record.moduleId.includes(value),
+        sorter: (a, b) => a.moduleId.length - b.moduleId.length,
+        sortOrder: sortedInfo.columnKey === 'moduleId' && sortedInfo.order,
       },
       {
         title: 'Severity',
-        dataIndex: 'severity',
-        key: 'severity',
+        dataIndex: 'severityId',
+        key: 'severityId',
         filters: [{ text: 'High', value: 'High' }, { text: 'Medium', value: 'Medium' }, { text: 'Low', value: 'Low' }],
-        filteredValue: filteredInfo.severity || null,
-        onFilter: (value, record) => record.severity.includes(value),
-        sorter: (a, b) => a.severity.length - b.severity.length,
+        filteredValue: filteredInfo.severityId || null,
+        onFilter: (value, record) => record.severityId.includes(value),
+        sorter: (a, b) => a.severityId.length - b.severityId.length,
         sortOrder: sortedInfo.columnKey === 'severity' && sortedInfo.order,
-        render: severity => (
+        render: severityId => (
           <span>
-            {severity.map(tag => {
+            {/*severityId.map(tag => {
               let color = tag.length > 5 ? 'geekblue' : 'green';
-              if (tag === 'High') {
+              if (tag === 'loser') {
                 color = 'volcano';
               }
               return (
@@ -282,59 +333,44 @@ export default class TableFilter extends React.Component {
                   {tag.toUpperCase()}
                 </Tag>
               );
-            })}
+            })*/}
           </span>
         ),
 
       },
       {
         title: 'Priority',
-        dataIndex: 'priority',
-        key: 'priority',
+        dataIndex: 'priorityId',
+        key: 'priorityId',
         filters: [{ text: 'High', value: 'High' }, { text: 'Medium', value: 'Medium' }, { text: 'Low', value: 'Low' }],
-        filteredValue: filteredInfo.priority || null,
-        onFilter: (value, record) => record.priority.includes(value),
-        sorter: (a, b) => a.priority.length - b.priority.length,
-        sortOrder: sortedInfo.columnKey === 'priority' && sortedInfo.order,
-        render: priority => (
-          <span>
-            {priority.map(tag => {
-              let color = tag.length > 5 ? 'geekblue' : 'green';
-              if (tag === 'High') {
-                color = 'volcano';
-              }
-              return (
-                <Tag color={color} key={tag}>
-                  {tag.toUpperCase()}
-                </Tag>
-              );
-            })}
-          </span>
-        ),
+        filteredValue: filteredInfo.priorityId || null,
+        onFilter: (value, record) => record.priorityId.includes(value),
+        sorter: (a, b) => a.priority.length - b.priorityId.length,
+        sortOrder: sortedInfo.columnKey === 'priorityId' && sortedInfo.order,
+        
       },
       {
-        title: 'Type',
-        dataIndex: 'type',
-        key: 'type',
+        title: 'typeId',
+        dataIndex: 'typeId',
+        key: 'typeId',
         filters: [{ text: 'UI', value: 'UI' }, { text: 'Functinality', value: 'Functinality' }, { text: 'Enhancement', value: 'Enhancement' }],
         filteredValue: filteredInfo.type || null,
         onFilter: (value, record) => record.type.includes(value),
         sorter: (a, b) => a.type.length - b.type.length,
-        sortOrder: sortedInfo.columnKey === 'type' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === 'typeId' && sortedInfo.order,
       },
       {
         title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
+        dataIndex: 'statusId',
+        key: 'statusId',
         filters: [{ text: 'Open', value: 'Open' }, { text: 'Re-opened', value: 'Re-opened' }, { text: 'Defrred', value: 'Defrred' }],
         filteredValue: filteredInfo.status || null,
         onFilter: (value, record) => record.status.includes(value),
         sorter: (a, b) => a.status.length - b.status.length,
-        sortOrder: sortedInfo.columnKey === 'status' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === 'statusId' && sortedInfo.order,
       },
       {
         title: 'Action',
-        dataIndex: 'action',
         key: 'action',
         render: (text, record) => (
           <span>
@@ -383,7 +419,6 @@ export default class TableFilter extends React.Component {
       },
       {
         title: 'More',
-        dataIndex: 'more',
         key: 'more',
         render: (text, record) => (
           <span>
@@ -418,7 +453,8 @@ export default class TableFilter extends React.Component {
 
                   <Input
                     placeholder="Defect Id"
-                    disabled="true"
+                    value="123"
+                    
                   />
                 </Form.Item>
 
@@ -516,7 +552,7 @@ export default class TableFilter extends React.Component {
     </Button>
           </Upload>
         </Modal>
-        <Table columns={columns} dataSource={data} onChange={this.handleChange} />
+    <Table columns={columns}  dataSource={defect}  onChanger={this.handleChange} />
 
         {/* Edit Defects Part  */}
         <Modal
@@ -686,7 +722,7 @@ export default class TableFilter extends React.Component {
           </Row>
           <Divider/>
           <h3>Comments</h3>
-          {comments.length > 0 && <CommentList comments={comments} />}
+          {/* {comments.length > 0 && <CommentList comments={comments} />}
         <Comment
           avatar={
             <Avatar
@@ -702,11 +738,13 @@ export default class TableFilter extends React.Component {
               value={value}
             />
           }
-        />
+        /> */}
         </Modal>
       </div>
 
     );
   }
 }
+
+export default TableFilter;
 
