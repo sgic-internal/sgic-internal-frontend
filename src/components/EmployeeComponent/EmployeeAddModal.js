@@ -185,9 +185,12 @@ class EmployeeAddModal extends React.Component {
     };
     axios
       .post("http://localhost:8084/employeeservice/createemployee", serverport)
-      .then(res => console.log(res.data));
+      .then(res => console.log(res.data)
+      
+     
+      );
 
-  
+      this.setState ({ visible: false });
   };
 
   // post integration finishes
