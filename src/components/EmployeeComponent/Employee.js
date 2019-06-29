@@ -270,13 +270,6 @@ export default class App extends React.Component {
     this.setState({ searchText: "" });
   };
 
-  // handleClick(param, e) {
-  //       console.log(param);
-  //       deletePatient(param);
-  //       // message.success('Successfully deleted patient!');
-  //       this.forceUpdate();
-  //     }
-
   render() {
     // For Table functions
     let { sortedInfo, filteredInfo } = this.state;
@@ -288,13 +281,11 @@ export default class App extends React.Component {
         dataIndex: "empId",
         key: "empId",
         width: "10%",
-        // //  ...this.getColumnSearchProps("empId")
+        defaultSortOrder: 'descend',
+        sorter: (a, b) => a.empId.length - b.empId.length,
+        //sortOrder: sortedInfo.columnKey === 'empId' && sortedInfo.order,
         // filteredValue: filteredInfo.empId || null,
         // onFilter: (value, record) => record.empId.includes(value),
-        // sorter: (a, b) => a.empId.length - b.empId.length,
-        // sortOrder: sortedInfo.columnKey === "empId" && sortedInfo.order
-        defaultSortOrder: 'descend',
-        sorter: (a, b) => a.empId - b.empId,
       },
       {
         title: "Employee Name",

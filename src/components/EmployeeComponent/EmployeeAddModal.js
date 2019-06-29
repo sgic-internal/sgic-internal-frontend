@@ -22,6 +22,7 @@ const emailRegex = RegExp(
 );
 
 const NameRegex = RegExp(/^[a-zA-Z]+$/);
+const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
 
 const formValid = ({ formerrors, ...rest }) => {
   let valid = true;
@@ -80,8 +81,13 @@ export default class App extends React.Component {
     // console.log("value: ", value);
     switch (name) {
       case "employeeId":
-        formerrors.employeeId =
-          value.length > 8 ? "Should have 8 characters" : "";
+          if (!ValidRegex.test(value)) {
+            formerrors.employeeId = "Invalid Id";
+          } else if (value.length > 8) {
+            formerrors.employeeId = "Should be less than 8 characters";
+          } else {
+            formerrors.employeeId = "";
+          }
         break;
       case "employeeName":
         if (!NameRegex.test(value)) {
@@ -160,7 +166,12 @@ export default class App extends React.Component {
   handleCancel = e => {
     console.log(e);
     this.setState({
+      employeeId: "",
+      employeeName: "",
+      employeeDesignation: "",
+      employeeEmail: "",
       visible: false
+
     });
   };
 
