@@ -31,8 +31,10 @@ export default class App extends React.Component {
     this.state = {
       employeeId: "",
       employeeName: "",
-      employeeDesignation: "USER",
-      employeeEmail: ""
+      employeeDesignation: "",
+      employeeEmail: "",
+      designations:[]
+      // employees: []
     };
 
     this.state = {
@@ -83,7 +85,7 @@ export default class App extends React.Component {
     const obj = {
       empId: this.state.employeeId,
       name: this.state.employeeName,
-      designation: this.state.employeeDesignation,
+      id: this.state.employeeDesignation,
       email: this.state.employeeEmail
     };
     axios
@@ -113,8 +115,7 @@ export default class App extends React.Component {
     const data = await response.json();
     console.log(data);
     this.setState({
-      employees: data,
-      empId: data
+      employees: data
     });
     console.log(this.state.employees);
 
@@ -169,7 +170,7 @@ export default class App extends React.Component {
         this.setState({
           employeeId: response.data.empId,
           employeeName: response.data.name,
-          employeeDesignation: response.data.designation,
+          employeeDesignation: response.data.id,
           employeeEmail: response.data.email
         });
       })
@@ -283,10 +284,10 @@ export default class App extends React.Component {
 
       {
         title: "Designation",
-        dataIndex: "designation",
-        key: "designation",
+        dataIndex: "designationname",
+        key: "designationname",
         width: "25%",
-        ...this.getColumnSearchProps("designation")
+        // ...this.getColumnSearchProps("id")
       },
 
       {

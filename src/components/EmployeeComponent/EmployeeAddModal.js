@@ -7,72 +7,74 @@ import Employee from "./Employee";
 
 const { Option } = Select;
 
-export default class App extends React.Component {
+class EmployeeAddModal extends React.Component {
   //post integration
 
   constructor(props) {
     super(props);
-    this.onChangeEmployeeId = this.onChangeEmployeeId.bind(this);
-    this.onChangeEmployeeName = this.onChangeEmployeeName.bind(this);
-    this.onChangeEmployeeEmail = this.onChangeEmployeeEmail.bind(this);
-    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
-      this
-    );
-    this.handleOk = this.handleOk.bind(this);
+
     this.state = {
-      employeeId: "",
-      employeeName: "",
-      employeeDesignation:"USER",
-      employeeEmail: "",
-      post:[],
-      getAllDesignation:[]
+      employeeId: {
+          value: ''
+      },
+      employeeName: {
+        value: ''
+    },
+      employeeDesignation: {
+        value: ''
+    },
+      employeeEmail: {
+        value: ''
+    },
+      designations:[]
     };
-  }
+    this.onhandleChange = this.onhandleChange.bind(this);
+    this.fetchDesignations = this.fetchDesignations.bind(this);
+    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(this);
+    this.handleOk = this.handleOk.bind(this);
 
-  state={
-    Id:null
-  }
 
-  // async getAllEmployees() {
-  //   const url = "http://localhost:8084/employeeservice/getAllDesignation";
-  //   const response = await fetch(url);
-  //   const data = await response.json();
-  //   console.log(data);
-  //   this.setState({
-  //     getAllDesignation: data
-  //   });
-  //   console.log(this.state.getAllDesignation);
-  // }
-
-  async getAllDesignation1() {
-    const url = `http://localhost:8084/employeeservice/getAllDesignation`;
-    const response = await fetch(url);
-    const data = await response.json();
-    console.log(data);
-    // this.setState({
-    //   getAllDesignation: data
-    // });
-    // console.log(this.state.getAllDesignation);
-
-    // data.forEach(element => {
-    //     console.log(element.severity);
-    // });
   }
 
   componentDidMount(){
-    this.getAllDesignation1();
+ 
+
+    this.fetchDesignations();
+      console.log("mounting");
   }
 
-  onChangeEmployeeId(e) {
-    this.setState({
-      employeeId: e.target.value
+  fetchDesignations() {
+    var _this = this;
+    axios.get('http://localhost:8084/employeeservice/getAllDesignation')
+    .then(function (response) {
+      // handle success
+      console.log(response.data);
+     _this.setState({designations: response.data});
+    //   this.setState(prevState => ({
+    //     designations: {                   // object that we want to update
+    //         ...prevState,    // keep all other key-value pairs
+    //         designations: response.data       // update the value of specific key
+    //     }
+    // }))
+      console.log(_this.state.designations);
+  
     });
   }
-  onChangeEmployeeName(e) {
+
+
+
+  onhandleChange(e, validateFunc) {
+    const inputName = e.target.name;
+    const inputValue = e.target.value;
+  
+    
     this.setState({
-      employeeName: e.target.value
+      [inputName]: {
+          value: inputValue,
+          ...validateFunc(inputValue)
+     }
     });
-    }
+  }
 
   onChangeEmployeeDesignation(value) {
     this.setState({
@@ -80,35 +82,23 @@ export default class App extends React.Component {
     });
     console.log(this.state.employeeDesignation)
   }
-  onChangeEmployeeEmail(e) {
-    this.setState({
-      employeeEmail: e.target.value
-    });
-  }
+
 
   handleOk = e => {
-    // e.preventDefault();
-    console.log();
+    e.preventDefault();
     const serverport = {
-      empId: this.state.employeeId,
-      name: this.state.employeeName,
-      // designation: this.state.employeeDesignation,
-      email: this.state.employeeEmail
+      empId: this.state.employeeId.value,
+      name: this.state.employeeName.value,
+      id: this.state.employeeDesignation,
+      email: this.state.employeeEmail.value
     };
+
+    console.log(serverport);
     axios
       .post("http://localhost:8084/employeeservice/createemployee", serverport)
       .then(res => console.log(res.data));
 
-    window.location.reload();
-
-    this.setState({
-      employeeId: "",
-      employeeName: "",
-      employeeDesignation: "",
-      employeeEmail: "",
-      visible: false
-    });
-    return <Employee />;
+  
   };
 
   // post integration finishes
@@ -126,24 +116,7 @@ export default class App extends React.Component {
       visible: false
     });
   };
-  // componentDidMount(){
-  //   let ur=`http://localhost:8084/employeeservice/getAllDesignation`;
-  //   console.log(ur);
-  //   fetch(ur)
-  //   .then(resp =>resp.json())
-  //   .then(data =>{
-  //       console.log(data)
 
-  //       let designation=data.map((post)=>{
-  //           return(
-  //               <option value={post.Id}>{post.Id}</option>
-  //           )
-  //       })
-  //       this.setState({designation:designation});
-  //   }) 
-
-
-  // }
   render() {
     return (
       <div>
@@ -162,20 +135,24 @@ export default class App extends React.Component {
               <Col span={6} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Id">
                   <Input
+                    name="employeeId"
                     placeholder="Employee Id"
-                    value={this.state.employeeId}
-                    onChange={this.onChangeEmployeeId} 
+                    value={this.state.employeeId.value}
+                    onChange={(event) => this.onhandleChange(event,this.validateName)}
                   />
-                  
-                  
                 </Form.Item>
               </Col>
               <Col span={18} style={{ padding: "5px" }}>
-                <Form.Item label="Employee Name">
+                <Form.Item label="Employee Name"
+                  hasFeedback
+                  label="Employee name"
+                  validateStatus={this.state.employeeName.validateStatus}
+                  help={this.state.employeeName.errorMsg}>
                   <Input
                     placeholder="Employee Name"
-                    value={this.state.employeeName}
-                    onChange={this.onChangeEmployeeName}
+                    name="employeeName"
+                    value={this.state.employeeName.value}
+                    onChange={(event) => this.onhandleChange(event,this.validateName)}
                   />
                 </Form.Item>
               </Col>
@@ -183,35 +160,16 @@ export default class App extends React.Component {
 
             <Row>
               <Col span={6} style={{ padding: "5px" }}>
-                <Form.Item label="Designation">
+                <Form.Item label="designation">
                   <Select
-                    placeholder="Select Designation"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      option.props.children
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    }
-                    value={this.state.employeeDesignation}
+                    defaultValue="Select Designations"
+                    style={{ width: 120 }}
                     onChange={this.onChangeEmployeeDesignation}
                   >
-
-            {this.state.getAllDesignation.map(e => (
-            <Option key={e.id} value={e.id}>
-                 {e.id}
-            </Option>
-                ))}
-
-                    {/* <Option value="ADMIN"> ADMIN</Option>
-                    <Option value="USER"> USER</Option>
-                    <Option value="HR">HR</Option>
-                    <Option value="PM">PM</Option>
-                    <Option value="QAL"> QAL</Option>
-                    <Option value="TECL"> TECL</Option>
-                    <Option value="QA"> QA</Option>
-                    <Option value="DEV">DEV</Option>
-                    <Option value="ASSOCQA"> ASSOCQA</Option>
-                    <Option value="ASSOCDEV">ASSOCDEV</Option> */}
+                    {this.state.designations.map(function(item, index){
+                      return <Option key={index} value={item.id}>{item.designationname}</Option>
+                      })}
+                 
                   </Select>
                 </Form.Item>
               </Col>
@@ -220,8 +178,9 @@ export default class App extends React.Component {
                 <Form.Item label="Email">
                   <Input
                     placeholder="Email"
-                    value={this.state.employeeEmail}
-                    onChange={this.onChangeEmployeeEmail} type="email"
+                    name="employeeEmail"
+                    value={this.state.employeeEmail.value}
+                    onChange={(event) => this.onhandleChange(event,this.validateName)}
                   />
                 </Form.Item>
               </Col>
@@ -242,9 +201,7 @@ export default class App extends React.Component {
               </Col> */}
 
             {/* <Row>
-
               
-
               <Col span={9} style={{ padding: "5px", marginTop: "44px" }}>
                 <Button>
                   <Icon type="upload" /> Upload Picture
@@ -256,4 +213,12 @@ export default class App extends React.Component {
       </div>
     );
   }
+
+  validateName = (name) => {
+    if(name.length < 2){
+      return {validateStatus: 'error', errorMsg: 'Name is short.'}
+    }
+  }
 }
+
+export default EmployeeAddModal;
