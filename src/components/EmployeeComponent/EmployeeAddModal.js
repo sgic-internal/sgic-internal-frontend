@@ -101,7 +101,7 @@ export default class App extends React.Component {
       case "employeeEmail":
         formerrors.employeeEmail = emailRegex.test(value)
           ? ""
-          : "invalid email address";
+          : "Invalid email address";
         break;
       default:
         break;
