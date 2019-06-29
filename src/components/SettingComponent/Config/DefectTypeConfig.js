@@ -290,7 +290,7 @@ export default class DefectTypeConfic extends React.Component {
               }}>
 
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} >
-                <Form.Item label="TypeName">
+                <Form.Item label="DefectType">
                   <Input type="text"
                     className="form-control"
                     value={this.state.name}
@@ -333,7 +333,7 @@ export default class DefectTypeConfic extends React.Component {
 
               }}>
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
-                <Form.Item label="TypeName">
+                <Form.Item label="DefectType">
                   <Input type="text"
                     className="form-control"
                     value={this.state.name}
