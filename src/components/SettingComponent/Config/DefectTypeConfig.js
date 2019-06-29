@@ -6,33 +6,6 @@ import reactCSS from 'reactcss';
 import axios from 'axios';
 import { Row, Col } from 'antd';
 
-// const data = [
-//   {
-//     key: '1',
-//     name: 'UI',
-//     Description: 'UI',
-//     Colour: "#ff5e57",
-//   },
-//   {
-//     key: '2',
-//     name: 'Functionality',
-//     Description: 'Functionality',
-//     Colour: "#0be881",
-//   },
-//   {
-//     key: '3',
-//     name: 'Enhancement',
-//     Description: 'Enhancement',
-//     Colour: "#ffdd59",
-//   },
-//   {
-//     key: '4',
-//     name: 'Performance',
-//     Description: 'Performance',
-//     Colour: "#00d8d6",
-//   },
-// ];
-
 
 export default class DefectTypeConfic extends React.Component {
   state = {
@@ -59,7 +32,8 @@ export default class DefectTypeConfic extends React.Component {
   };
 
   componentDidMount() {
-    this.componentWillMount()
+    //this.componentWillMount();
+    this.getdefectType();
     //setInterval(this.componentWillMount);
 
   }
@@ -84,11 +58,6 @@ export default class DefectTypeConfic extends React.Component {
         console.log(error);
       });
 
-  }
-  componentDidMount() {
-
-    //Simple Axios
-    this.getdefectType()
   }
 
   showModal = () => {
@@ -116,21 +85,6 @@ export default class DefectTypeConfic extends React.Component {
 
   deleteDefect(id) {
 
-    //this.showEditModal();
-
-    // this.setState({ id: id })
-    // console.log(id);
-    // axios.get('http://localhost:8081/defectservice/defecttype/' + id)
-    //   .then(response => {
-    //     this.setState({
-    //       name: response.data.name,
-    //       value: response.data.value
-    //     });
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   })
-    // this.setState({ visible: false })
     console.log(id)
     fetch(`http://localhost:8081/defectservice/defecttype/` + id, {
       method: "DELETE",
@@ -147,16 +101,6 @@ export default class DefectTypeConfic extends React.Component {
       DefectType
     })
 
-    // axios.delete(`http://localhost:8081/defectservice/defecttype/${id}`)
-    //   .then(response => {
-    //     console.log(response)
-    //     this.setState({
-    //       name: response.data.name,
-    //       value: response.data.value
-    //     });
-    //   })
-    //   .catch(err => console.log(err))
-
   }
 
 
@@ -166,8 +110,6 @@ export default class DefectTypeConfic extends React.Component {
     this.setState({
       visibleEditModal: true,
     });
-
-
   };
 
   handleOk = e => {
@@ -201,12 +143,12 @@ export default class DefectTypeConfic extends React.Component {
     })
   };
 
-
-
   handleCancel = e => {
     console.log(e);
     this.setState({
       visible: false,
+      name: null,
+      value: null
     });
   };
 
@@ -293,13 +235,6 @@ export default class DefectTypeConfic extends React.Component {
 
             <Divider type="vertical" />
 
-            {/* <Popconfirm
-    title="Are you sure？"
-    icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-  >
-    <a href="#">Delete</a>
-  </Popconfirm> */}
-
             <Popconfirm
               title="Are you sure, Do you want to delete this ?"
               icon={<Icon type="delete" style={{ color: 'red' }}
@@ -315,11 +250,8 @@ export default class DefectTypeConfic extends React.Component {
       },
     ];
 
-
     return (
-
       <React.Fragment>
-
         <div
           style={{
             padding: 24,
@@ -333,7 +265,6 @@ export default class DefectTypeConfic extends React.Component {
             <Col span={6}></Col>
             <Col span={10}></Col>
           </Row>
-
 
           <br></br>
           <div>
@@ -372,7 +303,6 @@ export default class DefectTypeConfic extends React.Component {
                     onChange={this.onChangeValue} />
                 </Form.Item>
 
-
                 {/* <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color} />
@@ -384,12 +314,10 @@ export default class DefectTypeConfic extends React.Component {
 
                 </Form.Item> */}
 
-
               </Form>
             </div>
 
           </Modal>
-
           <Modal
             title="Edit DefectType"
             visible={this.state.visibleEditModal}
@@ -428,7 +356,6 @@ export default class DefectTypeConfic extends React.Component {
                     <SketchPicker color={this.state.color} onChange={this.handleChange} />
                   </div> : null}
                 </Form.Item> */}
-
 
               </Form>
             </div>
