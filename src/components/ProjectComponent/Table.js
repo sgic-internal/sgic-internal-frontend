@@ -189,7 +189,7 @@ export default class App extends React.Component {
         dataIndex: "projectName",
         key: "projectName",
         width: "20%",
-        ...this.getColumnSearchProps("projectname")
+        ...this.getColumnSearchProps("projectName")
       },
       {
         title: "Type ",

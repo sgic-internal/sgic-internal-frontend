@@ -1,15 +1,20 @@
-import { Modal, Button, Form, Row, Col, Input, DatePicker } from "antd";
+import { Modal, Button, Form, Row, Col, Input, DatePicker,Select } from "antd";
 import React from "react";
 import axios from "axios";
 
-function onChange(e) {
-  console.log(`checked = ${e.target.checked}`);
-}
-const formValid = ({ formErrors, ...rest }) => {
+import { object } from "prop-types";
+
+//import ProjectDataService from './ProjectDataService';
+
+
+const NameRegex = RegExp(/^[a-zA-Z]+$/);
+const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
+
+const formValid = ({ formerrors, ...rest }) => {
   let valid = true;
 
   // validate form errors being empty
-  Object.values(formErrors).forEach(val => {
+  Object.values(formerrors).forEach(val => {
     val.length > 0 && (valid = false);
   });
 
@@ -43,7 +48,7 @@ export default class Model extends React.Component {
       duration: "",
       status: "",
       visible: false,
-      formErrors: {
+      formerrors: {
         projectId: "",
         projectName: "",
         type: "",
@@ -59,12 +64,47 @@ export default class Model extends React.Component {
     };
   }
 
+  handlechange = e => {
+    e.preventDefault();
+
+    const { name, value } = e.target;
+    let formerrors = { ...this.state.formerrors };
+
+    // console.log("Name: ", name);
+    // console.log("value: ", value);
+    // console.log("Name: ", name);
+    // console.log("value: ", value);
+    switch (name) {
+      case "projectId":
+          if (!ValidRegex.test(value)) {
+            formerrors.projectId = "Invalid Id";
+          } else if (value.length > 8  ) {
+            formerrors.projectId = "Should be less than 8 characters";
+          } else {
+            formerrors.projectId = "";
+          }
+        break;
+      case "projectName":
+        if (!NameRegex.test(value)) {
+          formerrors.projectName = "Invalid Name";
+        } else if (value.length > 30) {
+          formerrors.projectName = "Should be less than 30 characters";
+        } else {
+          formerrors.projectName = "";
+        }
+        break;
+      default:
+        break;
+    }
+    this.setState({ formerrors, [name]: value }, () => console.log(this.state));
+  };
   handleSubmit = e => {
     e.preventDefault();
 
     if (formValid(this.state)) {
       console.log(`
         --SUBMITTING--
+        Project Id :${this.state.projectId}
         Project Name: ${this.state.projectName}
         Type : ${this.state.type}
         startDate: ${this.state.startDate}
@@ -212,7 +252,7 @@ export default class Model extends React.Component {
     this.setState({ formErrors, [name]: value }, () => console.log(this.state));
   }; 
   render() {
-    const { formErrors } = this.state;
+    const { formerrors } = this.state;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>
@@ -232,22 +272,48 @@ export default class Model extends React.Component {
               <Col span={24}>
                 <Form.Item label="Project Id">
                   <Input
+                   className={
+                    formerrors.projectId.length > 0 ? "error" : null}
                     placeholder="Project Id"
+                    name="projectId"
                     value={this.state.projectId}
-                    onChange={this.onChangeprojectId}
+                    // onChange={this.onChangeprojectId}
+                    onChange={this.handlechange}
                   />
+                    {formerrors.projectId.length > 0 && (
+                      <span
+                        className="error"
+                        style={{ color: "red", fontSize: "14px" }}
+                      >
+                        {formerrors.projectId}
+                      </span>
+                    )}
                 </Form.Item>{" "}
               </Col>
             </Row>
 
             <Row gutter={16}>
               <Col span={24}>
-                <Form.Item label="Project Name">
+                <Form.Item label="Project Name"
+                 validateStatus={this.state.projectName.validateStatus}
+                 help={this.state.projectName.errorMsg}>
                   <Input
+                   className={
+                    formerrors.projectName.length > 0 ? "error" : null}
                     placeholder="Project Name"
+                    name="projectName"
                     value={this.state.projectName}
-                    onChange={this.onChangeprojectName}
+                    // onChange={this.onChangeprojectName}
+                    onChange={this.handlechange}
                   />
+                   {formerrors.projectName.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formerrors.projectName}
+                    </span>
+                  )}
                 </Form.Item>{" "}
               </Col>
             </Row>
