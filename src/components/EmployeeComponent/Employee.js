@@ -7,15 +7,32 @@ import {
   Form,
   Select,
   Row,
-  Col
+  Col,
+  Popconfirm,
+  message
 } from "antd";
 import Highlighter from "react-highlight-words";
 import React from "react";
 import EmployeeView from "./EmployeeViewModal";
 import axios from "axios";
+import { yieldExpression } from "@babel/types";
 // import axios from 'axios';
 
 const { Option } = Select;
+
+ function confirm(e) {
+  console.log(e);
+  message.success('Successfully Deleted');
+}
+
+function cancel(e) {
+  console.log(e);
+  // message.error('Click on No');
+}
+
+function onChange(sorter) {
+  console.log('params', sorter);
+}
 
 export default class App extends React.Component {
   constructor(props) {
@@ -32,9 +49,7 @@ export default class App extends React.Component {
       employeeId: "",
       employeeName: "",
       employeeDesignation: "",
-      employeeEmail: "",
-      designations:[]
-      // employees: []
+      employeeEmail: ""
     };
 
     this.state = {
@@ -98,6 +113,8 @@ export default class App extends React.Component {
       employeeEmail: "",
       visible: false
     });
+
+   message.success("Updated Successfully!!!");
   };
 
   handleCancel = e => {
@@ -141,6 +158,7 @@ export default class App extends React.Component {
       body: JSON.stringify(this.state)
     });
     console.log(empId);
+    confirm(empId);
     const employees = this.state.employees.filter(employees => {
       return employees.empId !== empId;
     });
@@ -174,9 +192,10 @@ export default class App extends React.Component {
           employeeEmail: response.data.email
         });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
+
   };
 
   getColumnSearchProps = dataIndex => ({
@@ -186,37 +205,37 @@ export default class App extends React.Component {
       confirm,
       clearFilters
     }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={node => {
-            this.searchInput = node;
-          }}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
-          style={{ width: 188, marginBottom: 8, display: "block" }}
-        />
-        <Button
-          type="primary"
-          onClick={() => this.handleSearch(selectedKeys, confirm)}
-          icon="search"
-          size="small"
-          style={{ width: 90, marginRight: 8 }}
-        >
-          Search
+        <div style={{ padding: 8 }}>
+          <Input
+            ref={node => {
+              this.searchInput = node;
+            }}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={e =>
+              setSelectedKeys(e.target.value ? [e.target.value] : [])
+            }
+            onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+            style={{ width: 188, marginBottom: 8, display: "block" }}
+          />
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm)}
+            icon="search"
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            Search
         </Button>
-        <Button
-          onClick={() => this.handleReset(clearFilters)}
-          size="small"
-          style={{ width: 90 }}
-        >
-          Reset
+          <Button
+            onClick={() => this.handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
         </Button>
-      </div>
-    ),
+        </div>
+      ),
     filterIcon: filtered => (
       <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
@@ -250,13 +269,6 @@ export default class App extends React.Component {
     this.setState({ searchText: "" });
   };
 
-  // handleClick(param, e) {
-  //       console.log(param);
-  //       deletePatient(param);
-  //       // message.success('Successfully deleted patient!');
-  //       this.forceUpdate();
-  //     }
-
   render() {
     // For Table functions
     let { sortedInfo, filteredInfo } = this.state;
@@ -268,11 +280,11 @@ export default class App extends React.Component {
         dataIndex: "empId",
         key: "empId",
         width: "10%",
-        // //  ...this.getColumnSearchProps("empId")
+        defaultSortOrder: 'descend',
+        sorter: (a, b) => a.empId.length - b.empId.length,
+        //sortOrder: sortedInfo.columnKey === 'empId' && sortedInfo.order,
         // filteredValue: filteredInfo.empId || null,
         // onFilter: (value, record) => record.empId.includes(value),
-        sorter: (a, b) => a.empId.length - b.empId.length,
-        sortOrder: sortedInfo.columnKey === "empId" && sortedInfo.order
       },
       {
         title: "Employee Name",
@@ -306,7 +318,6 @@ export default class App extends React.Component {
               onClick={this.handleEdit.bind(this, data.empId)}
               style={{ fontSize: "18px", color: "green" }}
             />
-            {/* <EmployeeEdit /> */}
           </a>
         ),
         key: "edit",
@@ -316,31 +327,38 @@ export default class App extends React.Component {
         title: "Delete",
         dataIndex: "empId",
         key: "empId",
-        ...this.getColumnSearchProps("empId"),
-        render: (text, data = this.state.patients) => (
-          <a>
-            <Icon
-              type="delete"
-              style={{ fontSize: "18px", color: "red" }}
-              onClick={this.handleDelete.bind(this, data.empId)}
-            />
-          </a>
+        // ...this.getColumnSearchProps("empId"),
+        render: ( text, data = this.state.patients) => (
+          <Popconfirm
+          title="Are you sure delete this Row?"
+          onConfirm={this.handleDelete.bind(this, data.empId)}
+          onCancel={cancel}
+          okText="Yes"
+          cancelText="No"
+        >
+         <a>
+              <Icon
+                type="delete"
+                style={{ fontSize: "18px", color: "red" }}
+              />
+            </a>
+        </Popconfirm>
         ),
         key: "delete",
         width: "8%"
       },
 
-      {
-        title: "More Details",
-        render: () => (
-          <a>
-            <EmployeeView />
-          </a>
-        ),
-        key: "view",
+      // {
+      //   title: "More Details",
+      //   render: () => (
+      //     <a>
+      //       <EmployeeView />
+      //     </a>
+      //   ),
+      //   key: "view",
 
-        width: "8%"
-      }
+      //   width: "8%"
+      // }
     ];
     return (
       <React.Fragment>
