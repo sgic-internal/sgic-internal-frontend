@@ -49,7 +49,8 @@ export default class App extends React.Component {
       employeeId: "",
       employeeName: "",
       employeeDesignation: "",
-      employeeEmail: ""
+      employeeEmail: "",
+      designations:[]
     };
 
     this.state = {
