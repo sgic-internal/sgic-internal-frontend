@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Table, Divider, Modal, Button, Icon, Form, Input, Col, Row, Popconfirm } from 'antd';
+import { Table, Divider, Modal, Button, Icon, Form, Input, Col, Row, Popconfirm,message } from 'antd';
 import { SketchPicker } from 'react-color';
 import reactCSS from 'reactcss';
 import axios from 'axios';
@@ -146,6 +146,7 @@ export default class StatusConfig extends React.Component {
     this.setState({
     DefectStatus
     })
+    message.error("Defect Status Successfully Deleted");
   }
   showEditModal = () => {
     console.log("showEditModal clicked");
@@ -160,6 +161,7 @@ export default class StatusConfig extends React.Component {
     const obj = {
     name: this.state.name,
     value: this.state.value
+    
     }
     axios.post('http://localhost:8081/defectservice/defectstatus/', obj)
     .then(res => this.getdefectStatus());
@@ -168,6 +170,7 @@ export default class StatusConfig extends React.Component {
     value: '',
     visible: false
     })
+    message.success("Defect Status Successfully Added");
     };
 
     handleEditOk = (id) => {
@@ -183,12 +186,15 @@ export default class StatusConfig extends React.Component {
         value: '',
         visibleEditModal: false
       })
+      message.info("Defect Status Successfully Updated");
     };
 
   handleCancel = e => {
     console.log(e);
     this.setState({
       visible: false,
+      name:null,
+      value:null
     });
   };
 
@@ -353,7 +359,7 @@ export default class StatusConfig extends React.Component {
               }}>
 
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }}>
-                <Form.Item label="Name">
+                <Form.Item label="Status">
                   <Input type="text" 
                       className="form-control" 
                       value={this.state.name}
