@@ -189,6 +189,8 @@ export default class StatusConfig extends React.Component {
     console.log(e);
     this.setState({
       visible: false,
+      name:null,
+      value:null
     });
   };
 
@@ -353,7 +355,7 @@ export default class StatusConfig extends React.Component {
               }}>
 
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }}>
-                <Form.Item label="Name">
+                <Form.Item label="Status">
                   <Input type="text" 
                       className="form-control" 
                       value={this.state.name}
