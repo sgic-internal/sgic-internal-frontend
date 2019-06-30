@@ -1,10 +1,6 @@
 import { Modal, Button, Form, Icon, Input, Select, Row, Col } from "antd";
 import React from "react";
 import axios from "axios";
-import Employee from "./Employee";
-import { object } from "prop-types";
-
-//import EmployeeDataService from './EmployeeDataService';
 
 const { Option } = Select;
 const emailRegex = RegExp(
@@ -36,18 +32,7 @@ class EmployeeAddModal extends React.Component {
     super(props);
 
     this.state = {
-    //   employeeId: {
-    //       value: ''
-    //   },
-    //   employeeName: {
-    //     value: ''
-    // },
-    //   employeeDesignation: {
-    //     value: ''
-    // },
-    //   employeeEmail: {
-    //     value: ''
-    // },
+      employeeautoId:"",
       employeeId: "",
       employeeName: "",
       employeeDesignation: "",
@@ -66,11 +51,9 @@ class EmployeeAddModal extends React.Component {
     this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(this);
     this.handleOk = this.handleOk.bind(this);
 
-
   }
 
   componentDidMount(){
- 
 
     this.fetchDesignations();
       console.log("mounting");
@@ -83,31 +66,10 @@ class EmployeeAddModal extends React.Component {
       // handle success
       console.log(response.data);
      _this.setState({designations: response.data});
-    //   this.setState(prevState => ({
-    //     designations: {                   // object that we want to update
-    //         ...prevState,    // keep all other key-value pairs
-    //         designations: response.data       // update the value of specific key
-    //     }
-    // }))
       console.log(_this.state.designations);
   
     });
   }
-
-
-
-  // onhandleChange(e, validateFunc) {
-  //   const inputName = e.target.name;
-  //   const inputValue = e.target.value;
-  
-    
-  //   this.setState({
-  //     [inputName]: {
-  //         value: inputValue,
-  //         ...validateFunc(inputValue)
-  //    }
-  //   });
-  // }
 
   onChangeEmployeeDesignation(value) {
     this.setState({
@@ -121,10 +83,6 @@ class EmployeeAddModal extends React.Component {
     const { name, value } = e.target;
     let formerrors = { ...this.state.formerrors };
 
-    // console.log("Name: ", name);
-    // console.log("value: ", value);
-    // console.log("Name: ", name);
-    // console.log("value: ", value);
     switch (name) {
       case "employeeId":
           if (!ValidRegex.test(value)) {
@@ -170,24 +128,16 @@ class EmployeeAddModal extends React.Component {
       console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
 
-    // this.setState({
-    //   employeeId: "",
-    //   employeeName: "",
-    //   employeeDesignation: "USER",
-    //   employeeEmail: "",
-    //   visible: false
-    // });
     const serverport = {
-      empId: this.state.employeeId,
+      empId:this.state.employeeautoId,
+      employeeid: this.state.employeeId,
       name: this.state.employeeName,
-      id: this.state.employeeDesignation,
+      designationid: this.state.employeeDesignation,
       email: this.state.employeeEmail
     };
     axios
       .post("http://localhost:8084/employeeservice/createemployee", serverport)
-      .then(res => console.log(res.data)
-      
-     
+      .then(res => console.log(res.data) 
       );
 
       this.setState ({ visible: false });
@@ -282,14 +232,14 @@ class EmployeeAddModal extends React.Component {
 
             <Row>
               <Col span={6} style={{ padding: "5px" }}>
-                <Form.Item label="designation">
+                <Form.Item label="Designation">
                   <Select
-                    defaultValue="Select Designations"
+                    defaultValue="Select Designation"
                     style={{ width: 120 }}
                     onChange={this.onChangeEmployeeDesignation}
                   >
                     {this.state.designations.map(function(item, index){
-                      return <Option key={index} value={item.id}>{item.designationname}</Option>
+                      return <Option key={index} value={item.designationid}>{item.designationname}</Option>
                       })}
                  
                   </Select>
