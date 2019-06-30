@@ -163,14 +163,22 @@ export default class StatusConfig extends React.Component {
     value: this.state.value
     
     }
+    if(this.state.name==""||this.state.value=="")
+    {
+
+    }
+    else{
     axios.post('http://localhost:8081/defectservice/defectstatus/', obj)
     .then(res => this.getdefectStatus());
+    message.success("Defect Status Successfully Added");
+    }
     this.setState({
     name: '',
     value: '',
-    visible: false
+    visible: false,
+   
     })
-    message.success("Defect Status Successfully Added");
+   
     };
 
     handleEditOk = (id) => {
