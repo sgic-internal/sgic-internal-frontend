@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { Table, Divider, Modal, Button, Icon, Form, Input, Popconfirm } from 'antd';
+import { Table, Divider, Modal, Button, Icon, Form, Input, Popconfirm, message } from 'antd';
 import { SketchPicker } from 'react-color';
 import reactCSS from 'reactcss';
 import axios from 'axios';
 import { Row, Col } from 'antd';
+
 
 
 export default class DefectTypeConfic extends React.Component {
@@ -14,6 +15,7 @@ export default class DefectTypeConfic extends React.Component {
     DefectType: [],
     def: []
   };
+
 
   constructor(props) {
     super(props);
@@ -100,7 +102,7 @@ export default class DefectTypeConfic extends React.Component {
     this.setState({
       DefectType
     })
-
+    message.error("Defect Type Successfully Deleted");
   }
 
 
@@ -116,7 +118,7 @@ export default class DefectTypeConfic extends React.Component {
     this.getdefectType();
     const obj = {
       name: this.state.name,
-      value: this.state.value
+      value: this.state.value,
     }
     axios.post('http://localhost:8081/defectservice/defecttype/', obj)
       .then(res => this.getdefectType());
@@ -126,6 +128,7 @@ export default class DefectTypeConfic extends React.Component {
       value: '',
       visible: false
     })
+    message.success("Defect Type Successfully Added");
   };
 
   handleEditOk = (id) => {
@@ -141,6 +144,7 @@ export default class DefectTypeConfic extends React.Component {
       value: '',
       visibleEditModal: false
     })
+    message.info("Defect Type Successfully Updated");
   };
 
   handleCancel = e => {
@@ -245,7 +249,7 @@ export default class DefectTypeConfic extends React.Component {
               <Icon type="delete" style={{ fontSize: '17px', color: 'red' }} />
             </Popconfirm>
 
-          </span>
+          </span >
         ),
       },
     ];
@@ -280,6 +284,7 @@ export default class DefectTypeConfic extends React.Component {
             onOk={this.handleOk}
             onCancel={this.handleCancel}
             style={{ padding: "60px", }}
+
           >
             <div
               style={{
@@ -365,7 +370,7 @@ export default class DefectTypeConfic extends React.Component {
 
           <Icon type="square" />
         </div>
-      </React.Fragment>
+      </React.Fragment >
     );
   }
 }
