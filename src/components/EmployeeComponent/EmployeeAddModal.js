@@ -289,7 +289,7 @@ class EmployeeAddModal extends React.Component {
                     onChange={this.onChangeEmployeeDesignation}
                   >
                     {this.state.designations.map(function(item, index){
-                      return <Option key={index} value={item.id}>{item.designationname}</Option>
+                      return <Option key={index} value={item.id}>{item.id}</Option>
                       })}
                  
                   </Select>

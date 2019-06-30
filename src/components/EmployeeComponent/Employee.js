@@ -50,7 +50,6 @@ export default class App extends React.Component {
       employeeName: "",
       employeeDesignation: "",
       employeeEmail: "",
-      designations:[]
     };
 
     this.state = {
