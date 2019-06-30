@@ -33,7 +33,8 @@ export default class AddCompany extends React.Component {
       LicenseEndDate: "",
       companyDescription: "",
       visible: false,
-      loading: false
+      loading: false,
+      company: []
     };
     this.onSubmit = this.onSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -92,14 +93,23 @@ export default class AddCompany extends React.Component {
       companyDescription: this.state.companyDescription
     };
     console.log(saveCompany);
-    axios
-      .post("http://localhost:8083/productservice/Company", saveCompany)
-      .then(res => {
-        if (res.status === 200) {
-          alert("Company Successfylly Added...!");
-          console.log(res.data);
-        }
+    axios({
+      method: "post",
+      url: "http://localhost:8083/productservice/Company",
+      data: saveCompany,
+      config: { headers: { "Content-Type": "application/json" } }
+    })
+      .then(function(response) {
+        //handle success
+        console.log(response);
+      })
+      .catch(function(response) {
+        //handle error
+        console.log(response);
       });
+    this.setState({
+      visible1: false
+    });
 
     this.setState({
       companyName: "",
@@ -128,6 +138,7 @@ export default class AddCompany extends React.Component {
         companyDescription: this.setState.companyDescription
       })
     );
+    this.handleCancel();
   }
 
   //-------------------------------------------------------------------------------------------------

@@ -17,6 +17,7 @@ import {
 import moment from "moment";
 import "./index.css";
 import axios from "axios";
+import AddCompany from "./AddCompany";
 // import { get } from "http";
 //import { getFieldDecorator } from "antd";
 
@@ -61,7 +62,8 @@ export default class App extends React.Component {
     comments: [],
     submitting: false,
     value: "",
-    data: ""
+    data: "",
+    company: []
   };
 
   handleChange = (pagination, filters, sorter) => {
@@ -84,16 +86,19 @@ export default class App extends React.Component {
     });
   };
 
+  //Deleting defect details
   // handleDelete = companyId => {
-  //   fetch("http://localhost:8083/productservice/company/" + companyId, {
-  //     method: "DELETE",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify(this.state)
+  //   axios
+  //     .delete("http://localhost:8083/productservice/Company/" + companyId)
+  //     .then(console.log(companyId))
+  //     .catch(err => console.log(err));
+
+  //   const company = this.state.company.filter(company => {
+  //     return company.companyId !== companyId;
   //   });
-  //   console.log(companyId);
+  //   this.setState({
+  //     company
+  //   });
   // };
 
   handleOk = () => {
@@ -289,7 +294,7 @@ export default class App extends React.Component {
             <Popconfirm
               title="Are you sure want to delete this Entry ?"
               icon={<Icon type="question-circle-o" style={{ color: "red" }} />}
-              onConfirm={confirm}
+              // onConfirm={this.handleDelete.bind(this, data.companyId)}
               onCancel={cancel}
               okText="Yes"
               cancelText="No"
