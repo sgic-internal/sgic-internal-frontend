@@ -5,6 +5,7 @@ import { InputNumber } from "antd";
 import { Row, Col } from "antd";
 import "./index.css";
 import axios from "axios";
+import CompanyController from "./CompanyController";
 // import AllApi from ".AllApi";
 
 //import { getFieldDecorator } from "antd";
@@ -22,6 +23,7 @@ export default class AddCompany extends React.Component {
     super(props);
 
     this.state = {
+      companyId: "",
       companyName: "",
       companyAbbrivation: "",
       companyRegNo: "",
@@ -33,7 +35,8 @@ export default class AddCompany extends React.Component {
       LicenseEndDate: "",
       companyDescription: "",
       visible: false,
-      loading: false
+      loading: false,
+      getCompany: []
     };
     this.onSubmit = this.onSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -79,7 +82,7 @@ export default class AddCompany extends React.Component {
   //On submit form method
   onSubmit(e) {
     e.preventDefault();
-    const saveCompany = {
+    const Company = {
       companyName: this.state.companyName,
       companyAbbrivation: this.state.companyAbbrivation,
       companyRegNo: this.state.companyRegNo,
@@ -87,20 +90,45 @@ export default class AddCompany extends React.Component {
       companyAdminEmail: this.state.companyAdminEmail,
       companyLicenseType: this.state.companyLicenseType,
       companyLicensePeriod: this.state.companyLicensePeriod,
-      LicenseStartDate: this.state.LicenseStartDate,
-      LicenseEndDate: this.state.LicenseEndDate,
       companyDescription: this.state.companyDescription
     };
-    console.log(saveCompany);
-    axios
-      .post("http://localhost:8083/productservice/Company", saveCompany)
-      .then(res => {
-        if (res.status === 200) {
-          alert("Company Successfylly Added...!");
-          console.log(res.data);
-        }
-      });
+    // console.log(Company);
+    // axios
+    //   .post("http://localhost:8083/productservice/Company", Company)
+    //   .then(res => {
+    //     if (res.status === 200) {
+    //       alert("Company Successfylly Added...!");
+    //       console.log(res.data);
+    //     }
+    //   });
 
+    // this.setState({
+    //   companyName: "",
+    //   companyAbbrivation: "",
+    //   companyRegNo: "",
+    //   companyAdminName: "",
+    //   companyAdminEmail: "",
+    //   companyLicenseType: "",
+    //   companyLicensePeriod: "",
+    //   companyDescription: ""
+    // });
+
+    // console.log(
+    //   JSON.stringify({
+    //     companyName: this.setState.companyName,
+    //     companyAbbrivation: this.setState.companyAbbrivation,
+    //     companyRegNo: this.setState.companyRegNo,
+    //     companyAdminName: this.setState.companyAdminName,
+    //     companyAdminEmail: this.setState.companyAdminEmail,
+    //     companyLicenseType: this.setState.companyLicenseType,
+    //     companyLicensePeriod: this.setState.companyLicensePeriod,
+    //     LicenseStartDate: this.setState.LicenseStartDate,
+    //     LicenseEndDate: this.setState.LicenseEndDate,
+    //     companyDescription: this.setState.companyDescription
+    //   })
+    // );
+
+    let newCompany = [...this.state.getCompany, Company];
     this.setState({
       companyName: "",
       companyAbbrivation: "",
@@ -109,25 +137,11 @@ export default class AddCompany extends React.Component {
       companyAdminEmail: "",
       companyLicenseType: "",
       companyLicensePeriod: "",
-      LicenseStartDate: "",
-      LicenseEndDate: "",
-      companyDescription: ""
+      companyDescription: "",
+      getCompany: newCompany
     });
-
-    console.log(
-      JSON.stringify({
-        companyName: this.setState.companyName,
-        companyAbbrivation: this.setState.companyAbbrivation,
-        companyRegNo: this.setState.companyRegNo,
-        companyAdminName: this.setState.companyAdminName,
-        companyAdminEmail: this.setState.companyAdminEmail,
-        companyLicenseType: this.setState.companyLicenseType,
-        companyLicensePeriod: this.setState.companyLicensePeriod,
-        LicenseStartDate: this.setState.LicenseStartDate,
-        LicenseEndDate: this.setState.LicenseEndDate,
-        companyDescription: this.setState.companyDescription
-      })
-    );
+    CompanyController.AddCompanyApi(Company);
+    console.log(Company);
   }
 
   //-------------------------------------------------------------------------------------------------
@@ -231,11 +245,10 @@ export default class AddCompany extends React.Component {
                 <Form.Item label="License Period">
                   <InputNumber
                     min={1}
-                    max={10}
+                    max={150}
                     // defaultValue={3}
-
                     onChange={this.onChangeLicense}
-                    placeholder="In Years"
+                    placeholder="In Months"
                     style={{ width: "100%" }}
                     type="number"
                     name="companyLicensePeriod"
