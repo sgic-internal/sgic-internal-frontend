@@ -1,38 +1,30 @@
 
 import React from 'react';
-import { Table, Divider, Modal, Button, Icon, Form, Input, Popconfirm } from 'antd';
+import { Table, Divider, Modal, Button, Icon, Form, Input, Popconfirm, message } from 'antd';
 import { SketchPicker } from 'react-color';
 import reactCSS from 'reactcss';
 import axios from 'axios';
 import { Row, Col } from 'antd';
 
-// const data = [
-//   {
-//     key: '1',
-//     name: 'UI',
-//     Description: 'UI',
-//     Colour: "#ff5e57",
-//   },
-//   {
-//     key: '2',
-//     name: 'Functionality',
-//     Description: 'Functionality',
-//     Colour: "#0be881",
-//   },
-//   {
-//     key: '3',
-//     name: 'Enhancement',
-//     Description: 'Enhancement',
-//     Colour: "#ffdd59",
-//   },
-//   {
-//     key: '4',
-//     name: 'Performance',
-//     Description: 'Performance',
-//     Colour: "#00d8d6",
-//   },
-// ];
 
+const NameRegex = RegExp(/^[a-zA-Z]+$/);
+//const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
+
+const formValid = ({ formErrors, ...rest }) => {
+  let valid = true;
+
+  // validate form errors being empty
+  Object.values(formErrors).forEach(val => {
+    val.length > 0 && (valid = false);
+  });
+
+  // validate the form was filled out
+  Object.values(rest).forEach(val => {
+    val === null && (valid = false);
+  });
+
+  return valid;
+};
 
 export default class DefectTypeConfic extends React.Component {
   state = {
@@ -42,37 +34,45 @@ export default class DefectTypeConfic extends React.Component {
     def: []
   };
 
+
   constructor(props) {
     super(props);
-    this.onChangeName = this.onChangeName.bind(this);
-    this.onChangeValue = this.onChangeValue.bind(this);
+    //this.onChangeName = this.onChangeName.bind(this);
+    //this.onChangeValue = this.onChangeValue.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleOk = this.handleOk.bind(this);
     this.handleEditOk = this.handleEditOk.bind(this);
     this.deleteDefect = this.deleteDefect.bind(this);
 
+
     this.state = {
       name: '',
       value: '',
-      id: ''
+      // id: '',
+      formErrors: {
+        name: "",
+        value: ""
+        //id: ""
+      }
     }
-    // this.componentWillMount = this.componentWillMount.bind(this);
   };
 
   componentDidMount() {
-    this.componentWillMount()
+    //this.componentWillMount();
+    this.getdefectType();
     //setInterval(this.componentWillMount);
 
   }
-  onChangeName(e) {
-    this.setState({
-      name: e.target.value
-    })
-  };
-  onChangeValue(e) {
-    this.setState({
-      value: e.target.value
-    })
-  };
+  // onChangeName(e) {
+  //   this.setState({
+  //     name: e.target.value
+  //   })
+  // };
+  // onChangeValue(e) {
+  //   this.setState({
+  //     value: e.target.value
+  //   })
+  //};
   getdefectType() {
     const url = 'http://localhost:8081/defectservice/defecttypes';
     axios.get(url)
@@ -84,11 +84,6 @@ export default class DefectTypeConfic extends React.Component {
         console.log(error);
       });
 
-  }
-  componentDidMount() {
-
-    //Simple Axios
-    this.getdefectType()
   }
 
   showModal = () => {
@@ -116,21 +111,6 @@ export default class DefectTypeConfic extends React.Component {
 
   deleteDefect(id) {
 
-    //this.showEditModal();
-
-    // this.setState({ id: id })
-    // console.log(id);
-    // axios.get('http://localhost:8081/defectservice/defecttype/' + id)
-    //   .then(response => {
-    //     this.setState({
-    //       name: response.data.name,
-    //       value: response.data.value
-    //     });
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   })
-    // this.setState({ visible: false })
     console.log(id)
     fetch(`http://localhost:8081/defectservice/defecttype/` + id, {
       method: "DELETE",
@@ -146,17 +126,7 @@ export default class DefectTypeConfic extends React.Component {
     this.setState({
       DefectType
     })
-
-    // axios.delete(`http://localhost:8081/defectservice/defecttype/${id}`)
-    //   .then(response => {
-    //     console.log(response)
-    //     this.setState({
-    //       name: response.data.name,
-    //       value: response.data.value
-    //     });
-    //   })
-    //   .catch(err => console.log(err))
-
+    message.error("Defect Type Successfully Deleted");
   }
 
 
@@ -166,24 +136,30 @@ export default class DefectTypeConfic extends React.Component {
     this.setState({
       visibleEditModal: true,
     });
-
-
   };
 
   handleOk = e => {
     this.getdefectType();
     const obj = {
       name: this.state.name,
-      value: this.state.value
+      value: this.state.value,
     }
-    axios.post('http://localhost:8081/defectservice/defecttype/', obj)
-      .then(res => this.getdefectType());
+
+    if (this.state.name == "" || this.state.value == "" || (!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value))) {
+      message.warn("Invalid Data");
+    }
+    else if (NameRegex.test(this.state.name) && NameRegex.test(this.state.value)) {
+      axios.post('http://localhost:8081/defectservice/defecttype/', obj)
+        .then(res => this.getdefectType());
+      message.success("Defect Type Successfully Added");
+    }
 
     this.setState({
       name: '',
       value: '',
       visible: false
     })
+
   };
 
   handleEditOk = (id) => {
@@ -191,22 +167,30 @@ export default class DefectTypeConfic extends React.Component {
       name: this.state.name,
       value: this.state.value
     }
-    axios.put(`http://localhost:8081/defectservice/defecttype/${id}`, obj)
-      .then(res => this.getdefectType());
+    if (this.state.name == "" || this.state.value == "" || (!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value))) {
+      message.warn("Invalid Data");
+    }
+    else if (NameRegex.test(this.state.name) && NameRegex.test(this.state.value)) {
+      axios.put(`http://localhost:8081/defectservice/defecttype/${id}`, obj)
+        .then(res => this.getdefectType());
+      message.info("Defect Type Successfully Updated");
+    }
+
 
     this.setState({
       name: '',
       value: '',
       visibleEditModal: false
     })
+
   };
-
-
 
   handleCancel = e => {
     console.log(e);
     this.setState({
       visible: false,
+      name: null,
+      value: null
     });
   };
 
@@ -236,17 +220,68 @@ export default class DefectTypeConfic extends React.Component {
     this.setState({ displayColorPicker: false })
   };
 
-  handleChange = (color) => {
-    this.setState({ color: color.rgb })
+  // handleChange = (color) => {
+  //   this.setState({ color: color.rgb })
+  // };
+
+  handleChange = e => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    let formErrors = { ...this.state.formErrors };
+
+    switch (name) {
+      case "name":
+        if (!NameRegex.test(value)) {
+          formErrors.name = "Invalid Defect Type";
+        }
+        // else if (value.length > 8) {
+        //   formErrors.name = "Should be less than 8 characters";
+        // }
+        else {
+          formErrors.name = "";
+        }
+        break;
+      case "value":
+        if (!NameRegex.test(value)) {
+          formErrors.value = "Invalid Description";
+        }
+        // else if (value.length > 8) {
+        //   formErrors.value = "Should be less than 8 characters";
+        // }
+        else {
+          formErrors.value = "";
+        }
+        break;
+      default:
+        break;
+    }
+
+    this.setState({ formErrors, [name]: value }, () => console.log(this.state));
+
   };
+
+  // handleSubmit = e => {
+  //   e.preventDefault();
+  //   this.props.form.validateFields((err, values) => {
+  //     if (!err) {
+  //       console.log('Received values of form: ', values);
+  //     }
+  //   });
+  // };
+
   handleSubmit = e => {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-      }
-    });
-  };
+
+    if (formValid(this.state)) {
+      console.log(`
+        --SUBMITTING--
+        name :${this.state.name}
+        value: ${this.state.value}
+      `);
+    } else {
+      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+    }
+  }
 
   normFile = e => {
     console.log('Upload event:', e);
@@ -257,6 +292,7 @@ export default class DefectTypeConfic extends React.Component {
   };
 
   render() {
+    const { formErrors } = this.state;
 
     const columns = [
       // {
@@ -266,7 +302,7 @@ export default class DefectTypeConfic extends React.Component {
 
       // },
       {
-        title: 'DefectType',
+        title: 'Defect Type',
         dataIndex: 'name',
         key: 'name',
 
@@ -293,13 +329,6 @@ export default class DefectTypeConfic extends React.Component {
 
             <Divider type="vertical" />
 
-            {/* <Popconfirm
-    title="Are you sure？"
-    icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-  >
-    <a href="#">Delete</a>
-  </Popconfirm> */}
-
             <Popconfirm
               title="Are you sure, Do you want to delete this ?"
               icon={<Icon type="delete" style={{ color: 'red' }}
@@ -310,16 +339,13 @@ export default class DefectTypeConfic extends React.Component {
               <Icon type="delete" style={{ fontSize: '17px', color: 'red' }} />
             </Popconfirm>
 
-          </span>
+          </span >
         ),
       },
     ];
 
-
     return (
-
       <React.Fragment>
-
         <div
           style={{
             padding: 24,
@@ -334,7 +360,6 @@ export default class DefectTypeConfic extends React.Component {
             <Col span={10}></Col>
           </Row>
 
-
           <br></br>
           <div>
             <Button type="primary" onClick={this.showModal}>
@@ -344,11 +369,12 @@ export default class DefectTypeConfic extends React.Component {
           <br></br>
 
           <Modal
-            title=" Add Defect Type"
+            title="Add Defect Type"
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
             style={{ padding: "60px", }}
+
           >
             <div
               style={{
@@ -359,19 +385,42 @@ export default class DefectTypeConfic extends React.Component {
               }}>
 
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} >
-                <Form.Item label="TypeName">
+                <Form.Item label="Defect Type">
                   <Input type="text"
-                    className="form-control"
+                    // className="form-control"
+                    className={formErrors.name.length > 0 ? "error" : null}
                     value={this.state.name}
-                    onChange={this.onChangeName} />
+                    name="name"
+                    // onChange={this.onChangeName}
+                    onChange={this.handleChange}
+                  />
+                  {formErrors.name.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formErrors.name}
+                    </span>
+                  )}
                 </Form.Item>
                 <Form.Item label="Description">
                   <Input type="text"
-                    className="form-control"
+                    //className="form-control"
+                    className={formErrors.value.length > 0 ? "error" : null}
                     value={this.state.value}
-                    onChange={this.onChangeValue} />
+                    name="value"
+                    // onChange={this.onChangeValue}
+                    onChange={this.handleChange}
+                  />
+                  {formErrors.value.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formErrors.value}
+                    </span>
+                  )}
                 </Form.Item>
-
 
                 {/* <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
@@ -384,12 +433,10 @@ export default class DefectTypeConfic extends React.Component {
 
                 </Form.Item> */}
 
-
               </Form>
             </div>
 
           </Modal>
-
           <Modal
             title="Edit DefectType"
             visible={this.state.visibleEditModal}
@@ -405,17 +452,41 @@ export default class DefectTypeConfic extends React.Component {
 
               }}>
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
-                <Form.Item label="TypeName">
+                <Form.Item label="Defect Type">
                   <Input type="text"
-                    className="form-control"
+                    //className="form-control"
+                    className={formErrors.name.length > 0 ? "error" : null}
+                    name="name"
                     value={this.state.name}
-                    onChange={this.onChangeName} />
+                    onChange={this.handleChange}
+                  //onChange={this.onChangeName}
+                  />
+                  {formErrors.name.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formErrors.name}
+                    </span>
+                  )}
                 </Form.Item>
                 <Form.Item label="Description">
                   <Input type="text"
-                    className="form-control"
+                    //className="form-control"
+                    className={formErrors.value.length > 0 ? "error" : null}
+                    name="value"
                     value={this.state.value}
-                    onChange={this.onChangeValue} />
+                    onChange={this.handleChange}
+                  //onChange={this.onChangeValue}
+                  />
+                  {formErrors.value.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formErrors.value}
+                    </span>
+                  )}
                 </Form.Item>
 
 
@@ -429,7 +500,6 @@ export default class DefectTypeConfic extends React.Component {
                   </div> : null}
                 </Form.Item> */}
 
-
               </Form>
             </div>
 
@@ -438,7 +508,7 @@ export default class DefectTypeConfic extends React.Component {
 
           <Icon type="square" />
         </div>
-      </React.Fragment>
+      </React.Fragment >
     );
   }
 }
