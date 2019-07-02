@@ -5,6 +5,22 @@ import { SketchPicker } from 'react-color';
 import reactCSS from 'reactcss';
 import axios from 'axios';
 
+const NameRegex = RegExp(/^[a-zA-Z ]+$/);
+const formValid = ({ formErrors, ...rest }) => {
+  let valid = true;
+
+  // validate form errors being empty
+  Object.values(formErrors).forEach(val => {
+    val.length > 0 && (valid = false);
+  });
+
+  // validate the form was filled out
+  Object.values(rest).forEach(val => {
+    val === null && (valid = false);
+  });
+
+  return valid;
+};
 // const data = [
 //   {
 //     key: '1',
@@ -61,29 +77,43 @@ export default class StatusConfig extends React.Component {
 
   constructor(props) {
     super(props);
-    this.onChangeName = this.onChangeName.bind(this);
-    this.onChangeValue = this.onChangeValue.bind(this);
+   // this.onChangeName = this.onChangeName.bind(this);
+    //this.onChangeValue = this.onChangeValue.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleOk = this.handleOk.bind(this);
     this.handleEditOk = this.handleEditOk.bind(this);
     this.deleteDefect=this.deleteDefect.bind(this);
     this.state = {
     name: '',
     value: '',
-    id:''
+   // id:''
+   formErrors: {
+    name: "",
+    value: ""
+    //id: ""
+  }
+ 
+    
+  
     }
-    this.componentWillMount = this.componentWillMount.bind(this);
+   // this.componentWillMount = this.componentWillMount.bind(this);
     };
-
-    onChangeName(e) {
-      this.setState({
-      name: e.target.value
-      })
-      };
-      onChangeValue(e) {
-      this.setState({
-      value: e.target.value
-      })
-      };
+    componentDidMount() {
+      //this.componentWillMount();
+      this.getdefectStatus();
+      //setInterval(this.componentWillMount);
+  
+    }
+    // onChangeName(e) {
+    //   this.setState({
+    //   name: e.target.value
+    //   })
+    //   };
+    //   onChangeValue(e) {
+    //   this.setState({
+    //   value: e.target.value
+    //   })
+    //   };
 
       getdefectStatus() {
         const url = 'http://localhost:8081/defectservice/defectstatuses';
@@ -95,18 +125,19 @@ export default class StatusConfig extends React.Component {
         console.log(error);
         });
         }
-    componentWillMount(){
-      //Simple Axios
-      const url ='http://localhost:8081/defectservice/defectstatuses';
-      axios.get(url)
+    // componentWillMount(){
+    //   //Simple Axios
+    //   const url ='http://localhost:8081/defectservice/defectstatuses';
+    //   axios.get(url)
       
-      .then(response => this.setState({
-      DefectStatus: response.data,
-      }))
-      .catch(function (error){
-      console.log(error);
-      });
-      }
+    //   .then(response => this.setState({
+    //   DefectStatus: response.data,
+    //   }))
+    //   .catch(function (error){
+    //   console.log(error);
+    //   });
+    //   }
+    
   showModal = () => {
     this.setState({
       visible: true,
@@ -163,14 +194,25 @@ export default class StatusConfig extends React.Component {
     value: this.state.value
     
     }
-    if(this.state.name==""||this.state.value=="")
-    {
-
+     if(this.state.name===""||this.state.value===""||(!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value)))
+     {
+       message.warn("Invalid Data");
     }
-    else{
-    axios.post('http://localhost:8081/defectservice/defectstatus/', obj)
-    .then(res => this.getdefectStatus());
-    message.success("Defect Status Successfully Added");
+     else if(NameRegex.test(this.state.name) && NameRegex.test(this.state.value)){
+    axios.post('http://localhost:8081/defectservice/defectstatus/', obj).then((response) => {
+   
+      this.setState({ events: response.data })
+      if (response.data.status === "OK") {
+      
+      message.success("Defect Status Successfully Added").then(res => this.getdefectStatus());
+      }
+      })
+      .catch((error) => {
+      console.log(error);
+      message.warn("Defect Status Already Exist");
+      });
+   
+   
     }
     this.setState({
     name: '',
@@ -186,15 +228,30 @@ export default class StatusConfig extends React.Component {
         name: this.state.name,
         value: this.state.value
       }
-      axios.put(`http://localhost:8081/defectservice/defectstatus/${id}`, obj)
-          .then(res => this.getdefectStatus());
-      
+      if(this.state.name===""||this.state.value===""||(!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value)))
+    {
+      message.warn("Invalid Data");
+    }
+    else if(NameRegex.test(this.state.name) && NameRegex.test(this.state.value)){
+      axios.put('http://localhost:8081/defectservice/defectstatus/', obj).then((response) => {
+   
+        this.setState({ events: response.data })
+        if (response.data.status === "OK") {
+        
+        message.success("Defect Status Successfully Added").then(res => this.getdefectStatus());
+        }
+        })
+        .catch((error) => {
+        console.log(error);
+        message.warn("Defect Status Already Exist");
+        });
+      }
       this.setState({
         name: '',
         value: '',
         visibleEditModal: false
       })
-      message.info("Defect Status Successfully Updated");
+    
     };
 
   handleCancel = e => {
@@ -233,18 +290,83 @@ export default class StatusConfig extends React.Component {
     this.setState({ displayColorPicker: false })
   };
 
-  handleChange = (color) => {
-    this.setState({ color: color.rgb })
+  // handleChange = (color) => {
+  //  // this.setState({ color: color.rgb })
+  // };
+  handleChange = e => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    let formErrors = { ...this.state.formErrors };
+    var newstr=value.replace(/\s+/g,'');
+    switch (name) {
+      case "name":
+        if (!NameRegex.test(newstr)) {
+          formErrors.name = "Invalid Defect Status";
+        }
+        else if (newstr.length ==0) {
+          formErrors.name = "can't leave this field blank";
+        }
+        else if(newstr.length<3)
+        {
+          formErrors.name = "Required more than 3 charecters";
+        }
+        else if(newstr.length>15)
+        {
+          formErrors.name = "Required less than 15 charecters";
+        }
+        else{
+          formErrors.name = "";
+        }
+        break;
+      case "value":
+        if (!NameRegex.test(value)) {
+          formErrors.value = "Invalid Description";
+        }
+        else if(value.length<5 )
+        {
+          formErrors.value = "Required more than 5 charecters";
+        }
+        else if( value.length>50)
+        {
+          formErrors.value = "Required less than 50 charecters";
+        }
+       
+        else if (value.length ==0) {
+          formErrors.value = "can't leave this field blank";
+        }
+        else {
+          formErrors.value = "";
+        }
+        break;
+      default:
+        break;
+    }
+
+    this.setState({ formErrors, [name]: value }, () => console.log(this.state));
+
   };
+  // handleSubmit = e => {
+  //   e.preventDefault();
+  //   this.props.form.validateFields((err, values) => {
+  //     if (!err) {
+  //       console.log('Received values of form: ', values);
+  //     }
+  //   });
+  // };
+
   handleSubmit = e => {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-      }
-    });
-  };
 
+    if (formValid(this.state)) {
+      console.log(`
+        --SUBMITTING--
+        name :${this.state.name}
+        value: ${this.state.value}
+      `);
+    } else {
+      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+    }
+  }
   normFile = e => {
     console.log('Upload event:', e);
     if (Array.isArray(e)) {
@@ -254,10 +376,10 @@ export default class StatusConfig extends React.Component {
   };
 
   render() {
-
+const{formErrors}=this.state;
     const columns = [
       {
-        title: 'Status',
+        title: 'DefectStatus',
         dataIndex: 'name',
         key: 'name',
 
@@ -356,7 +478,7 @@ export default class StatusConfig extends React.Component {
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
-            style={{ padding: "60px", }}
+            style={{ padding: "20px", }}
           >
             <div
               style={{
@@ -367,19 +489,41 @@ export default class StatusConfig extends React.Component {
               }}>
 
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }}>
-                <Form.Item label="Status">
+                <Form.Item label="Defect Status">
                   <Input type="text" 
-                      className="form-control" 
+                      //className="form-control"
+                      className={formErrors.name.length > 0 ? "error" : null} 
                       value={this.state.name}
-                      onChange={this.onChangeName}
+                      name = "name"
+                      //onChange={this.onChangeName}
+                      onChange={this.handleChange}
                     />
+                    {formErrors.name.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "12px" }}
+                    >
+                      {formErrors.name}
+                    </span>
+                  )}
                 </Form.Item>
                 <Form.Item label="Description">
                   <Input type="text" 
-                    className="form-control" 
+                    //className="form-control" 
+                    className={formErrors.value.length > 0 ? "error" : null}
                     value={this.state.value}
-                    onChange={this.onChangeValue}
+                    name = "value"
+                   // onChange={this.onChangeValue}
+                   onChange={this.handleChange}
                   />
+                  {formErrors.value.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "12px" }}
+                    >
+                      {formErrors.value}
+                    </span>
+                  )}
                 </Form.Item>
 
 
@@ -405,7 +549,7 @@ export default class StatusConfig extends React.Component {
             visible={this.state.visibleEditModal}
             onOk={this.handleEditOk.bind(this, this.state.id)}
             onCancel={this.handleEditPriorityCancel}
-            style={{ padding: "60px", }}
+            style={{ padding: "20px", }}
           >
             <div
               style={{
@@ -415,17 +559,43 @@ export default class StatusConfig extends React.Component {
 
               }}>
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
-                <Form.Item label="Name">
+                <Form.Item label="Defect Status">
                 <Input type="text" 
-                      className="form-control" 
+                     // className="form-control" 
+                     className={formErrors.name.length > 0 ? "error" : null}
                       value={this.state.name}
-                      onChange={this.onChangeName}/>
+                      //onChange={this.onChangeName}
+                      name="name"
+                      // onChange={this.onChangeName}
+                      onChange={this.handleChange}
+                      />
+                       {formErrors.name.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "12px" }}
+                    >
+                      {formErrors.name}
+                    </span>
+                  )}
                 </Form.Item>
                 <Form.Item label="Description">
                 <Input type="text" 
-                      className="form-control" 
+                     // className="form-control" 
+                     className={formErrors.value.length > 0 ? "error" : null}
                       value={this.state.value}
-                      onChange={this.onChangeValue}/>
+                      name="value"
+                    // onChange={this.onChangeValue}
+                    onChange={this.handleChange}
+                     // onChange={this.onChangeValue}
+                     />
+                      {formErrors.value.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "12px" }}
+                    >
+                      {formErrors.value}
+                    </span>
+                  )}
                 </Form.Item>
 
 
