@@ -7,7 +7,7 @@ import axios from 'axios';
 import { Row, Col } from 'antd';
 
 
-const NameRegex = RegExp(/^[a-zA-Z]+$/);
+const NameRegex = RegExp(/^[a-zA-Z ]+$/);
 //const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
 
 const formValid = ({ formErrors, ...rest }) => {
@@ -144,42 +144,61 @@ export default class DefectTypeConfic extends React.Component {
       name: this.state.name,
       value: this.state.value,
     }
-
-    if (this.state.name == "" || this.state.value == "" || (!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value))) {
+    if (this.state.name === "" || this.state.value === "" || (!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value))) {
       message.warn("Invalid Data");
     }
     else if (NameRegex.test(this.state.name) && NameRegex.test(this.state.value)) {
-      axios.post('http://localhost:8081/defectservice/defecttype/', obj)
-        .then(res => this.getdefectType());
-      message.success("Defect Type Successfully Added");
+      // axios.post('http://localhost:8081/defectservice/defecttype/', obj)
+      //   .then(res => this.getdefectType());
+      axios.post('http://localhost:8081/defectservice/defecttype/', obj).then((response) => {
+        //console.log(response.data);
+        this.setState({ events: response.data })
+        if (response.data.status === "OK") {
+          message.success("Defect Type Successfully Added").then(res => this.getdefectType());
+        }
+      })
+        .catch((error) => {
+          console.log(error);
+          message.warn("Defect Type Already Exist");
+        });
     }
 
     this.setState({
       name: '',
       value: '',
-      visible: false
+      visible: false,
     })
 
   };
 
   handleEditOk = (id) => {
+
     const obj = {
       name: this.state.name,
       value: this.state.value
     }
-    if (this.state.name == "" || this.state.value == "" || (!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value))) {
+    if (this.state.name === "" || this.state.value === "" || (!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value))) {
       message.warn("Invalid Data");
     }
     else if (NameRegex.test(this.state.name) && NameRegex.test(this.state.value)) {
       axios.put(`http://localhost:8081/defectservice/defecttype/${id}`, obj)
-        .then(res => this.getdefectType());
-      message.info("Defect Type Successfully Updated");
+        .then((response) => {
+          //console.log(response.data);
+          this.setState({ events: response.data })
+          if (response.data.status === "OK") {
+            message.success("Defect Type Successfully Updated").then(res => this.getdefectType());
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          message.warn("Defect Type Already Exist");
+        });
     }
-
 
     this.setState({
       name: '',
       value: '',
+      visible: false,
       visibleEditModal: false
     })
 
@@ -228,15 +247,22 @@ export default class DefectTypeConfic extends React.Component {
     e.preventDefault();
     const { name, value } = e.target;
     let formErrors = { ...this.state.formErrors };
-
+    var newStr = value.replace(/\s+/g, '');
+    //console.log(newStr);
     switch (name) {
       case "name":
         if (!NameRegex.test(value)) {
           formErrors.name = "Invalid Defect Type";
         }
-        // else if (value.length > 8) {
-        //   formErrors.name = "Should be less than 8 characters";
-        // }
+        else if (newStr.length > 15) {
+          formErrors.name = "Required less than 15 characters";
+        }
+        else if (newStr.length < 2) {
+          formErrors.name = "Required greater than 2 characters";
+        }
+        else if (newStr.length === 0) {
+          formErrors.name = "Can't leave this field blank";
+        }
         else {
           formErrors.name = "";
         }
@@ -244,10 +270,17 @@ export default class DefectTypeConfic extends React.Component {
       case "value":
         if (!NameRegex.test(value)) {
           formErrors.value = "Invalid Description";
+          //this.handleOk = false;
         }
-        // else if (value.length > 8) {
-        //   formErrors.value = "Should be less than 8 characters";
-        // }
+        else if (newStr.length > 50) {
+          formErrors.value = "Required less than 50 characters";
+        }
+        else if (newStr.length < 10) {
+          formErrors.value = "Required greater than 10 characters";
+        }
+        else if (newStr.length === 0) {
+          formErrors.value = "Can't leave this field blank";
+        }
         else {
           formErrors.value = "";
         }
@@ -388,16 +421,16 @@ export default class DefectTypeConfic extends React.Component {
                 <Form.Item label="Defect Type">
                   <Input type="text"
                     // className="form-control"
-                    className={formErrors.name.length > 0 ? "error" : null}
+                    className={formErrors.name.length >= 0 ? "error" : null}
                     value={this.state.name}
                     name="name"
                     // onChange={this.onChangeName}
                     onChange={this.handleChange}
                   />
-                  {formErrors.name.length > 0 && (
+                  {formErrors.name.length >= 0 && (
                     <span
                       className="error"
-                      style={{ color: "red", fontSize: "14px" }}
+                      style={{ color: "red", fontSize: "12px" }}
                     >
                       {formErrors.name}
                     </span>
@@ -415,11 +448,12 @@ export default class DefectTypeConfic extends React.Component {
                   {formErrors.value.length > 0 && (
                     <span
                       className="error"
-                      style={{ color: "red", fontSize: "14px" }}
+                      style={{ color: "red", fontSize: "12px" }}
                     >
                       {formErrors.value}
                     </span>
                   )}
+
                 </Form.Item>
 
                 {/* <Form.Item label="Colour">
@@ -438,7 +472,7 @@ export default class DefectTypeConfic extends React.Component {
 
           </Modal>
           <Modal
-            title="Edit DefectType"
+            title="Edit Defect Type"
             visible={this.state.visibleEditModal}
             onOk={this.handleEditOk.bind(this, this.state.id)}
             onCancel={this.handleEditPriorityCancel}
@@ -464,7 +498,7 @@ export default class DefectTypeConfic extends React.Component {
                   {formErrors.name.length > 0 && (
                     <span
                       className="error"
-                      style={{ color: "red", fontSize: "14px" }}
+                      style={{ color: "red", fontSize: "12px" }}
                     >
                       {formErrors.name}
                     </span>
@@ -482,7 +516,7 @@ export default class DefectTypeConfic extends React.Component {
                   {formErrors.value.length > 0 && (
                     <span
                       className="error"
-                      style={{ color: "red", fontSize: "14px" }}
+                      style={{ color: "red", fontSize: "12px" }}
                     >
                       {formErrors.value}
                     </span>
@@ -511,4 +545,5 @@ export default class DefectTypeConfic extends React.Component {
       </React.Fragment >
     );
   }
+
 }
