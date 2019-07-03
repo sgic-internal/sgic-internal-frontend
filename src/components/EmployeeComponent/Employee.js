@@ -42,11 +42,11 @@ export default class App extends React.Component {
     this.fetchDesignations = this.fetchDesignations.bind(this);
 
     this.state = {
-      // employeeautoId:"",
-      // employeeId: "",
-      // employeeName: "",
-      // employeeDesignation: "",
-      // employeeEmail: "",
+      employeeautoId:"",
+      employeeId: "",
+      employeeName: "",
+      employeeDesignation: "",
+      employeeEmail: "",
     };
 
     this.state = {
@@ -115,11 +115,11 @@ export default class App extends React.Component {
   handleOk = empId => {
     console.log(empId);
     const obj = {
-      // empId:this.state.employeeautoId,
-      // employeeid: this.state.employeeId,
-      // name: this.state.employeeName,
-      // designationid: this.state.employeeDesignation,
-      // email: this.state.employeeEmail
+      empId:this.state.employeeautoId,
+      employeeid: this.state.employeeId,
+      name: this.state.employeeName,
+      designationid: this.state.employeeDesignation,
+      email: this.state.employeeEmail
     };
     axios
       .put("http://localhost:8084/employeeservice/update/" + empId, obj)
