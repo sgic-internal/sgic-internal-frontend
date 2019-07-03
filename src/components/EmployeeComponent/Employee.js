@@ -199,7 +199,7 @@ export default class App extends React.Component {
           employeeautoId:response.data.empId,
           employeeId: response.data.employeeid,
           employeeName: response.data.name,
-          employeeDesignation: response.data.designationname,
+          employeeDesignation: response.data.designationid,
           employeeEmail: response.data.email
         });
       })
@@ -401,14 +401,20 @@ export default class App extends React.Component {
                 </Col>
               </Row>
               <Row>
-                <Col span={8} style={{ padding: "5px" }}>
+              <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Designation">
-                  <Select>
-                  {/* {this.state.designations.map(function(item, index){
-                      return <Option key={index} value={item.designationid}> {item.designationname}</Option> })} */}
-                    </Select>
-                  </Form.Item>
-                </Col>
+                  <Select
+                   // defaultValue="Select Designation"
+                   onChange={this.onChangeEmployeeDesignation}
+                   value={this.state.employeeDesignation}
+                  >
+                    {this.state.employees.map(function(item, index){
+                      return <Option key={index} value={item.designationid}>{item.designationname}</Option>
+                      })}
+                 
+                  </Select>
+                </Form.Item>
+              </Col>
                 <Col span={16} style={{ padding: "5px" }}>
                   <Form.Item label="Email Id">
                     <Input
