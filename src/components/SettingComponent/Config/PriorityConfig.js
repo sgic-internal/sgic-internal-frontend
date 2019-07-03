@@ -48,6 +48,9 @@ const options = [
 ];
 const defaultOption = "Select an Icon";
 
+const rgbHex = require('rgb-hex');
+const hexRgb = require('hex-rgb');
+
 // const props = {
 //   action: '//jsonplaceholder.typicode.com/posts/',
 //   listType: 'picture',
@@ -167,11 +170,19 @@ export default class PriorityConfig extends React.Component {
     console.log(id);
     axios.get('http://localhost:8081/defectservice/defectpriority/' + id)
       .then(response => {
+        let colorRGBValue = hexRgb(response.data.color);
+        //alert(colorRGBValue.red, colorRGBValue.green, colorRGBValue.blue);
+        let colorRGB = {
+          r: colorRGBValue.red,
+          g: colorRGBValue.green,
+          b: colorRGBValue.blue,
+          a: colorRGBValue.alpha
+        };
         this.setState({
           name: response.data.name,
           value: response.data.value,
           icon: response.data.icon,
-          color: response.data.color
+          color: colorRGB
         });
       })
       .catch(function (error) {
@@ -182,11 +193,12 @@ export default class PriorityConfig extends React.Component {
 
   handleOk = e => {
     this.getDefectPriority();
+    let colorStringValue = '#' + rgbHex(this.state.color.r, this.state.color.g, this.state.color.b);
     const obj = {
       name: this.state.name,
       value: this.state.value,
       icon: this.state.icon,
-      color: this.state.color
+      color: colorStringValue
     }
     axios.post('http://localhost:8081/defectservice/defectpriority/', obj)
       .then(res => this.getDefectPriority());
@@ -201,11 +213,12 @@ export default class PriorityConfig extends React.Component {
   };
 
   handleEditOk = (id) => {
+    let colorString = '#' + rgbHex(this.state.color.r, this.state.color.g, this.state.color.b);
     const obj = {
       name: this.state.name,
       value: this.state.value,
       icon: this.state.icon,
-      color: this.state.color
+      color: colorString
     }
     axios.put(`http://localhost:8081/defectservice/defectpriority/${id}`, obj)
       .then(res => this.getDefectPriority());
@@ -252,7 +265,7 @@ export default class PriorityConfig extends React.Component {
   };
 
   handleChange = (color) => {
-    this.setState({ color: color.hex })
+    this.setState({ color: color.rgb })
   };
 
   handleSelect(icon) {
