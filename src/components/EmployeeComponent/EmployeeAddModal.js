@@ -1,11 +1,13 @@
 import { Modal, Button, Form, Icon, Input, Select, Row, Col } from "antd";
 import React from "react";
 import axios from "axios";
+import Employee from "./Employee";
+import { object } from "prop-types";
 
-const { Option } = Select;
-const emailRegex = RegExp(
-  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+var emailRegex = new RegExp(
+  /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
 );
+const { Option } = Select;
 
 const NameRegex = RegExp(/^[a-zA-Z]+$/);
 const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
@@ -26,14 +28,14 @@ const formValid = ({ formerrors, ...rest }) => {
   return valid;
 };
 class EmployeeAddModal extends React.Component {
-  //post integration
-
   constructor(props) {
     super(props);
 
     this.state = {
       employeeId: "",
+      employeeIdError: "",
       employeeName: "",
+      employeeNameError: "",
       employeeDesignation: "",
       employeeEmail: "",
       visible: false,
@@ -46,7 +48,7 @@ class EmployeeAddModal extends React.Component {
     };
 
     // this.onhandleChange = this.onhandleChange.bind(this);
-    this.handlechange = this.handlechange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.fetchDesignations = this.fetchDesignations.bind(this);
     this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
       this
@@ -71,18 +73,19 @@ class EmployeeAddModal extends React.Component {
       });
   }
 
-  onChangeEmployeeDesignation(value) {
+  // handling select cuz handleChange is throwing errors
+  handleDesignationChange = value => {
     this.setState({
-      employeeDesignation: `${value}`
+      designation: value
     });
     console.log(this.state.employeeDesignation);
-  }
+  };
+
   handlechange = e => {
     e.preventDefault();
 
     const { name, value } = e.target;
     let formerrors = { ...this.state.formerrors };
-
     switch (name) {
       case "employeeId":
         if (!ValidRegex.test(value)) {
@@ -195,7 +198,7 @@ class EmployeeAddModal extends React.Component {
           onCancel={this.handleCancel}
           width="550px"
         >
-          <Form>
+          <Form onSubmit={e => this.handleOk(e)}>
             <Row>
               <Col span={6} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Id">
@@ -259,7 +262,8 @@ class EmployeeAddModal extends React.Component {
                     >
                       {formerrors.employeeName}
                     </span>
-                  )}
+                  )}{" "}
+                  */}
                 </Form.Item>
               </Col>
             </Row>
@@ -318,7 +322,8 @@ class EmployeeAddModal extends React.Component {
                     >
                       {formerrors.employeeEmail}
                     </span>
-                  )}
+                  )}{" "}
+                  */}
                 </Form.Item>
               </Col>
             </Row>

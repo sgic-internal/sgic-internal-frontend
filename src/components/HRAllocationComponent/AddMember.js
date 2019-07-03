@@ -1,8 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 //import './ab.css';
-import { Transfer, Switch, Table, Tag,InputNumber } from 'antd';
-import difference from 'lodash/difference';
+import { Transfer, Switch, Table, Tag, InputNumber } from "antd";
+import difference from "lodash/difference";
+import axios from "axios";
 
 // Customize Table Transfer
 const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
@@ -13,9 +14,9 @@ const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
       onItemSelectAll,
       onItemSelect,
       selectedKeys: listSelectedKeys,
-      disabled: listDisabled,
+      disabled: listDisabled
     }) => {
-      const columns = direction === 'left' ? leftColumns : rightColumns;
+      const columns = direction === "left" ? leftColumns : rightColumns;
 
       const rowSelection = {
         getCheckboxProps: item => ({ disabled: listDisabled || item.disabled }),
@@ -31,88 +32,63 @@ const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
         onSelect({ key }, selected) {
           onItemSelect(key, selected);
         },
-        selectedRowKeys: listSelectedKeys,
+        selectedRowKeys: listSelectedKeys
       };
-      
+
       return (
         <Table
           rowSelection={rowSelection}
           columns={columns}
           dataSource={filteredItems}
           size="small"
-          style={{ pointerEvents: listDisabled ? 'none' : null }}
+          style={{ pointerEvents: listDisabled ? "none" : null }}
           onRow={({ key, disabled: itemDisabled }) => ({
             onClick: () => {
               if (itemDisabled || listDisabled) return;
               onItemSelect(key, !listSelectedKeys.includes(key));
-            },
+            }
           })}
         />
       );
     }}
   </Transfer>
-  
 );
 function onChange(value) {
-  console.log('changed', value);
+  console.log("changed", value);
 }
 
-const mockTags = ['cat', 'dog', 'bird'];
+const mockTags = ["cat", "dog", "bird"];
 
 const mockData = [];
 for (let i = 0; i < 20; i++) {
   mockData.push({
     key: i.toString(),
     empname: `content${i + 1}`,
-    percentage:  <InputNumber
-    defaultValue={100}
-    min={10}
-    max={100}
-    formatter={value => `${value}%`}
-    parser={value => value.replace('%', '')}
-    onChange={onChange}
-  />,
+    percentage: (
+      <InputNumber
+        defaultValue={100}
+        min={10}
+        max={100}
+        formatter={value => `${value}%`}
+        parser={value => value.replace("%", "")}
+        onChange={onChange}
+      />
+    ),
     disabled: i % 4 === 0,
-    tag: mockTags[i % 3],
+    tag: mockTags[i % 3]
   });
 }
 
-const originTargetKeys = mockData.filter(item => +item.key % 3 > 1).map(item => item.key);
-
-const leftTableColumns = [
-  {
-    dataIndex: 'key',
-    title: 'Emp ID',
-  },
-  {
-    dataIndex: 'empname',
-    title: 'Full name',
-  },
-  {
-    dataIndex: 'percentage',
-    title: 'Percentage',
-  },
-];
-const rightTableColumns = [
-  {
-    dataIndex: 'key',
-    title: 'Emp ID',
-  },
-  {
-    dataIndex: 'empname',
-    title: 'Full name',
-  },
-  {
-    dataIndex: 'percentage',
-    title: 'Percentage',
-  },
-];
+const originTargetKeys = mockData
+  .filter(item => +item.key % 3 > 1)
+  .map(item => item.key);
 
 class AddMember extends React.Component {
   state = {
     targetKeys: originTargetKeys,
     disabled: false,
     showSearch: false,
+    employee: []
   };
 
   onChange = nextTargetKeys => {
@@ -127,7 +103,53 @@ class AddMember extends React.Component {
     this.setState({ showSearch });
   };
 
+  componentDidMount() {
+    this.fetchEmployee();
+  }
+  fetchEmployee() {
+    var _this = this;
+    axios
+      .get("http://localhost:8081/defectservices/GetAllresources")
+      .then(function(response) {
+        // handle success
+        console.log(response.data);
+        _this.setState({ employee: response.data });
+        console.log(_this.state.employee);
+      });
+  }
+
   render() {
+    const leftTableColumns = [
+      {
+        dataIndex: "employeeid",
+        title: "Emp ID"
+      },
+
+      {
+        dataIndex: "empname",
+        title: "Full name"
+      },
+      {
+        dataIndex: "percentage",
+        title: "Percentage"
+      }
+    ];
+
+    const rightTableColumns = [
+      {
+        dataIndex: "key",
+        title: "Emp ID"
+      },
+      {
+        dataIndex: "empname",
+        title: "Full name"
+      },
+      {
+        dataIndex: "percentage",
+        title: "Percentage"
+      }
+    ];
+
     const { targetKeys, disabled, showSearch } = this.state;
     return (
       <div>
@@ -138,7 +160,8 @@ class AddMember extends React.Component {
           showSearch={showSearch}
           onChange={this.onChange}
           filterOption={(inputValue, item) =>
-            item.title.indexOf(inputValue) !== -1 || item.tag.indexOf(inputValue) !== -1
+            item.title.indexOf(inputValue) !== -1 ||
+            item.tag.indexOf(inputValue) !== -1
           }
           leftColumns={leftTableColumns}
           rightColumns={rightTableColumns}
