@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 //import './ab.css';
 import { Transfer, Switch, Table, Tag,InputNumber } from 'antd';
 import difference from 'lodash/difference';
+import axios from "axios";
 
 // Customize Table Transfer
 const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
@@ -79,40 +80,15 @@ for (let i = 0; i < 20; i++) {
 
 const originTargetKeys = mockData.filter(item => +item.key % 3 > 1).map(item => item.key);
 
-const leftTableColumns = [
-  {
-    dataIndex: 'key',
-    title: 'Emp ID',
-  },
-  {
-    dataIndex: 'empname',
-    title: 'Full name',
-  },
-  {
-    dataIndex: 'percentage',
-    title: 'Percentage',
-  },
-];
-const rightTableColumns = [
-  {
-    dataIndex: 'key',
-    title: 'Emp ID',
-  },
-  {
-    dataIndex: 'empname',
-    title: 'Full name',
-  },
-  {
-    dataIndex: 'percentage',
-    title: 'Percentage',
-  },
-];
+
+
 
 class AddMember extends React.Component {
   state = {
     targetKeys: originTargetKeys,
     disabled: false,
     showSearch: false,
+    employee:[]
   };
 
   onChange = nextTargetKeys => {
@@ -127,7 +103,57 @@ class AddMember extends React.Component {
     this.setState({ showSearch });
   };
 
+  
+  componentDidMount() {
+  
+    this.fetchEmployee();
+  }
+  fetchEmployee() {
+    var _this = this;
+    axios.get('http://localhost:8081/defectservices/GetAllresources')
+    .then(function (response) {
+      // handle success
+      console.log(response.data);
+     _this.setState({ employee: response.data});    
+      console.log(_this.state.employee);
+  
+    });
+  }
+
   render() {
+
+    const leftTableColumns = [
+      {
+        dataIndex: 'employeeid',
+        title: 'Emp ID',
+      },
+      
+      {
+        dataIndex: 'empname',
+        title: 'Full name',
+      },
+      {
+        dataIndex: 'percentage',
+        title: 'Percentage',
+      },
+    ];
+
+    const rightTableColumns = [
+      {
+        dataIndex: 'key',
+        title: 'Emp ID',
+      },
+      {
+        dataIndex: 'empname',
+        title: 'Full name',
+      },
+      {
+        dataIndex: 'percentage',
+        title: 'Percentage',
+      },
+    ];
+
+    
     const { targetKeys, disabled, showSearch } = this.state;
     return (
       <div>

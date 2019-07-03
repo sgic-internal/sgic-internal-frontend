@@ -13,10 +13,7 @@ import {
 } from "antd";
 import Highlighter from "react-highlight-words";
 import React from "react";
-import EmployeeView from "./EmployeeViewModal";
 import axios from "axios";
-import { yieldExpression } from "@babel/types";
-// import axios from 'axios';
 
 const { Option } = Select;
 
@@ -40,16 +37,16 @@ export default class App extends React.Component {
     this.onChangeEmployeeId = this.onChangeEmployeeId.bind(this);
     this.onChangeEmployeeName = this.onChangeEmployeeName.bind(this);
     this.onChangeEmployeeEmail = this.onChangeEmployeeEmail.bind(this);
-    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
-      this
-    );
+    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(this);
     this.handleOk = this.handleOk.bind(this);
+    this.fetchDesignations = this.fetchDesignations.bind(this);
 
     this.state = {
-      employeeId: "",
-      employeeName: "",
-      employeeDesignation: "",
-      employeeEmail: "",
+      // employeeautoId:"",
+      // employeeId: "",
+      // employeeName: "",
+      // employeeDesignation: "",
+      // employeeEmail: "",
     };
 
     this.state = {
@@ -74,8 +71,9 @@ export default class App extends React.Component {
     this.setState({
       employeeDesignation: `${value}`
     });
-    //console.log(this.state.employeeDesignation)
+    console.log(this.state.employeeDesignation)
   }
+  
   onChangeEmployeeEmail(e) {
     this.setState({
       employeeEmail: e.target.value
@@ -95,18 +93,39 @@ export default class App extends React.Component {
     });
   };
 
+  componentDidMount() {
+    
+    this.fetchDesignations();
+    console.log("mounting");
+    this.getAllEmployees();
+  }
+
+  fetchDesignations() {
+    var _this = this;
+    axios.get('http://localhost:8084/employeeservice/getAllDesignation')
+    .then(function (response) {
+      // handle success
+      console.log(response.data);
+     _this.setState({designations: response.data});    
+      console.log(_this.state.designations);
+  
+    });
+  }
+
   handleOk = empId => {
     console.log(empId);
     const obj = {
-      empId: this.state.employeeId,
-      name: this.state.employeeName,
-      id: this.state.employeeDesignation,
-      email: this.state.employeeEmail
+      // empId:this.state.employeeautoId,
+      // employeeid: this.state.employeeId,
+      // name: this.state.employeeName,
+      // designationid: this.state.employeeDesignation,
+      // email: this.state.employeeEmail
     };
     axios
       .put("http://localhost:8084/employeeservice/update/" + empId, obj)
       .then(response => this.getAllEmployees());
     this.setState({
+      employeeautoId:"",
       employeeId: "",
       employeeName: "",
       employeeDesignation: "",
@@ -136,19 +155,10 @@ export default class App extends React.Component {
     });
     console.log(this.state.employees);
 
-    // data.forEach(element => {
-    //     console.log(element.severity);
-    // });
   }
 
-  componentDidMount() {
-    this.getAllEmployees();
-  }
 
   handleDelete = empId => {
-    // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
-    //     .then(console.log('Deleted'))
-    //     .catch(err => console.log(err))
     fetch("http://localhost:8084/employeeservice/deletebyid/" + empId, {
       method: "DELETE",
       headers: {
@@ -186,9 +196,10 @@ export default class App extends React.Component {
       .then(response => {
         console.log(response);
         this.setState({
-          employeeId: response.data.empId,
+          employeeautoId:response.data.empId,
+          employeeId: response.data.employeeid,
           employeeName: response.data.name,
-          employeeDesignation: response.data.id,
+          employeeDesignation: response.data.designationname,
           employeeEmail: response.data.email
         });
       })
@@ -277,14 +288,11 @@ export default class App extends React.Component {
     const columns = [
       {
         title: "Emp Id",
-        dataIndex: "empId",
-        key: "empId",
+        dataIndex: "employeeid",
+        key: "employeeid",
         width: "10%",
         defaultSortOrder: 'descend',
-        sorter: (a, b) => a.empId.length - b.empId.length,
-        //sortOrder: sortedInfo.columnKey === 'empId' && sortedInfo.order,
-        // filteredValue: filteredInfo.empId || null,
-        // onFilter: (value, record) => record.empId.includes(value),
+        sorter: (a, b) => a.employeeid.length - b.employeeid.length,
       },
       {
         title: "Employee Name",
@@ -394,26 +402,14 @@ export default class App extends React.Component {
               </Row>
               <Row>
                 <Col span={8} style={{ padding: "5px" }}>
-                  <Form.Item label="Role">
-                    <Select
-                      placeholder="Role"
-                      onChange={this.onChangeEmployeeDesignation}
-                      value={this.state.employeeDesignation}
-                    >
-                      <Option value="ADMIN"> ADMIN</Option>
-                      <Option value="USER"> USER</Option>
-                      <Option value="HR">HR</Option>
-                      <Option value="PM">PM</Option>
-                      <Option value="QAL"> QAL</Option>
-                      <Option value="TECL"> TECL</Option>
-                      <Option value="QA"> QA</Option>
-                      <Option value="DEV">DEV</Option>
-                      <Option value="ASSOCQA"> ASSOCQA</Option>
-                      <Option value="ASSOCDEV">ASSOCDEV</Option>
+                <Form.Item label="Designation">
+                  <Select>
+                  {/* {this.state.designations.map(function(item, index){
+                      return <Option key={index} value={item.designationid}> {item.designationname}</Option> })} */}
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={12} style={{ padding: "5px" }}>
+                <Col span={16} style={{ padding: "5px" }}>
                   <Form.Item label="Email Id">
                     <Input
                       placeholder="Email Id"
