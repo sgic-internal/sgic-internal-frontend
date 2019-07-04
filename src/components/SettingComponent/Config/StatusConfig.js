@@ -267,6 +267,8 @@ export default class StatusConfig extends React.Component {
     console.log(e);
     this.setState({
       visibleEditModal: false,
+      name:null,
+      value:null
     });
   };
 
