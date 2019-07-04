@@ -12,7 +12,8 @@ import {
   Col,
   InputNumber,
   Popconfirm,
-  message
+  message,
+  Select
 } from "antd";
 import moment from "moment";
 import "./index.css";
@@ -20,6 +21,7 @@ import axios from "axios";
 import CompanyController from "./CompanyController";
 
 const { TextArea } = Input;
+const { Option } = Select;
 //dropdown for Lisence period s Function
 function onChange(value) {
   console.log("changed", value);
@@ -51,8 +53,32 @@ export default class App extends React.Component {
     submitting: false,
     value: "",
     data: "",
-    getCompany: []
+    getCompany: [],
+    licenseTypeCompany: "",
+    getLicenseTypes: []
   };
+
+  //-----------------------------------------------------------------
+  fetchAllLicenseType = () => {
+    fetch(`http://localhost:8083/productservice/Licenses`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          getLicenseTypes: data
+        });
+        console.log(data);
+      });
+  };
+
+  onChangeLicenseSelect = value => {
+    this.setState({
+      licenseTypeCompany: value
+    });
+    console.log(this.state.licenseTypeCompany);
+    //this.fetchAllLicenseType();
+  };
+
+  //--------------------------------------------------------------
 
   handleChange = (pagination, filters, sorter) => {
     console.log("Various parameters", pagination, filters, sorter);
@@ -87,6 +113,7 @@ export default class App extends React.Component {
       [e.target.id]: e.target.value
     });
     console.log(e.target.value);
+    this.fetchAllLicenseType();
   };
 
   onChangeLicense = value => {
@@ -187,24 +214,26 @@ export default class App extends React.Component {
         console.log(data);
       });
 
-    const Company = {
-      companyName: this.state.companyName,
-      companyAbbrivation: this.state.companyAbbrivation,
-      companyRegNo: this.state.companyRegNo,
-      companyAdminName: this.state.companyAdminName,
-      companyAdminEmail: this.state.companyAdminEmail,
-      companyLicenseType: this.state.companyLicenseType,
-      companyLicensePeriod: this.state.companyLicensePeriod,
-      companyDescription: this.state.companyDescription
-    };
-    let newCompany = [...this.state.getCompany, Company];
-    this.setState({
-      getCompany: newCompany
-    });
+    // const Company = {
+    //   companyName: this.state.companyName,
+    //   companyAbbrivation: this.state.companyAbbrivation,
+    //   companyRegNo: this.state.companyRegNo,
+    //   companyAdminName: this.state.companyAdminName,
+    //   companyAdminEmail: this.state.companyAdminEmail,
+    //   companyLicenseTypeId: this.state.companyLicenseTypeId,
+    //   companyLicenseTypeName: this.state.companyLicenseTypeName,
+    //   companyLicensePeriod: this.state.companyLicensePeriod,
+    //   companyDescription: this.state.companyDescription
+    // };
+    // let newCompany = [...this.state.getCompany, Company];
+    // this.setState({
+    //   getCompany: newCompany
+    // });
   };
 
   componentDidMount() {
     this.fetchAllCompany();
+    this.fetchAllLicenseType();
   }
 
   handleOk = companyId => {
@@ -216,7 +245,8 @@ export default class App extends React.Component {
       companyRegNo: this.state.companyRegNo,
       companyAdminName: this.state.companyAdminName,
       companyAdminEmail: this.state.companyAdminEmail,
-      companyLicenseType: this.state.companyLicenseType,
+      companyLicenseTypeId: this.state.licenseTypeCompany,
+      companyLicenseTypeName: this.state.companyLicenseTypeName,
       companyLicensePeriod: this.state.companyLicensePeriod,
       companyDescription: this.state.companyDescription
     };
@@ -230,7 +260,8 @@ export default class App extends React.Component {
       companyRegNo: "",
       companyAdminName: "",
       companyAdminEmail: "",
-      companyLicenseType: "",
+      companyLicenseTypeId: "",
+      companyLicenseTypeName: "",
       companyLicensePeriod: "",
       companyDescription: "",
       visible: false
@@ -250,7 +281,8 @@ export default class App extends React.Component {
           companyRegNo: response.data.companyRegNo,
           companyAdminName: response.data.companyAdminName,
           companyAdminEmail: response.data.companyAdminEmail,
-          companyLicenseType: response.data.companyLicenseType,
+          companyLicenseTypeId: response.data.companyLicenseTypeId,
+          companyLicenseTypeName: response.data.companyLicenseTypeName,
           licenseStartDate: response.data.licenseStartDate,
           licenseEndDate: response.data.licenseEndDate,
           companyLicensePeriod: response.data.companyLicensePeriod,
@@ -494,16 +526,24 @@ export default class App extends React.Component {
               </Col>
 
               <Col span={15} style={{ padding: "5px" }}>
-                <Form.Item
-                  label="Licence Type"
-                  className="collection-create-form_last-form-item"
-                >
-                  <Radio.Group>
-                    <Radio value="Basic">Basic</Radio>
-                    <Radio value="Medium">Medium</Radio>
-                    <Radio value="Advanced">Advanced</Radio>
-                    <Radio value="Customized">Customized</Radio>
-                  </Radio.Group>
+                <Form.Item label="License Type">
+                  <Select
+                    name="licenseType"
+                    id="licenseType"
+                    value={this.state.licenseTypeCompany}
+                    defaultValue="Select License Type"
+                    style={{ width: 200 }}
+                    onChange={this.onChangeLicenseSelect}
+                  >
+                    {/* <Option value={this.state.companyLicenseTypeId || ""}>
+                      {this.state.companyLicenseTypeName || ""}
+                    </Option> */}
+                    {this.state.getLicenseTypes.map(e => (
+                      <Option key={e.licenseId} value={e.licenseId}>
+                        {e.licenseType}
+                      </Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
             </Row>
@@ -652,7 +692,7 @@ export default class App extends React.Component {
               <p>{this.state.companyLicensePeriod}</p>
               <p>{this.state.licenseStartDate}</p>
               <p>{this.state.licenseEndDate}</p>
-              <p>{this.state.companyLicenseType}</p>
+              <p>{this.state.companyLicenseTypeName}</p>
               <p>{this.state.companyAdminName}</p>
               <p>{this.state.companyAdminEmail}</p>
               <p>{this.state.companyDescription}</p>
