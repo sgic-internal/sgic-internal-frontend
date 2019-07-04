@@ -1,306 +1,163 @@
 import { Modal, Button, Form, Icon, Input, Select, Row, Col } from "antd";
 import React from "react";
 import axios from "axios";
-import Employee from "./Employee";
-import { object } from "prop-types";
 
-var emailRegex = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
 const { Option } = Select;
+const emailRegex = RegExp(
+  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+);
 
+const NameRegex = RegExp(/^[a-zA-Z]+$/);
+const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
+
+const formValid = ({ formerrors, ...rest }) => {
+  let valid = true;
+
+  // validate form errors being empty
+  Object.values(formerrors).forEach(val => {
+    val.length > 0 && (valid = false);
+  });
+
+  // validate the form was filled out
+  Object.values(rest).forEach(val => {
+    val === null && (valid = false);
+  });
+
+  return valid;
+};
 class EmployeeAddModal extends React.Component {
+  //post integration
 
   constructor(props) {
     super(props);
 
     this.state = {
       employeeId: "",
-      employeeIdError: "",
       employeeName: "",
-      employeeNameError: "",
       employeeDesignation: "",
       employeeEmail: "",
-      employeeEmailError: "",
-      designations: [],
-      designation: "Please Select a Designation",
-      employeeDesignationError: "",
       visible: false,
-      error: false,
-      eIdError: false,
-      eNameError: false,
-      eEmailError: false
+      formerrors: {
+        employeeId: "",
+        employeeName: "",
+        employeeEmail: ""
+      },
+      designations: []
     };
 
     // this.onhandleChange = this.onhandleChange.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handlechange = this.handlechange.bind(this);
     this.fetchDesignations = this.fetchDesignations.bind(this);
-    //this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(this);
+    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
+      this
+    );
     this.handleOk = this.handleOk.bind(this);
-
-
-  }
-
-  doValidate = (e) => {
-    let empId = this.state.employeeId;
-    let empName = this.state.employeeName;
-    let empEmail = this.state.employeeEmail;
-    let empDesError = this.state.employeeDesignationError;
-    let error = this.state.error;
-    let eIdError = false;
-    let eNameError = false;
-    let eEmailError = false;
-    let eDescError = false;
-
-    if (!empId && !empName && !empEmail && !eDescError) {
-      this.setState({
-        employeeIdError: "*Employee Id cannot be empty",
-        employeeNameError: "*Employee Name cannot be empty",
-        employeeEmailError: "*Employee Email cannot be empty",
-        employeeDesignationError: "* Please Select a Designation"
-      });
-
-    }
-    else if (!empId) {
-      this.setState({
-        employeeIdError: "*Employee Id cannot be empty",
-      });
-      eIdError = true;
-      console.log(eIdError);
-      return false
-    }
-
-    else if (empId) {
-      this.setState({
-        employeeIdError: "",
-      });
-      eIdError = true;
-      console.log(eIdError);
-
-    }
-
-    if (!empName) {
-      this.setState({
-        employeeNameError: "*Employee Name cannot be empty"
-      });
-      eNameError = true;
-      console.log(eNameError)
-
-    }
-
-    else if (empName) {
-      this.setState({
-        employeeNameError: ""
-      });
-      eNameError = true;
-      console.log(eNameError)
-
-    }
-
-
-
-    if (!empEmail) {
-      this.setState({
-        employeeEmailError: "*Employee Email cannot be empty"
-      });
-      eEmailError = true;
-      console.log(eEmailError)
-
-    }
-
-    else if (empEmail) {
-      this.setState({
-        employeeEmailError: ""
-      });
-      eEmailError = true;
-      console.log(eEmailError)
-
-    }
-
-    else if (!emailRegex.test(empEmail)) {
-      this.setState({
-        employeeEmailError
-          : "Employee Email must have @ character"
-      });
-      error = true;
-      console.log(error)
-    }
-
-    if (empDesError) {
-
-    }
-
-    if (empId && empName && empEmail && eDescError) {
-      this.setState({
-        employeeIdError: "",
-        employeeNameError: "",
-        employeeEmailError: "",
-        employeeDesignationError: ""
-      });
-
-      return true;
-    }
-
-
-
   }
 
   componentDidMount() {
-    //this.props.form.validateFields();
-    //this.doValidate();
     this.fetchDesignations();
     console.log("mounting");
   }
 
   fetchDesignations() {
     var _this = this;
-    axios.get('http://localhost:8084/employeeservice/getAllDesignation')
-      .then(function (response) {
+    axios
+      .get("http://localhost:8084/employeeservice/getAllDesignation")
+      .then(function(response) {
         // handle success
         console.log(response.data);
         _this.setState({ designations: response.data });
-        //   this.setState(prevState => ({
-        //     designations: {                   // object that we want to update
-        //         ...prevState,    // keep all other key-value pairs
-        //         designations: response.data       // update the value of specific key
-        //     }
-        // }))
         console.log(_this.state.designations);
       });
   }
 
-
-
-  // onhandleChange(e, validateFunc) {
-  //   const inputName = e.target.name;
-  //   const inputValue = e.target.value;
-
-
-  //   this.setState({
-  //     [inputName]: {
-  //         value: inputValue,
-  //         ...validateFunc(inputValue)
-  //    }
-  //   });
-  // }
-
-  handleChange = (e) => {
+  onChangeEmployeeDesignation(value) {
     this.setState({
-      [e.target.name]: e.target.value
+      employeeDesignation: `${value}`
     });
-    console.log(e.target.value);
-
+    console.log(this.state.employeeDesignation);
   }
+  handlechange = e => {
+    e.preventDefault();
 
-  // handling select cuz handleChange is throwing errors
-  handleDesignationChange = (value) => {
-    this.setState({
-      designation: value
-    });
-    console.log()
-  }
+    const { name, value } = e.target;
+    let formerrors = { ...this.state.formerrors };
 
-
+    switch (name) {
+      case "employeeId":
+        if (!ValidRegex.test(value)) {
+          formerrors.employeeId = "Invalid Id";
+        } else if (value.length > 8) {
+          formerrors.employeeId = "Should be less than 8 characters";
+        } else if (value.length < 2) {
+          formerrors.employeeId = "Should be greater than 2 characters";
+        } else {
+          formerrors.employeeId = "";
+        }
+        break;
+      case "employeeName":
+        if (!NameRegex.test(value)) {
+          formerrors.employeeName = "Invalid Name";
+        } else if (value.length > 30) {
+          formerrors.employeeName = "Should be less than 30 characters";
+        } else {
+          formerrors.employeeName = "";
+        }
+        break;
+      case "employeeEmail":
+        formerrors.employeeEmail = emailRegex.test(value)
+          ? ""
+          : "Invalid email address";
+        break;
+      default:
+        break;
+    }
+    this.setState({ formerrors, [name]: value }, () => console.log(this.state));
+  };
 
   handleOk = e => {
-
     e.preventDefault();
-    let isValidated = this.doValidate();
-    let error = this.state.error;
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log("Received values of form: ", values);
+        this.setState({ visible: false });
+      } else {
+      }
+    });
+    if (formValid(this.state)) {
+      console.info(`
+        --SUBMITTING--
+        Employee Id: ${this.state.employeeId}
+        Employee Name: ${this.state.employeeName}
+        Employee Email: ${this.state.employeeEmail}
+       
+      `);
 
-    if (!isValidated) {
-      this.setState({
-        // employeeIdError: "Employee Id cannot be empty",
-        // employeeNameError: "Employee Name cannot be empty",
-        visible: true
-      })
-    }
-
-    if (isValidated) {
-      this.setState({
-        visible: false
-      })
       const serverport = {
-        empId: this.state.employeeId,
+        employeeid: this.state.employeeId,
         name: this.state.employeeName,
-        id: this.state.employeeDesignation,
+        designationid: this.state.employeeDesignation,
         email: this.state.employeeEmail
       };
       axios
-        .post("http://localhost:8084/employeeservice/createemployee", serverport)
-        .then(res => console.log(res.data)
-        );
+        .post(
+          "http://localhost:8084/employeeservice/createemployee",
+          serverport
+        )
+        .then(res => console.log(res.data))
+        .catch(error => {
+          console.log(error);
+        });
+    } else {
+      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
-
-
-
-    //eIdError & etc
-    // let e1 = this.state.eIdError;
-    // let e2 = this.state.eNameError;
-    // let e3 = this.state.eEmailError;
-
-    // if (e1) {
-    //   this.setState({
-    //     visible: "true",
-    //     employeeIdError: "Employee Id cannot be empty"
-    //   });
-
-    // }
-
-    // if (!e1) {
-    //   this.setState({
-    //     visible: "true",
-    //     employeeIdError: ""
-    //   });
-    // }
-
-
-    // if (e2) {
-    //   this.setState({
-    //     visible: "true",
-    //     employeeNameError: "Employee Name cannot be empty",
-    //   });
-    // }
-
-    // if (e2 == false) {
-    //   this.setState({
-    //     visible: "true",
-    //     employeeNameError: "",
-    //   });
-    // }
-
-    // if (e3 == true) {
-    //   this.setState({
-    //     visible: "true",
-    //     employeeEmailError: "Employee Email cannot be empty",
-    //   });
-    // }
-
-    // this.props.form.validateFields((err, values) => {
-    //   if (!err) {
-    //     console.log('Received values of form: ', values);
-    //   }
-    // });
-    // if (formValid(this.state)) {
-    //   console.info(`
-    //     --SUBMITTING--
-    //     Employee Id: ${this.state.employeeId}
-    //     Employee Name: ${this.state.employeeName}
-    //     Employee Email: ${this.state.employeeEmail}
-
-    //   `);
-    // } else {
-    //   console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
-    // }
 
     // this.setState({
     //   employeeId: "",
     //   employeeName: "",
-    //   employeeDesignation: "USER",
-    //   employeeEmail: "",
-    //   visible: false
+    //   employeeDesignation: "",
+    //   employeeEmail: ""
     // });
-
-
-
   };
 
   // post integration finishes
@@ -313,17 +170,26 @@ class EmployeeAddModal extends React.Component {
   };
 
   handleCancel = e => {
-    console.log(e);
     this.setState({
-      employeeId: "",
-      employeeName: "",
-      employeeDesignation: "",
-      employeeEmail: "",
+      employeeId: "null",
+      employeeName: "null",
+      employeeDesignation: "null",
+      employeeEmail: "null",
       visible: false
     });
+
+    console.info(`
+        --Cancel--
+        Employee Id: ${this.state.employeeId}
+        Employee Name: ${this.state.employeeName}
+        Employee Email: ${this.state.employeeEmail}
+       
+      `);
   };
 
   render() {
+    const { formerrors } = this.state;
+    const { getFieldDecorator } = this.props.form;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>
@@ -336,96 +202,130 @@ class EmployeeAddModal extends React.Component {
           onCancel={this.handleCancel}
           width="550px"
         >
-          <Form onSubmit={e => this.handleOk(e)}>
+          <Form>
             <Row>
               <Col span={6} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Id">
-                  <Input
-                    placeholder="Employee Id"
-                    value={this.state.employeeId}
-                    name="employeeId"
-                    type="text"
-                    onChange={e => this.handleChange(e)}
-                    required
-                  />
-                  <div style={{ color: "red", fontSize: "11px", marginRight: "4px" }}>{this.state.employeeIdError}</div>
+                  <div>
+                    {getFieldDecorator("employeeId", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input employeeId!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        className={
+                          formerrors.employeeId.length > 0 ? "error" : null
+                        }
+                        placeholder="Employee Id"
+                        value={this.state.employeeId}
+                        name="employeeId"
+                        type="text"
+                        onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
 
-                  {/* {formerrors.employeeId.length > 0 && (
+                  {formerrors.employeeId.length > 0 && (
                     <span
                       className="error"
                       style={{ color: "red", fontSize: "14px" }}
                     >
                       {formerrors.employeeId}
                     </span>
-                  )}  */}
-
+                  )}
                 </Form.Item>
               </Col>
               <Col span={18} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Name">
-                  <Input
-                    required
-                    placeholder="Employee Name"
-                    value={this.state.employeeName}
-                    onChange={e => this.handleChange(e)}
-                    name="employeeName"
-                    type="text"
-                  />
-                  <div style={{ color: "red", fontSize: "11px" }}>{this.state.employeeNameError}</div>
-                  {/* {formerrors.employeeName.length > 0 && (
+                  {getFieldDecorator("employeeName", {
+                    rules: [
+                      {
+                        required: true,
+                        message: "Please input employeeName!"
+                      }
+                    ]
+                  })(
+                    <Input
+                      className={
+                        formerrors.employeeName.length > 0 ? "error" : null
+                      }
+                      placeholder="Employee Name"
+                      value={this.state.employeeName}
+                      onChange={this.handlechange}
+                      name="employeeName"
+                      type="text"
+                    />
+                  )}
+                  {formerrors.employeeName.length > 0 && (
                     <span
                       className="error"
                       style={{ color: "red", fontSize: "14px" }}
                     >
                       {formerrors.employeeName}
                     </span>
-                  )} */}
+                  )}
                 </Form.Item>
               </Col>
             </Row>
 
             <Row>
               <Col span={6} style={{ padding: "5px" }}>
-                <Form.Item label="designation">
-                  <Select
-                    defaultValue="Select Designations"
-                    style={{ width: 120 }}
-                    value={this.state.designation}
-                    onChange={e => this.handleDesignationChange(e)}
-                    name="designation"
-                  >
-                    {this.state.designations.map(function (item, index) {
-                      return <Option key={index} value={item.id}>{item.designationname}</Option>
-                    })}
-                  </Select>
-                  <div>{this.state.employeeDesignationError}</div>
+                <Form.Item label="Designation">
+                  {getFieldDecorator("gender", {
+                    rules: [
+                      { required: true, message: "Please select designation!" }
+                    ]
+                  })(
+                    <Select
+                      defaultValue="Select Designation"
+                      style={{ width: 120 }}
+                      onChange={this.onChangeEmployeeDesignation}
+                    >
+                      {this.state.designations.map(function(item, index) {
+                        return (
+                          <Option key={index} value={item.designationid}>
+                            {item.designationname}
+                          </Option>
+                        );
+                      })}
+                    </Select>
+                  )}
                 </Form.Item>
               </Col>
 
               <Col span={18} style={{ padding: "5px" }}>
                 <Form.Item label="Email">
-                  <Input
-                    // className={
-                    //   formerrors.employeeEmail.length > 0 ? "error" : null
-                    // }
-                    placeholder="Email"
-                    value={this.state.employeeEmail}
-                    //     value={this.state.employeeEmail}
-                    onChange={e => this.handleChange(e)}
-                    name="employeeEmail"
-                    type="text"
-                    required
-                  />
-                  <div style={{ color: "red", fontSize: "11px" }}>{this.state.employeeEmailError}</div>
-
-                  {/* {formerrors.employeeEmail.length > 0 && (
+                  {getFieldDecorator("employeeEmail", {
+                    rules: [
+                      {
+                        required: true,
+                        message: "Please input employeeEmail!"
+                      }
+                    ]
+                  })(
+                    <Input
+                      className={
+                        formerrors.employeeEmail.length > 0 ? "error" : null
+                      }
+                      placeholder="Email"
+                      value={this.state.employeeEmail}
+                      //     value={this.state.employeeEmail}
+                      onChange={this.handlechange}
+                      name="employeeEmail"
+                      type="text"
+                    />
+                  )}
+                  {formerrors.employeeEmail.length > 0 && (
                     <span
                       className="error"
                       style={{ color: "red", fontSize: "14px" }}
                     >
                       {formerrors.employeeEmail}
                     </span>
-                  )} */}
+                  )}
                 </Form.Item>
               </Col>
             </Row>
@@ -454,16 +354,15 @@ class EmployeeAddModal extends React.Component {
             </Row> */}
           </Form>
         </Modal>
-      </div >
+      </div>
     );
   }
 
-  // validateName = (name) => {
-  //   if (name.length < 2) {
-  //     return { validateStatus: 'error', errorMsg: 'Name is short.' }
-  //   }
-  // }
+  validateName = name => {
+    if (name.length < 2) {
+      return { validateStatus: "error", errorMsg: "Name is short." };
+    }
+  };
 }
 
-export default EmployeeAddModal;
-// export default Form.create()(EmployeeAddModal);
+export default Form.create()(EmployeeAddModal);

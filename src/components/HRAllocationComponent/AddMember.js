@@ -13,9 +13,9 @@ const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
       onItemSelectAll,
       onItemSelect,
       selectedKeys: listSelectedKeys,
-      disabled: listDisabled,
+      disabled: listDisabled
     }) => {
-      const columns = direction === 'left' ? leftColumns : rightColumns;
+      const columns = direction === "left" ? leftColumns : rightColumns;
 
       const rowSelection = {
         getCheckboxProps: item => ({ disabled: listDisabled || item.disabled }),
@@ -31,7 +31,7 @@ const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
         onSelect({ key }, selected) {
           onItemSelect(key, selected);
         },
-        selectedRowKeys: listSelectedKeys,
+        selectedRowKeys: listSelectedKeys
       };
 
       return (
@@ -40,12 +40,12 @@ const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
           columns={columns}
           dataSource={filteredItems}
           size="small"
-          style={{ pointerEvents: listDisabled ? 'none' : null }}
+          style={{ pointerEvents: listDisabled ? "none" : null }}
           onRow={({ key, disabled: itemDisabled }) => ({
             onClick: () => {
               if (itemDisabled || listDisabled) return;
               onItemSelect(key, !listSelectedKeys.includes(key));
-            },
+            }
           })}
         />
       );
@@ -118,7 +118,6 @@ class AddMember extends React.Component {
     targetKeys: originTargetKeys,
     disabled: false,
     showSearch: false,
-
   };
 
   onChange = nextTargetKeys => {
@@ -176,7 +175,8 @@ class AddMember extends React.Component {
           showSearch={showSearch}
           onChange={this.onChange}
           filterOption={(inputValue, item) =>
-            item.title.indexOf(inputValue) !== -1 || item.tag.indexOf(inputValue) !== -1
+            item.title.indexOf(inputValue) !== -1 ||
+            item.tag.indexOf(inputValue) !== -1
           }
           leftColumns={leftTableColumns}
           rightColumns={rightTableColumns}
