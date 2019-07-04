@@ -31,7 +31,8 @@ export default class DefectTypeConfic extends React.Component {
     visible: false,
     visibleEditModal: false,
     DefectType: [],
-    def: []
+    def: [],
+    CountDefectType: []
   };
 
 
@@ -60,6 +61,7 @@ export default class DefectTypeConfic extends React.Component {
   componentDidMount() {
     //this.componentWillMount();
     this.getdefectType();
+    this.getCountDefectType();
     //setInterval(this.componentWillMount);
 
   }
@@ -79,6 +81,18 @@ export default class DefectTypeConfic extends React.Component {
 
       .then(response => this.setState({
         DefectType: response.data,
+      }))
+      .catch(function (error) {
+        console.log(error);
+      });
+
+  }
+
+  getCountDefectType() {
+    const url = 'http://localhost:8081/defectservice/countdefecttype';
+    axios.get(url)
+      .then(response => this.setState({
+        CountDefectType: response.data,
       }))
       .catch(function (error) {
         console.log(error);
@@ -126,6 +140,7 @@ export default class DefectTypeConfic extends React.Component {
     this.setState({
       DefectType
     })
+    this.getCountDefectType();
     message.error("Defect Type Successfully Deleted");
   }
 
@@ -151,10 +166,12 @@ export default class DefectTypeConfic extends React.Component {
       // axios.post('http://localhost:8081/defectservice/defecttype/', obj)
       //   .then(res => this.getdefectType());
       axios.post('http://localhost:8081/defectservice/defecttype/', obj).then((response) => {
-        //console.log(response.data);
+        // console.log(response);
         this.setState({ events: response.data })
         if (response.data.status === "OK") {
-          message.success("Defect Type Successfully Added").then(res => this.getdefectType());
+          message.success("Defect Type Successfully Added");
+          this.getdefectType();
+          this.getCountDefectType();
         }
       })
         .catch((error) => {
@@ -539,7 +556,7 @@ export default class DefectTypeConfic extends React.Component {
 
           </Modal>
           <Table columns={columns} dataSource={this.state.DefectType} />
-
+          Total Number of Defect Type: {this.state.CountDefectType}
           <Icon type="square" />
         </div>
       </React.Fragment >
