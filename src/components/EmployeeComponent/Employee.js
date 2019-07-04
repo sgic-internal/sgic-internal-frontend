@@ -315,8 +315,8 @@ export default class App extends React.Component {
         title: "Designation",
         dataIndex: "designationname",
         key: "designationname",
-        width: "25%"
-        // ...this.getColumnSearchProps("id")
+        width: "25%",
+        ...this.getColumnSearchProps("id")
       },
 
       {
@@ -407,7 +407,6 @@ export default class App extends React.Component {
                 </Col>
               </Row>
               <Row>
-<<<<<<< HEAD
                 <Col span={8} style={{ padding: "5px" }}>
                   <Form.Item label="Designation">
                     <Select
@@ -425,22 +424,6 @@ export default class App extends React.Component {
                     </Select>
                   </Form.Item>
                 </Col>
-=======
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Designation">
-                  <Select
-                   // defaultValue="Select Designation"
-                   onChange={this.onChangeEmployeeDesignation}
-                   value={this.state.employeeDesignation}
-                  >
-                    {this.state.employees.map(function(item, index){
-                      return <Option key={index} value={item.designationid}>{item.designationname}</Option>
-                      })}
-                 
-                  </Select>
-                </Form.Item>
-              </Col>
->>>>>>> e225d480bf89e98c558d565bfd46f49f9d3263d3
                 <Col span={16} style={{ padding: "5px" }}>
                   <Form.Item label="Email Id">
                     <Input

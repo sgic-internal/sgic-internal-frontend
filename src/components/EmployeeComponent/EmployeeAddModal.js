@@ -1,17 +1,15 @@
 import { Modal, Button, Form, Icon, Input, Select, Row, Col } from "antd";
 import React from "react";
 import axios from "axios";
-import Employee from "./Employee";
-import { object } from "prop-types";
 
-var emailRegex = new RegExp(
-  /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-);
 const { Option } = Select;
+const emailRegex = RegExp(
+  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+);
 
 const NameRegex = RegExp(/^[a-zA-Z]+$/);
 const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
-const NotNull = RegExp(/^[]+$/);
+
 const formValid = ({ formerrors, ...rest }) => {
   let valid = true;
 
@@ -28,14 +26,14 @@ const formValid = ({ formerrors, ...rest }) => {
   return valid;
 };
 class EmployeeAddModal extends React.Component {
+  //post integration
+
   constructor(props) {
     super(props);
 
     this.state = {
       employeeId: "",
-      employeeIdError: "",
       employeeName: "",
-      employeeNameError: "",
       employeeDesignation: "",
       employeeEmail: "",
       visible: false,
@@ -48,7 +46,7 @@ class EmployeeAddModal extends React.Component {
     };
 
     // this.onhandleChange = this.onhandleChange.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handlechange = this.handlechange.bind(this);
     this.fetchDesignations = this.fetchDesignations.bind(this);
     this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
       this
@@ -73,27 +71,26 @@ class EmployeeAddModal extends React.Component {
       });
   }
 
-  // handling select cuz handleChange is throwing errors
-  handleDesignationChange = value => {
+  onChangeEmployeeDesignation(value) {
     this.setState({
-      designation: value
+      employeeDesignation: `${value}`
     });
     console.log(this.state.employeeDesignation);
-  };
-
+  }
   handlechange = e => {
     e.preventDefault();
 
     const { name, value } = e.target;
     let formerrors = { ...this.state.formerrors };
+
     switch (name) {
       case "employeeId":
         if (!ValidRegex.test(value)) {
           formerrors.employeeId = "Invalid Id";
         } else if (value.length > 8) {
           formerrors.employeeId = "Should be less than 8 characters";
-        } else if (!NotNull) {
-          formerrors.employeeId = "Not Null";
+        } else if (value.length < 2) {
+          formerrors.employeeId = "Should be greater than 2 characters";
         } else {
           formerrors.employeeId = "";
         }
@@ -173,14 +170,21 @@ class EmployeeAddModal extends React.Component {
   };
 
   handleCancel = e => {
-    console.log(e);
     this.setState({
-      employeeId: "",
-      employeeName: "",
-      employeeDesignation: "",
-      employeeEmail: "",
+      employeeId: "null",
+      employeeName: "null",
+      employeeDesignation: "null",
+      employeeEmail: "null",
       visible: false
     });
+
+    console.info(`
+        --Cancel--
+        Employee Id: ${this.state.employeeId}
+        Employee Name: ${this.state.employeeName}
+        Employee Email: ${this.state.employeeEmail}
+       
+      `);
   };
 
   render() {
@@ -198,7 +202,7 @@ class EmployeeAddModal extends React.Component {
           onCancel={this.handleCancel}
           width="550px"
         >
-          <Form onSubmit={e => this.handleOk(e)}>
+          <Form>
             <Row>
               <Col span={6} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Id">
@@ -262,8 +266,7 @@ class EmployeeAddModal extends React.Component {
                     >
                       {formerrors.employeeName}
                     </span>
-                  )}{" "}
-                  */}
+                  )}
                 </Form.Item>
               </Col>
             </Row>
@@ -322,8 +325,7 @@ class EmployeeAddModal extends React.Component {
                     >
                       {formerrors.employeeEmail}
                     </span>
-                  )}{" "}
-                  */}
+                  )}
                 </Form.Item>
               </Col>
             </Row>
