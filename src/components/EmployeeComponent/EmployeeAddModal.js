@@ -1,42 +1,66 @@
-import { Modal, Button, Form, Icon, Input, Select, Row, Col } from "antd";
+import {
+  Modal,
+  Button,
+  Form,
+  Icon,
+  Input,
+  Select,
+  Row,
+  Col,
+  Alert
+} from "antd";
 import React from "react";
 import axios from "axios";
 import Employee from "./Employee";
+import { object } from "prop-types";
 
 //import EmployeeDataService from './EmployeeDataService';
 
 const { Option } = Select;
+const emailRegex = RegExp(
+  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+);
+
+const NameRegex = RegExp(/^[a-zA-Z]+$/);
+
+const formValid = ({ formerrors, ...rest }) => {
+  let valid = true;
+
+  // validate form errors being empty
+  Object.values(formerrors).forEach(val => {
+    val.length > 0 && (valid = false);
+  });
+
+  // validate the form was filled out
+  Object.values(rest).forEach(val => {
+    val === null && (valid = false);
+  });
+
+  return valid;
+};
 
 export default class App extends React.Component {
   //post integration
 
   constructor(props) {
     super(props);
-    this.onChangeEmployeeId = this.onChangeEmployeeId.bind(this);
-    this.onChangeEmployeeName = this.onChangeEmployeeName.bind(this);
-    this.onChangeEmployeeEmail = this.onChangeEmployeeEmail.bind(this);
-    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
-      this
-    );
-    this.handleOk = this.handleOk.bind(this);
 
     this.state = {
       employeeId: "",
       employeeName: "",
-      employeeDesignation: "USER",
-      employeeEmail: ""
+      employeeDesignation: "",
+      employeeEmail: "",
+      formerrors: {
+        employeeId: "",
+        employeeName: "",
+        employeeEmail: ""
+      }
     };
-  }
-
-  onChangeEmployeeId(e) {
-    this.setState({
-      employeeId: e.target.value
-    });
-  }
-  onChangeEmployeeName(e) {
-    this.setState({
-      employeeName: e.target.value
-    });
+    this.handlechange = this.handlechange.bind(this);
+    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
+      this
+    );
+    this.handleOk = this.handleOk.bind(this);
   }
 
   onChangeEmployeeDesignation(value) {
@@ -45,14 +69,62 @@ export default class App extends React.Component {
     });
     //console.log(this.state.employeeDesignation)
   }
-  onChangeEmployeeEmail(e) {
-    this.setState({
-      employeeEmail: e.target.value
-    });
-  }
+
+  handlechange = e => {
+    e.preventDefault();
+
+    const { name, value } = e.target;
+    let formerrors = { ...this.state.formerrors };
+
+    // console.log("Name: ", name);
+    // console.log("value: ", value);
+    switch (name) {
+      case "employeeId":
+        formerrors.employeeId =
+          value.length > 8 ? "Should have 8 characters" : "";
+        break;
+      case "employeeName":
+        if (!NameRegex.test(value)) {
+          formerrors.employeeName = "Invalid Name";
+        } else if (value.length > 30) {
+          formerrors.employeeName = "Should be less than 30 characters";
+        } else {
+          formerrors.employeeName = "";
+        }
+        break;
+      case "employeeEmail":
+        formerrors.employeeEmail = emailRegex.test(value)
+          ? ""
+          : "invalid email address";
+        break;
+      default:
+        break;
+    }
+
+    this.setState({ formerrors, [name]: value }, () => console.log(this.state));
+  };
 
   handleOk = e => {
     e.preventDefault();
+    if (formValid(this.state)) {
+      console.info(`
+        --SUBMITTING--
+        Employee Id: ${this.state.employeeId}
+        Employee Name: ${this.state.employeeName}
+        Employee Email: ${this.state.employeeEmail}
+       
+      `);
+    } else {
+      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+    }
+
+    // this.setState({
+    //   employeeId: "",
+    //   employeeName: "",
+    //   employeeDesignation: "USER",
+    //   employeeEmail: "",
+    //   visible: false
+    // });
     const serverport = {
       empId: this.state.employeeId,
       name: this.state.employeeName,
@@ -63,6 +135,8 @@ export default class App extends React.Component {
       .post("http://localhost:8084/employeeservice/createemployee", serverport)
       .then(res => console.log(res.data));
 
+
+    alert("New Employee Record Added Successfully!!!") 
     window.location.reload();
 
     this.setState({
@@ -74,7 +148,6 @@ export default class App extends React.Component {
     });
     return <Employee />;
   };
-
   // post integration finishes
   state = { visible: false };
 
@@ -92,6 +165,7 @@ export default class App extends React.Component {
   };
 
   render() {
+    const { formerrors } = this.state;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>
@@ -106,28 +180,58 @@ export default class App extends React.Component {
         >
           <Form>
             <Row>
-              <Col span={6} style={{ padding: "5px" }}>
+              <Col span={10} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Id">
-                  <Input
-                    placeholder="Employee Id"
-                    value={this.state.employeeId}
-                    onChange={this.onChangeEmployeeId}
-                  />
+                  <div className="employeeId">
+                    <Input
+                      className={
+                        formerrors.employeeId.length > 0 ? "error" : null
+                      }
+                      placeholder="Employee Id"
+                      value={this.state.employeeId}
+                      name="employeeId"
+                      type="text"
+                      onChange={this.handlechange}
+                    />
+
+                    {formerrors.employeeId.length > 0 && (
+                      <span
+                        className="error"
+                        style={{ color: "red", fontSize: "14px" }}
+                      >
+                        {formerrors.employeeId}
+                      </span>
+                    )}
+                  </div>
                 </Form.Item>
               </Col>
-              <Col span={18} style={{ padding: "5px" }}>
+              <Col span={14} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Name">
                   <Input
+                    className={
+                      formerrors.employeeName.length > 0 ? "error" : null
+                    }
                     placeholder="Employee Name"
                     value={this.state.employeeName}
-                    onChange={this.onChangeEmployeeName}
+                    onChange={this.handlechange}
+                    name="employeeName"
+                    type="text"
                   />
+
+                  {formerrors.employeeName.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formerrors.employeeName}
+                    </span>
+                  )}
                 </Form.Item>
               </Col>
             </Row>
 
             <Row>
-              <Col span={6} style={{ padding: "5px" }}>
+              <Col span={10} style={{ padding: "5px" }}>
                 <Form.Item label="Designation">
                   <Select
                     placeholder="Select Designation"
@@ -137,8 +241,9 @@ export default class App extends React.Component {
                         .toLowerCase()
                         .indexOf(input.toLowerCase()) >= 0
                     }
-                    //value={this.state.employeeDesignation}
+                    value={this.state.employeeDesignation}
                     onChange={this.onChangeEmployeeDesignation}
+                    name="designation"
                   >
                     <Option value="ADMIN"> ADMIN</Option>
                     <Option value="USER"> USER</Option>
@@ -154,13 +259,27 @@ export default class App extends React.Component {
                 </Form.Item>
               </Col>
 
-              <Col span={18} style={{ padding: "5px" }}>
+              <Col span={14} style={{ padding: "5px" }}>
                 <Form.Item label="Email">
                   <Input
+                    className={
+                      formerrors.employeeEmail.length > 0 ? "error" : null
+                    }
                     placeholder="Email"
                     value={this.state.employeeEmail}
-                    onChange={this.onChangeEmployeeEmail}
+                    //     value={this.state.employeeEmail}
+                    onChange={this.handlechange}
+                    name="employeeEmail"
+                    type="text"
                   />
+                  {formerrors.employeeEmail.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formerrors.employeeEmail}
+                    </span>
+                  )}
                 </Form.Item>
               </Col>
             </Row>

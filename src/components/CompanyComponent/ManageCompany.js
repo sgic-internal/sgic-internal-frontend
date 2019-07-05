@@ -1,10 +1,26 @@
 import React from "react";
-import { Table, Button, Icon, Divider, Modal, Form, Input, Radio, DatePicker, Row, Col, InputNumber, Popconfirm, message } from "antd";
+import {
+  Table,
+  Button,
+  Icon,
+  Divider,
+  Modal,
+  Form,
+  Input,
+  Radio,
+  Row,
+  Col,
+  InputNumber,
+  Popconfirm,
+  message
+} from "antd";
 import moment from "moment";
 import "./index.css";
+import axios from "axios";
+// import { get } from "http";
 //import { getFieldDecorator } from "antd";
 
-const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY"];
+// const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY"];
 
 const { TextArea } = Input;
 //dropdown for Lisence period s Function
@@ -22,60 +38,18 @@ function cancel(e) {
   message.error("Click on No");
 }
 
-
-
-const data = [
-  {
-    key: "1",
-    registrationid: "Sl200585",
-    companyname: "Samuel Gnanam IT Centre",
-    abbreviation: "SGIC",
-    licenseperiod: "2yrs",
-    itaministrator: "Sujeeban",
-    action: "",
-    more: ""
-  },
-  {
-    key: "2",
-    registrationid: "Sl199576",
-    companyname: "Virtusa Technologies",
-    abbreviation: "VT",
-    licenseperiod: "3yrs",
-    itaministrator: "Thanushan",
-    action: "",
-    more: ""
-  },
-  {
-    key: "3",
-    registrationid: "Sl200843",
-    companyname: "Keeran Software Solutions",
-    abbreviation: "KSS",
-    licenseperiod: "5yrs",
-    itaministrator: "Dayanshan",
-    action: "",
-    more: ""
-  },
-  {
-    key: "4",
-    registrationid: "Sl201198",
-    companyname: "Unicom Consultant Technoligies",
-    abbreviation: "SGIC",
-    licenseperiod: "2yrs",
-    itaministrator: "Lineshwaran",
-    action: "",
-    more: ""
-  },
-  {
-    key: "5",
-    registrationid: "Sl200585",
-    companyname: "Thuviyan Technologies Pvt Ltd",
-    abbreviation: "TTPL",
-    licenseperiod: "2yrs",
-    itaministrator: "Thuviyan",
-    action: "",
-    more: ""
-  }
-];
+// const data = [
+//   {
+//     key: "1",
+//     registrationid: "Sl200585",
+//     companyname: "Samuel Gnanam IT Centre",
+//     abbreviation: "SGIC",
+//     licenseperiod: "2yrs",
+//     itaministrator: "Sujeeban",
+//     action: "",
+//     more: ""
+//   }
+// ];
 
 export default class App extends React.Component {
   state = {
@@ -86,7 +60,8 @@ export default class App extends React.Component {
     visible: false,
     comments: [],
     submitting: false,
-    value: ""
+    value: "",
+    data: ""
   };
 
   handleChange = (pagination, filters, sorter) => {
@@ -108,6 +83,18 @@ export default class App extends React.Component {
       showModalView: true
     });
   };
+
+  // handleDelete = companyId => {
+  //   fetch("http://localhost:8083/productservice/company/" + companyId, {
+  //     method: "DELETE",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json"
+  //     },
+  //     body: JSON.stringify(this.state)
+  //   });
+  //   console.log(companyId);
+  // };
 
   handleOk = () => {
     this.setState({ loading: true });
@@ -160,8 +147,72 @@ export default class App extends React.Component {
       });
     }, 1000);
   };
+
+  componentDidMount() {
+    fetch(`http://localhost:8083/productservice/Companys`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          data: data
+        });
+        console.log(data);
+      });
+  }
+
+  //On submit form method
+  onSubmit(e) {
+    e.preventDefault();
+    const updateCompany = {
+      companyName: this.state.companyName,
+      companyAbbrivation: this.state.companyAbbrivation,
+      companyRegNo: this.state.companyRegNo,
+      companyAdminName: this.state.companyAdminName,
+      companyAdminEmail: this.state.companyAdminEmail,
+      companyLicenseType: this.state.companyLicenseType,
+      companyLicensePeriod: this.state.companyLicensePeriod,
+      LicenseStartDate: this.state.LicenseStartDate,
+      LicenseEndDate: this.state.LicenseEndDate,
+      companyDescription: this.state.companyDescription
+    };
+    console.log(updateCompany);
+    axios
+      .post("http://localhost:8083/productservice/Company", updateCompany)
+      .then(res => {
+        if (res.status === 200) {
+          alert("Company Update Successfylly...!");
+          console.log(res.data);
+        }
+      });
+    this.setState({
+      companyName: "",
+      companyAbbrivation: "",
+      companyRegNo: "",
+      companyAdminName: "",
+      companyAdminEmail: "",
+      companyLicenseType: "",
+      companyLicensePeriod: "",
+      LicenseStartDate: "",
+      LicenseEndDate: "",
+      companyDescription: ""
+    });
+
+    console.log(
+      JSON.stringify({
+        companyName: this.setState.companyName,
+        companyAbbrivation: this.setState.companyAbbrivation,
+        companyRegNo: this.setState.companyRegNo,
+        companyAdminName: this.setState.companyAdminName,
+        companyAdminEmail: this.setState.companyAdminEmail,
+        companyLicenseType: this.setState.companyLicenseType,
+        companyLicensePeriod: this.setState.companyLicensePeriod,
+        LicenseStartDate: this.setState.LicenseStartDate,
+        LicenseEndDate: this.setState.LicenseEndDate,
+        companyDescription: this.setState.companyDescription
+      })
+    );
+  }
+
   render() {
-   
     const { visible, loading } = this.state;
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
@@ -169,8 +220,8 @@ export default class App extends React.Component {
     const columns = [
       {
         title: "Registration Id",
-        dataIndex: "registrationid",
-        key: "registrationid",
+        dataIndex: "companyRegNo",
+        key: "companyRegNo",
         // filters: [{ text: "Joe", value: "Joe" }, { text: "Jim", value: "Jim" }],
         filteredValue: filteredInfo.registrationid || null,
         onFilter: (value, record) => record.registrationid.includes(value),
@@ -179,8 +230,8 @@ export default class App extends React.Component {
       },
       {
         title: "Company Name",
-        dataIndex: "companyname",
-        key: "companyname",
+        dataIndex: "companyName",
+        key: "companyName",
         // filters: [{ text: "Joe", value: "Joe" }, { text: "Jim", value: "Jim" }],
         filteredValue: filteredInfo.companyname || null,
         onFilter: (value, record) => record.companyname.includes(value),
@@ -189,8 +240,8 @@ export default class App extends React.Component {
       },
       {
         title: "Abbreviation",
-        dataIndex: "abbreviation",
-        key: "abbreviation",
+        dataIndex: "companyAbbrivation",
+        key: "companyAbbrivation",
         // filters: [{ text: "Joe", value: "Joe" }, { text: "Jim", value: "Jim" }],
         filteredValue: filteredInfo.abbreviation || null,
         onFilter: (value, record) => record.abbreviation.includes(value),
@@ -199,8 +250,8 @@ export default class App extends React.Component {
       },
       {
         title: "License Period",
-        dataIndex: "licenseperiod",
-        key: "licenseperiod",
+        dataIndex: "companyLicensePeriod",
+        key: "companyLicensePeriod",
         filters: [
           { text: "1yrs", value: "1yrs" },
           { text: "2yrs", value: "2yrs" },
@@ -215,8 +266,8 @@ export default class App extends React.Component {
       },
       {
         title: "IT Admin",
-        dataIndex: "itaministrator",
-        key: "itaministrator",
+        dataIndex: "companyAdminName",
+        key: "companyAdminName",
         // filters: [{ text: "Joe", value: "Joe" }, { text: "Jim", value: "Jim" }],
         filteredValue: filteredInfo.itaministrator || null,
         onFilter: (value, record) => record.itaministrator.includes(value),
@@ -232,7 +283,7 @@ export default class App extends React.Component {
             <Icon
               type="edit"
               style={{ color: "blue" }}
-              onClick={this.showModal}
+              onClick={this.showEditModal}
             />
             <Divider type="vertical" />
             <Popconfirm
@@ -244,7 +295,11 @@ export default class App extends React.Component {
               cancelText="No"
             >
               <a href="#">
-                <Icon type="delete" style={{ color: "red" }} />
+                <Icon
+                  type="delete"
+                  style={{ color: "red" }}
+                  // onClick={this.handleDelete.bind(this, data.companyId)}
+                />
               </a>
             </Popconfirm>
           </span>
@@ -270,7 +325,7 @@ export default class App extends React.Component {
         <div className="table-operations" />
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={this.state.data}
           onChange={this.handleChange}
         />
         <br />
@@ -356,7 +411,7 @@ export default class App extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
+            {/* <Row>
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Start Date">
                   <DatePicker
@@ -376,7 +431,7 @@ export default class App extends React.Component {
                   />
                 </Form.Item>
               </Col>
-            </Row>
+            </Row> */}
 
             <Form.Item label="E-mail">
               <Input
@@ -403,9 +458,9 @@ export default class App extends React.Component {
         >
           <Row>
             <Col span={9} style={{ padding: "5px" }}>
-              <p>
+              {/* <p>
                 <b>Registration Id :</b>
-              </p>
+              </p> */}
               <p>
                 <b>Company Name: </b>
               </p>
@@ -421,12 +476,12 @@ export default class App extends React.Component {
               <p>
                 <b>License Type</b>
               </p>
-              <p>
+              {/* <p>
                 <b>Start Date</b>
               </p>
               <p>
                 <b>End Date</b>
-              </p>
+              </p> */}
               <p>
                 <b>E-mail</b>
               </p>
@@ -441,6 +496,9 @@ export default class App extends React.Component {
               <p label="Status: "></p> */}
             </Col>
             <Col span={1} style={{ padding: "5px" }}>
+              {/* <p>
+                <b>:</b>
+              </p> */}
               <p>
                 <b>:</b>
               </p>
@@ -462,19 +520,16 @@ export default class App extends React.Component {
               <p>
                 <b>:</b>
               </p>
-              <p>
+              {/* <p>
                 <b>:</b>
               </p>
               <p>
                 <b>:</b>
-              </p>
-              <p>
-                <b>:</b>
-              </p>
+              </p> */}
             </Col>
             <Col span={14} style={{ padding: "5px" }}>
-              <p>Sl200585</p>
-              <p>Samuel Gnanam IT Centre</p>
+              <p />
+              <p>Samuel Gnanam</p>
               <p>SGIC</p>
               <p>2yrs</p>
               <p>Sujeeban</p>
