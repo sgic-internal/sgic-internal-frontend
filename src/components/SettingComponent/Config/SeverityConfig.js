@@ -86,7 +86,7 @@ export default class SeverityConfig extends React.Component {
     this.handleSelect = this.handleSelect.bind(this);
     this.handleEditOk = this.handleEditOk.bind(this);
     this.deleteDefectSeverity = this.deleteDefectSeverity.bind(this);
-
+    //this.handleClick = this.handleClick.bind(this);
     this.state = {
       name: '',
       value: '',
@@ -243,18 +243,22 @@ export default class SeverityConfig extends React.Component {
     });
   };
 
-  state = {
-    displayColorPicker: false,
-    color: {
-      r: '241',
-      g: '112',
-      b: '19',
-      a: '1',
-    },
-  };
+  // state = {
+  //   displayColorPicker: false,
+  //   color: {
+  //     r: '241',
+  //     g: '112',
+  //     b: '19',
+  //     a: '1',
+  //   },
+  // };
 
   handleClick = () => {
-    this.setState({ displayColorPicker: !this.state.displayColorPicker })
+    this.setState({ displayColorPicker: !this.setState.displayColorPicker })
+  };
+
+  handleClickAfter = () => {
+    this.setState({ displayColorPicker: this.setState.displayColorPicker })
   };
 
   handleClose = () => {
@@ -263,6 +267,7 @@ export default class SeverityConfig extends React.Component {
 
   handleChange = (color) => {
     this.setState({ color: color.rgb })
+    this.handleClose();
   };
 
   handleSelect(icon) {

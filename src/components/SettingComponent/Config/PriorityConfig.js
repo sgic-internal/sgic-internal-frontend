@@ -222,7 +222,6 @@ export default class PriorityConfig extends React.Component {
     }
     axios.put(`http://localhost:8081/defectservice/defectpriority/${id}`, obj)
       .then(res => this.getDefectPriority());
-
     this.setState({
       name: '',
       value: '',
@@ -266,6 +265,7 @@ export default class PriorityConfig extends React.Component {
 
   handleChange = (color) => {
     this.setState({ color: color.rgb })
+    this.handleClose();
   };
 
   handleSelect(icon) {
