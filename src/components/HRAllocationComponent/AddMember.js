@@ -62,7 +62,7 @@ axios.get('http://localhost:8081/defectservices/GetAllresources')
   });
 
 const employee = []
-const originTargetKeys = employee.filter(item => +item.key % 4 > 1).map(item => item.key);
+const originTargetKeys = employee.filter(item => +item.key % 5 > 1).map(item => item.key);
 
 const leftTableColumns = [
   {
@@ -85,6 +85,11 @@ const leftTableColumns = [
     title: "Designation",
     dataIndex: "designationname",
     key: "designationname",
+  },
+  {
+    title: "Availability",
+    dataIndex: "availability",
+    key: "availability",
   },
 ];
 
@@ -110,6 +115,11 @@ const rightTableColumns = [
     dataIndex: "designationname",
     key: "designationname",
   },
+  {
+    title: "Availability",
+    dataIndex: "availability",
+    key: "availability",
+  },
 
 ];
 
@@ -128,9 +138,7 @@ class AddMember extends React.Component {
     this.setState({ disabled });
   };
 
-  triggerShowSearch = showSearch => {
-    this.setState({ showSearch });
-  };
+  
 
   componentDidMount() {
     this.fetchEmployee();
@@ -153,6 +161,7 @@ class AddMember extends React.Component {
             name: post.name,
             email: post.email,
             designationname: post.designationname,
+            availability:post.availability,
 
           });
           _this.setState({
@@ -163,6 +172,9 @@ class AddMember extends React.Component {
 
       });
   }
+  triggerShowSearch = showSearch => {
+    this.setState({ showSearch });
+  };
 
   render() {
     const { targetKeys, disabled, showSearch } = this.state;
@@ -175,8 +187,10 @@ class AddMember extends React.Component {
           showSearch={showSearch}
           onChange={this.onChange}
           filterOption={(inputValue, item) =>
-            item.title.indexOf(inputValue) !== -1 ||
-            item.tag.indexOf(inputValue) !== -1
+            item.employeeid.indexOf(inputValue) !== -1 ||
+            item.name.indexOf(inputValue) !== -1 ||
+            item.email.indexOf(inputValue) !== -1 ||
+            item.designationname.indexOf(inputValue) !== -1
           }
           leftColumns={leftTableColumns}
           rightColumns={rightTableColumns}
@@ -186,14 +200,14 @@ class AddMember extends React.Component {
           checkedChildren="disabled"
           checked={disabled}
           onChange={this.triggerDisable}
-          style={{ marginTop: 16 }}
+          style={{ marginTop: 10 }}
         />
         <Switch
           unCheckedChildren="showSearch"
           checkedChildren="showSearch"
           checked={showSearch}
           onChange={this.triggerShowSearch}
-          style={{ marginTop: 16 }}
+          style={{ marginTop: 10 }}
         />
       </div>
     );

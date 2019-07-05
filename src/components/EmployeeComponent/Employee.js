@@ -31,6 +31,8 @@ function onChange(sorter) {
   console.log("params", sorter);
 }
 
+
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -316,7 +318,7 @@ export default class App extends React.Component {
         dataIndex: "designationname",
         key: "designationname",
         width: "25%",
-        ...this.getColumnSearchProps("id")
+        ...this.getColumnSearchProps("designationname")
       },
 
       {

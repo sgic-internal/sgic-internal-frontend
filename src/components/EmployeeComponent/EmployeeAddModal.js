@@ -1,8 +1,9 @@
-import { Modal, Button, Form, Icon, Input, Select, Row, Col } from "antd";
+import { Modal, Button, Form, message, Input, Select, Row, Col } from "antd";
 import React from "react";
 import axios from "axios";
 
 const { Option } = Select;
+
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 );
@@ -120,6 +121,7 @@ class EmployeeAddModal extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
+        message.success("Successfully Added!!!")
         this.setState({ visible: false });
       } else {
       }

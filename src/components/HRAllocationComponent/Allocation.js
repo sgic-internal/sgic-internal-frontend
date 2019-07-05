@@ -83,8 +83,8 @@ export default class Allocation extends React.Component {
 
                     visible={visible}
                     title="Allocating Members for Project"
-                    width="80%"
-                    height="30%"
+                    width="90%"
+                    height="40%"
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
                     footer={[
