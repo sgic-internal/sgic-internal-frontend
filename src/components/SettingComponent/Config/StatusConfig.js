@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Table, Divider, Modal, Button, Icon, Form, Input, Col, Row, Popconfirm,message } from 'antd';
-import { SketchPicker } from 'react-color';
-import reactCSS from 'reactcss';
+//import { SketchPicker } from 'react-color';
+//import reactCSS from 'reactcss';
 import axios from 'axios';
 
 const NameRegex = RegExp(/^[a-zA-Z ]+$/);
@@ -72,7 +71,8 @@ export default class StatusConfig extends React.Component {
     visible: false,
     visibleEditModal: false,
     DefectStatus:[],
-    def:[]
+    def:[],
+    TotalDefectStatus: []
   };
 
   constructor(props) {
@@ -101,6 +101,7 @@ export default class StatusConfig extends React.Component {
     componentDidMount() {
       //this.componentWillMount();
       this.getdefectStatus();
+      this.getCountDefectStatus();
       //setInterval(this.componentWillMount);
   
     }
@@ -125,6 +126,17 @@ export default class StatusConfig extends React.Component {
         console.log(error);
         });
         }
+
+        getCountDefectStatus() {
+          const url = 'http://localhost:8081/defectservice/countdefectstatus';
+          axios.get(url)
+          .then(response => this.setState({
+          TotalDefectStatus: response.data,
+          }))
+          .catch(function (error) {
+          console.log(error);
+          });
+          }
     // componentWillMount(){
     //   //Simple Axios
     //   const url ='http://localhost:8081/defectservice/defectstatuses';
@@ -178,6 +190,7 @@ export default class StatusConfig extends React.Component {
     DefectStatus
     })
     message.error("Defect Status Successfully Deleted");
+    this.getCountDefectStatus();
   }
   showEditModal = () => {
     console.log("showEditModal clicked");
@@ -200,11 +213,13 @@ export default class StatusConfig extends React.Component {
     }
      else if(NameRegex.test(this.state.name) && NameRegex.test(this.state.value)){
     axios.post('http://localhost:8081/defectservice/defectstatus/', obj).then((response) => {
-   
+      console.log(response);
       this.setState({ events: response.data })
-      if (response.data.status === "OK") {
+      if (response.status === 200) {
       
-      message.success("Defect Status Successfully Added").then(res => this.getdefectStatus());
+      message.success("Defect Status Successfully Added");
+      this.getdefectStatus();
+      this.getCountDefectStatus();
       }
       })
       .catch((error) => {
@@ -233,12 +248,13 @@ export default class StatusConfig extends React.Component {
       message.warn("Invalid Data");
     }
     else if(NameRegex.test(this.state.name) && NameRegex.test(this.state.value)){
-      axios.put('http://localhost:8081/defectservice/defectstatus/', obj).then((response) => {
-   
+      axios.put(`http://localhost:8081/defectservice/defectstatus/${id}`, obj).then((response) => {
+//  console.log(response);
         this.setState({ events: response.data })
-        if (response.data.status === "OK") {
+        if (response.status === 200) {
         
-        message.success("Defect Status Successfully Added").then(res => this.getdefectStatus());
+        message.success("Defect Status Successfully Updated");
+        this.getdefectStatus();
         }
         })
         .catch((error) => {
@@ -267,8 +283,9 @@ export default class StatusConfig extends React.Component {
     console.log(e);
     this.setState({
       visibleEditModal: false,
-      name:null,
-      value:null
+      name:"",
+      value:""
+
     });
   };
 
@@ -305,7 +322,7 @@ export default class StatusConfig extends React.Component {
         if (!NameRegex.test(newstr)) {
           formErrors.name = "Invalid Defect Status";
         }
-        else if (newstr.length ==0) {
+        else if (newstr.length ===0) {
           formErrors.name = "can't leave this field blank";
         }
         else if(newstr.length<3)
@@ -333,7 +350,7 @@ export default class StatusConfig extends React.Component {
           formErrors.value = "Required less than 50 charecters";
         }
        
-        else if (value.length ==0) {
+        else if (value.length ===0) {
           formErrors.value = "can't leave this field blank";
         }
         else {
@@ -403,7 +420,9 @@ const{formErrors}=this.state;
         render: (text, data=this.state.def) => (
           <span>
 
-            <a onClick={this.editStatus.bind(this, data.id)}><Icon type="edit" style={{fontSize:'17px', color:'blue'}} /></a>
+            {/* <a onClick={this.editStatus.bind(this, data.id)}><Icon type="edit" style={{fontSize:'17px', color:'blue'}} /></a>
+            */}
+            <Icon onClick={this.editStatus.bind(this, data.id)} type="edit" style={{fontSize:'17px', color:'blue'}} />
             <Divider type="vertical" />
 
 
@@ -423,35 +442,35 @@ const{formErrors}=this.state;
       },
     ];
 
-    const styles = reactCSS({
-      'default': {
-        color: {
-          width: '36px',
-          height: '14px',
-          borderRadius: '2px',
-          /*{background: `rgba(${this.state.color.r}, ${this.state.color.g}, ${this.state.color.b}, ${this.state.color.a})`,}*/
-        },
-        swatch: {
-          padding: '5px',
-          background: '#fff',
-          borderRadius: '1px',
-          boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
-          display: 'inline-block',
-          cursor: 'pointer',
-        },
-        popover: {
-          position: 'absolute',
-          zIndex: '2',
-        },
-        cover: {
-          position: 'fixed',
-          top: '0px',
-          right: '0px',
-          bottom: '0px',
-          left: '0px',
-        },
-      },
-    });
+    // const styles = reactCSS({
+    //   'default': {
+    //     color: {
+    //       width: '36px',
+    //       height: '14px',
+    //       borderRadius: '2px',
+    //       /*{background: `rgba(${this.state.color.r}, ${this.state.color.g}, ${this.state.color.b}, ${this.state.color.a})`,}*/
+    //     },
+    //     swatch: {
+    //       padding: '5px',
+    //       background: '#fff',
+    //       borderRadius: '1px',
+    //       boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
+    //       display: 'inline-block',
+    //       cursor: 'pointer',
+    //     },
+    //     popover: {
+    //       position: 'absolute',
+    //       zIndex: '2',
+    //     },
+    //     cover: {
+    //       position: 'fixed',
+    //       top: '0px',
+    //       right: '0px',
+    //       bottom: '0px',
+    //       left: '0px',
+    //     },
+    //   },
+    // });
     return (
       <React.Fragment>
         <div
@@ -617,10 +636,11 @@ const{formErrors}=this.state;
 
           </Modal>
           <Table columns={columns} dataSource={this.state.DefectStatus} />
-
+Total Number of Defect Status: {this.state.TotalDefectStatus}
           <Icon type="square" />
         </div>
       </React.Fragment>
     );
   }
 }
+
