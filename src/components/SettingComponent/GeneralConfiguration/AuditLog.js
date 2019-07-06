@@ -56,7 +56,9 @@ class AuditLog extends React.Component {
   state = {
     visible: false,
     visibleEditModal: false,
-    Data: []
+    Data: [],
+    audit: [],
+    userInput: ""
   };
 
   showModal = () => {
@@ -91,10 +93,38 @@ class AuditLog extends React.Component {
     console.log("Selected Time: ", value);
     console.log("Formatted Selected Time: ", dateString);
   }
-
+  auditSearchview = e => {
+    console.log(e);
+  };
   onOk(value) {
     console.log("onOk: ", value);
   }
+
+  auditSearch = value => {
+    axios
+      .get("http://localhost:8081/defectservices/auditLog/" + value)
+      .then(resp => {
+        let audit = resp.data;
+        console.log(audit);
+
+        const search = [];
+        audit.map((post, index) => {
+          search.push({
+            key: index,
+            fixDate: post.fixDate,
+            user: post.user,
+            status: post.status,
+            defectId: post.defect.defectId
+          });
+        });
+
+        if (value != null) {
+          this.setState({ Data: search });
+        } else {
+          this.getAudit();
+        }
+      });
+  };
 
   /*
   Author: 
@@ -258,7 +288,10 @@ class AuditLog extends React.Component {
             <Col span={5}>
               <Search
                 placeholder=" search ......"
-                onSearch={value => console.log(value)}
+                onChange={e => this.auditSearchview(e)}
+                onSearch={value => {
+                  this.auditSearch(value);
+                }}
                 style={{ width: 215 }}
                 enterButton
               />
