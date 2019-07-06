@@ -1,8 +1,29 @@
-import React from 'react';
-import {Table,Modal,Button,Icon,Form,Select,Row,Col,Upload,Input,TreeSelect,Tag,Comment,Avatar,List, Popconfirm, message, Typography, Divider} from 'antd';
-import moment from 'moment';
-import axios from 'axios';
-import Lightbox from 'react-image-lightbox';
+import React from "react";
+import {
+  Table,
+  Modal,
+  Button,
+  Icon,
+  Form,
+  Select,
+  Row,
+  Col,
+  Upload,
+  Input,
+  TreeSelect,
+  Tag,
+  Comment,
+  Avatar,
+  List,
+  Popconfirm,
+  message,
+  Typography,
+  Divider
+} from "antd";
+import moment from "moment";
+import axios from "axios";
+import Lightbox from "react-image-lightbox";
+import "react-image-lightbox/style.css";
 //import axios from "axios";
 const TreeNode = TreeSelect.TreeNode;
 const Option = Select.Option;
@@ -57,7 +78,6 @@ const Editor = ({ onChange, onSubmit, submitting, value }) => (
   </div>
 );
 
-
 class TableFilter extends React.Component {
   constructor(props) {
     super(props);
@@ -70,7 +90,7 @@ class TableFilter extends React.Component {
         {
           defectId: "",
           projectId: "1",
-          moduleId: "'",
+          moduleId: "",
           severityId: 0,
           priorityId: 0,
           typeId: 0,
@@ -86,6 +106,12 @@ class TableFilter extends React.Component {
           dateAndTime: "2017-05-05"
         }
       ],
+      addAttachment: {
+        name: "",
+        action: "",
+        headers: "",
+        multiple: true
+      },
       images: [],
       defectId: "",
       user: "",
@@ -119,23 +145,20 @@ class TableFilter extends React.Component {
       comments: e.target.value
     });
   }
-  attachment = () => {
-    axios.get("http://localhost:8081/defectservices/listFile/1").then(data => {
-      data.data.map(file => {
-        if (file.id == 1) {
+  attachment = id => {
+    axios
+      .get("http://localhost:8081/defectservices/listFile/" + id)
+      .then(data => {
+        data.data.map(file => {
           console.log(file.fileDownloadUri);
           this.setState({
-            images: [file.fileDownloadUri],
+            images: [...this.state.images, file.fileDownloadUri],
             isOpen: true
           });
-        }
+        });
       });
-    });
-    // this.setState({
-    //   images:['//localhost:8081/defect/downloadFile/1'],
-    //   isOpen: true
-    // })
   };
+
   onSubmit(e) {
     //e.preventDefault();
     const commentsu = {
@@ -213,11 +236,25 @@ class TableFilter extends React.Component {
     });
   };
   showModalView = id => {
+    this.setState({
+      addAttachment: {
+        name: "files",
+        action:
+          "http://localhost:8081/defectservices/uploadMultipleFiles?defectId=" +
+          id,
+        headers: {
+          authorization: "authorization-text"
+        },
+        multiple: true
+      }
+    });
+    console.log(this.state.addAttachment);
     this.getComment(id);
     this.setState({
       showModalView: true,
       defectId: id,
-      comments: ""
+      comments: "",
+      images: []
     });
   };
   handleOk = e => {
@@ -250,8 +287,8 @@ class TableFilter extends React.Component {
     };
     console.log(defectList);
     axios({
-      method: 'post',
-      url: 'http://localhost:8081/defectservices/saveDefect',
+      method: "post",
+      url: "http://localhost:8081/defectservices/saveDefect",
       data: defectList,
       config: { headers: { "Content-Type": "application/json" } }
     })
@@ -291,9 +328,7 @@ class TableFilter extends React.Component {
   handleCancel1 = e => {
     console.log(e);
     this.setState({
-      visible1: false,
-    
-
+      visible1: false
     });
   };
   handleCancelView = e => {
@@ -449,27 +484,29 @@ class TableFilter extends React.Component {
     return <img src="spinner.gif" />;
   }
 
-   //Getting All defect details
-   getdefectStatus() {
-    const url = 'http://localhost:8081/defectservices/getAllDefects';
-    axios.get(url)
-    .then(response => this.setState({
-    defect: response.data,
-    }))
-    .catch(function (error) {
-    console.log(error);
-    });
-    }
+  //Getting All defect details
+  getdefectStatus() {
+    const url = "http://localhost:8081/defectservices/getAllDefects";
+    axios
+      .get(url)
+      .then(response =>
+        this.setState({
+          defect: response.data
+        })
+      )
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
 
+  componentWillMount() {
+    this.getdefectStatus();
+  }
 
-    componentWillMount(){
-      this.getdefectStatus();
-      }
-
-    
-          //Deleting defect details 
+  //Deleting defect details
   handleDelete = defectId => {
-    axios.delete("http://localhost:8081/defectservices/deleteDefect/" + defectId)
+    axios
+      .delete("http://localhost:8081/defectservices/deleteDefect/" + defectId)
       .then(console.log(defectId))
       .catch(err => console.log(err));
 
@@ -538,31 +575,30 @@ class TableFilter extends React.Component {
   //     });
   // }
 
-// //Edting Defect Details 
-//   handleEdit = defectId => {
-//     this.showModal();
-//     console.log(defectId);
-//     this.setState({
-//       defectId: defectId
-//     });
-//     axios
-//       .get("http://localhost:8081/defectservices/getDefectById" + defectId)
-//       .then(response => {
-//         console.log(response);
-//         this.setState({
-//           defectId:response.data.defectId,
-//           moduleId:response.data.moduleId,
-//           defectDescription:response.data.defectDescription,
-         
-          
-//         });
-//       })
-//       .catch(function (error) {
-//         console.log(error);
-//       });
+  // //Edting Defect Details
+  //   handleEdit = defectId => {
+  //     this.showModal();
+  //     console.log(defectId);
+  //     this.setState({
+  //       defectId: defectId
+  //     });
+  //     axios
+  //       .get("http://localhost:8081/defectservices/getDefectById" + defectId)
+  //       .then(response => {
+  //         console.log(response);
+  //         this.setState({
+  //           defectId:response.data.defectId,
+  //           moduleId:response.data.moduleId,
+  //           defectDescription:response.data.defectDescription,
 
-//   };
-  
+  //         });
+  //       })
+  //       .catch(function (error) {
+  //         console.log(error);
+  //       });
+
+  //   };
+
   render() {
     const { photoIndex, isOpen, images } = this.state;
     const { comments, submitting, value, defect } = this.state;
@@ -581,19 +617,19 @@ class TableFilter extends React.Component {
         sortOrder: sortedInfo.columnKey === "defectId" && sortedInfo.order
       },
       {
-        title: 'Project Name',
-        dataIndex: 'projectId',
-        key: 'projectId',
+        title: "Project Name",
+        dataIndex: "projectId",
+        key: "projectId",
         //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
         filteredValue: filteredInfo.projectName || null,
         onFilter: (value, record) => record.projectName.includes(value),
         sorter: (a, b) => a.projectName.length - b.projectName.length,
-        sortOrder: sortedInfo.columnKey === 'projectId' && sortedInfo.order,
+        sortOrder: sortedInfo.columnKey === "projectId" && sortedInfo.order
       },
       {
-        title: 'Module Name',
-        dataIndex: 'moduleId',
-        key: 'moduleId',
+        title: "Module Name",
+        dataIndex: "moduleId",
+        key: "moduleId",
         //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
         filteredValue: filteredInfo.moduleId || null,
         onFilter: (value, record) => record.moduleId.includes(value),
@@ -676,51 +712,41 @@ class TableFilter extends React.Component {
         key: "action",
         render: (text, data = this.state.defect, record) => (
           <span>
-            <Icon type="edit" style={{ fontSize: "18px", color: "blue" }} 
-             // onClick={this.handleEdit.bind(this, data.defectId)}
-            onClick={this.showModal}
+            <Icon
+              type="edit"
+              style={{ fontSize: "18px", color: "blue" }}
+              // onClick={this.handleEdit.bind(this, data.defectId)}
+              onClick={this.showModal}
             />
-            <Divider
-          type="vertical"
-          />
-          
-          <Popconfirm
-          
-          title="Are you sure want to delete this Entry ?"
-          
-          icon={<Icon
-          type="question-circle-o"
-          style={{
-          color: 
-          "red" }} 
-          />}
-          
-          onConfirm={this.handleDelete.bind(this, data.defectId)}
-          
-          onCancel={cancel}
-          
-          okText="Yes"
-          
-          cancelText="No"
-          
-          >
-          
-          <a
-          href="#">
-          
-          <Icon
-          type="delete"
-          style={{
-          color: 
-          "red",fontSize: "18px" }} 
+            <Divider type="vertical" />
 
-         // onClick={() => this.handleDelete(data.defectId)}
-          
-          />
-          
-          </a>
-          
-          </Popconfirm>
+            <Popconfirm
+              title="Are you sure want to delete this Entry ?"
+              icon={
+                <Icon
+                  type="question-circle-o"
+                  style={{
+                    color: "red"
+                  }}
+                />
+              }
+              onConfirm={this.handleDelete.bind(this, data.defectId)}
+              onCancel={cancel}
+              okText="Yes"
+              cancelText="No"
+            >
+              <a href="#">
+                <Icon
+                  type="delete"
+                  style={{
+                    color: "red",
+                    fontSize: "18px"
+                  }}
+
+                  // onClick={() => this.handleDelete(data.defectId)}
+                />
+              </a>
+            </Popconfirm>
           </span>
         )
       },
@@ -740,201 +766,198 @@ class TableFilter extends React.Component {
     ];
     return (
       <div>
-      <Button type="primary" onClick={this.showModal1}>
-       Add Defect
-      </Button>
-      <br/><br/>
-      {/* Add Defects Part */}
-      <Modal
-        title="Add Defects"
-        visible={this.state.visible1}
-        onOk={this.handleOkAddDefect}
-        onCancel={this.handleCancel1}
-        width="600px"
-      >
-
-        <Form onSubmit={this.handleAddDefect}>
-          <Row>
-            <Col span={12} style={{ padding: '5px' }}>
-
-
-              <Form.Item label="Defect Id: ">
-
-                <Input
-                  placeholder="Defect Id"
-                  className="defectId"
-                  name="defectId"
-                  disabled="true"
-                  onChange={(event) => this.handleChangeState(event)}
-                  
-                />
-              </Form.Item>
-
-            </Col>
-            <Col span={12} style={{ padding: '5px' }}>
-              <Form.Item label="Module: ">
-                <TreeSelect
-                  showSearch
-                  style={{ width: '100%' }}
-                  className="moduleId"
-                  name="moduleId"
-                  value={this.state.defect.moduleId}
-                  dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                  placeholder="Module / SubModule name"
-                  allowClear
-                  treeDefaultExpandAll
-                  onChange={this.onChange}
-                >
-                  <TreeNode value="parent 1" title="Module" key="0-1">
-                    <TreeNode value="parent 1-0" title="Sub Module" key="0-1-1">
-
-
+        <Button type="primary" onClick={this.showModal1}>
+          Add Defect
+        </Button>
+        <br />
+        <br />
+        {/* Add Defects Part */}
+        <Modal
+          title="Add Defects"
+          visible={this.state.visible1}
+          onOk={this.handleOkAddDefect}
+          onCancel={this.handleCancel1}
+          width="600px"
+        >
+          <Form onSubmit={this.handleAddDefect}>
+            <Row>
+              <Col span={12} style={{ padding: "5px" }}>
+                <Form.Item label="Defect Id: ">
+                  <Input
+                    placeholder="Defect Id"
+                    className="defectId"
+                    name="defectId"
+                    disabled="true"
+                    onChange={event => this.handleChangeState(event)}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12} style={{ padding: "5px" }}>
+                <Form.Item label="Module: ">
+                  <TreeSelect
+                    showSearch
+                    style={{ width: "100%" }}
+                    className="moduleId"
+                    name="moduleId"
+                    value={this.state.defect.moduleId}
+                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                    placeholder="Module / SubModule name"
+                    allowClear
+                    treeDefaultExpandAll
+                    onChange={this.onChange}
+                  >
+                    <TreeNode value="parent 1" title="Module" key="0-1">
+                      <TreeNode
+                        value="parent 1-0"
+                        title="Sub Module"
+                        key="0-1-1"
+                      />
                     </TreeNode>
+                  </TreeSelect>
+                </Form.Item>
+              </Col>
+            </Row>
 
-                  </TreeNode>
-                </TreeSelect>
-              </Form.Item>
-            </Col>
-          </Row>
+            <Form.Item label="Project Name: ">
+              <Input
+                placeholder="ProjectName"
+                className="ProjectName"
+                name="projectName"
+                onChange={event => this.handleChangeState(event)}
+              />
+            </Form.Item>
 
-          <Form.Item label="Project Name: ">
+            <Form.Item label="Description: ">
+              <TextArea
+                className="defectDescription"
+                name="defectDescription"
+                autosize={{ minRows: 4, maxRows: 10 }}
+                onChange={this.handleChangeState}
+                placeholder="Description"
+              />
+            </Form.Item>
 
-<Input
-  placeholder="ProjectName"
-  className="ProjectName"
-  name="projectName"
-  onChange={(event) => this.handleChangeState(event)}
-  
-/>
-</Form.Item>
+            <Form.Item label="Steps to Re-create: ">
+              <TextArea
+                className="stepsToRecreate"
+                name="stepsToRecreate"
+                placeholder="Step to Create"
+                autosize={{ minRows: 6, maxRows: 12 }}
+                onChange={this.handleChangeState}
+              />
+            </Form.Item>
+            <Row>
+              <Col span={8} style={{ padding: "5px" }}>
+                <Form.Item label="Type: ">
+                  <Select
+                    defaultValue="UI"
+                    style={{ width: "100%" }}
+                    onChange={this.handleChangeType}
+                  >
+                    <Option value="1">UI</Option>
+                    <Option value="2">Functionality</Option>
+                    <Option value="3">Enhancement</Option>
+                    <Option value="4">Performance</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8} style={{ padding: "5px" }}>
+                <Form.Item label="Severity">
+                  <Select
+                    defaultValue="high"
+                    style={{ width: "100%" }}
+                    onChange={this.handleChangeSeverity}
+                  >
+                    <Option value="1">High</Option>
+                    <Option value="2">Medium</Option>
+                    <Option value="3">Low</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8} style={{ padding: "5px" }}>
+                <Form.Item label="Priority:  ">
+                  <Select
+                    defaultValue="high"
+                    style={{ width: "100%" }}
+                    onChange={this.handleChangePriority}
+                  >
+                    <Option value="1">High</Option>
+                    <Option value="2">Medium</Option>
+                    <Option value="3">Low</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8} style={{ padding: "5px" }}>
+                <Form.Item label="Found In: ">
+                  <Select
+                    defaultValue="Release"
+                    style={{ width: "100%" }}
+                    onChange={this.onChange}
+                  >
+                    <Option value="Release1">Release1</Option>
+                    <Option value="Release2">Release2</Option>
+                    <Option value="Release3">Release3</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8} style={{ padding: "5px" }}>
+                <Form.Item label="Available In">
+                  <Select
+                    defaultValue="Release"
+                    style={{ width: "100%" }}
+                    onChange={this.onChangeSeverityId}
+                  >
+                    <Option value="Release1">Release1</Option>
+                    <Option value="Release2">Release2</Option>
+                    <Option value="Release3">Release3</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8} style={{ padding: "5px" }}>
+                <Form.Item label="Assigned To: ">
+                  <Select
+                    defaultValue="user1"
+                    style={{ width: "100%" }}
+                    onChange={this.handleChangeAssignTo}
+                  >
+                    <Option value="user1">User 1</Option>
+                    <Option value="user2">User 2</Option>
+                    <Option value="user3">User 3</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+          <Upload {...props}>
+            <Button>
+              <Icon type="upload" /> Click to Upload
+            </Button>
+          </Upload>
+        </Modal>
+        <Table
+          columns={columns}
+          dataSource={this.state.defect}
+          onChanger={this.handleChange}
+        />
 
-         
-
-          <Form.Item label="Description: ">
-            <TextArea className="defectDescription"
-             name="defectDescription"
-             autosize={{ minRows: 4, maxRows: 10 }}
-             onChange={this.handleChangeState} 
-             placeholder="Description"  />
-          </Form.Item>
-
-          <Form.Item label="Steps to Re-create: ">
-            <TextArea
-              className="stepsToRecreate"
-              name="stepsToRecreate"
-              placeholder="Step to Create"
-              autosize={{ minRows: 6, maxRows: 12 }}
-              onChange={this.handleChangeState}
-            />
-          </Form.Item>
-          <Row>
-            <Col span={8} style={{ padding: '5px' }}>
-
-
-              <Form.Item label="Type: ">
-                <Select defaultValue="UI"  style={{ width: '100%' }} onChange={this.handleChangeType}>
-                  <Option value="1">UI</Option>
-                  <Option value="2">Functionality</Option>
-                  <Option value="3">Enhancement</Option>
-                  <Option value="4">Performance</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8} style={{ padding: '5px' }}>
-
-              <Form.Item label="Severity">
-                <Select defaultValue="high" style={{ width: '100%' }} onChange={this.handleChangeSeverity}>
-                  <Option value="1">High</Option>
-                  <Option value="2">Medium</Option>
-                  <Option value="3">Low</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8} style={{ padding: '5px' }}>
-              <Form.Item label="Priority:  ">
-                <Select defaultValue="high" style={{ width: '100%' }} onChange={this.handleChangePriority}>
-                  <Option value="1">High</Option>
-                  <Option value="2">Medium</Option>
-                  <Option value="3">Low</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8} style={{ padding: '5px' }}>
-
-
-              <Form.Item label="Found In: ">
-                <Select defaultValue="Release" style={{ width: '100%' }} onChange={this.onChange}>
-                
-                  <Option value="Release1">Release1</Option>
-                  <Option value="Release2">Release2</Option>
-                  <Option value="Release3">Release3</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8} style={{ padding: '5px' }}>
-
-              <Form.Item label="Available In">
-                <Select defaultValue="Release" style={{ width: '100%' }} 
-                  onChange={this.onChangeSeverityId}>
-                  <Option value="Release1">Release1</Option>
-                  <Option value="Release2">Release2</Option>
-                  <Option value="Release3">Release3</Option>
-                </Select>
-              </Form.Item>
-             
-
-            </Col>
-            <Col span={8} style={{ padding: '5px' }}>
-            <Form.Item label="Assigned To: ">
-
-<Select defaultValue="user1" style={{ width: '100%' }} onChange={this.handleChangeAssignTo}>
-<Option value="user1">User 1</Option>
-<Option value="user2">User 2</Option>
-<Option value="user3">User 3</Option>
-</Select>
-</Form.Item>
-</Col>
-
-          
-          </Row>
-
-
-         
-
-       
-        </Form>
-        <Upload {...props}>
-          <Button>
-            <Icon type="upload" /> Click to Upload
-  </Button>
-        </Upload>
-      </Modal>
-  <Table columns={columns}  dataSource={this.state.defect}  onChanger={this.handleChange} />
-
-       {/* Edit Defects Part  */}
-       <Modal
+        {/* Edit Defects Part  */}
+        <Modal
           title="Edit Defects"
           visible={this.state.visible}
-         // onOk={this.handleEditOk.bind(this, this.state.defectId)}
+          // onOk={this.handleEditOk.bind(this, this.state.defectId)}
           onCancel={this.handleCancel}
           width="600px"
         >
           <Form onSubmit={this.handleSubmit}>
             <Row>
-              <Col span={12} style={{ padding: '5px' }}>
-
-
+              <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label=" Defect Id: ">
-
-                  <Input
-                    placeholder="Defect Id"
-                    disabled="true"
-                  />
+                  <Input placeholder="Defect Id" disabled="true" />
                 </Form.Item>
               </Col>
-              <Col span={12} style={{ padding: '5px' }}>
+              <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label=" Module: ">
                   <TreeSelect
                     showSearch
@@ -959,33 +982,40 @@ class TableFilter extends React.Component {
             </Row>
 
             <Row>
-              <Col span={8} style={{ padding: '5px' }}>
-
-
+              <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label=" Type: ">
-                  <Select defaultValue="UI" style={{ width: '100%' }} onChange={this.onChange}>
-                  <Option value="UI">UI</Option>
+                  <Select
+                    defaultValue="UI"
+                    style={{ width: "100%" }}
+                    onChange={this.onChange}
+                  >
+                    <Option value="UI">UI</Option>
                     <Option value="Functionality">Functionality</Option>
                     <Option value="Enhancement">Enhancement</Option>
                     <Option value="performance">Performance</Option>
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={8} style={{ padding: '5px' }}>
-
+              <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label=" Severity">
-                  <Select defaultValue="high" style={{ width: '100%' }} 
-                    onChange={this.onChangeSeverityId}>
+                  <Select
+                    defaultValue="high"
+                    style={{ width: "100%" }}
+                    onChange={this.onChangeSeverityId}
+                  >
                     <Option value="high">High</Option>
                     <Option value="medium">Medium</Option>
                     <Option value="low">Low</Option>
                   </Select>
                 </Form.Item>
-               
               </Col>
-              <Col span={8} style={{ padding: '5px' }}>
+              <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label=" Priority:  ">
-                  <Select defaultValue="high" style={{ width: '100%' }} onChange={this.onChange}>
+                  <Select
+                    defaultValue="high"
+                    style={{ width: "100%" }}
+                    onChange={this.onChange}
+                  >
                     <Option value="high">High</Option>
                     <Option value="medium">Medium</Option>
                     <Option value="low">Low</Option>
@@ -993,35 +1023,40 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-             <Row>
-              <Col span={8} style={{ padding: '5px' }}>
-
-
+            <Row>
+              <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Fixed In: ">
-                  <Select defaultValue="Fixed In" style={{ width: '100%' }} onChange={this.onChange}>
-                  
+                  <Select
+                    defaultValue="Fixed In"
+                    style={{ width: "100%" }}
+                    onChange={this.onChange}
+                  >
                     <Option value="User1">User1</Option>
                     <Option value="User2">User2</Option>
                     <Option value="User3">User3</Option>
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={8} style={{ padding: '5px' }}>
-
-              <Form.Item label="Found In: ">
-                  <Select defaultValue="Release" style={{ width: '100%' }} onChange={this.onChange}>
-                  
+              <Col span={8} style={{ padding: "5px" }}>
+                <Form.Item label="Found In: ">
+                  <Select
+                    defaultValue="Release"
+                    style={{ width: "100%" }}
+                    onChange={this.onChange}
+                  >
                     <Option value="Release1">Release1</Option>
                     <Option value="Release2">Release2</Option>
                     <Option value="Release3">Release3</Option>
                   </Select>
                 </Form.Item>
-              
-
               </Col>
-              <Col span={8} style={{ padding: '5px' }}>
+              <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Status:  ">
-                  <Select defaultValue="New" style={{ width: '100%' }} onChange={this.onChange}>
+                  <Select
+                    defaultValue="New"
+                    style={{ width: "100%" }}
+                    onChange={this.onChange}
+                  >
                     <Option value="New">New</Option>
                     <Option value="Open">Open</Option>
                     <Option value="Fixed">Fixed</Option>
@@ -1034,28 +1069,33 @@ class TableFilter extends React.Component {
             </Row>
 
             <Form.Item label="Available In">
-                <Select defaultValue="Release" style={{ width: '100%' }} 
-                  onChange={this.onChangeSeverityId}>
-                  <Option value="Release1">Release1</Option>
-                  <Option value="Release2">Release2</Option>
-                  <Option value="Release3">Release3</Option>
-                </Select>
-              </Form.Item>
-            <Form.Item label=" Description: ">
-              <TextArea placeholder="Description" autosize={{ minRows: 3, maxRows: 12 }} />
+              <Select
+                defaultValue="Release"
+                style={{ width: "100%" }}
+                onChange={this.onChangeSeverityId}
+              >
+                <Option value="Release1">Release1</Option>
+                <Option value="Release2">Release2</Option>
+                <Option value="Release3">Release3</Option>
+              </Select>
             </Form.Item>
-
-            <Form.Item label=" Steps to Re-create: ">
+            <Form.Item label=" Description: ">
               <TextArea
-                placeholder=""
-                autosize={{ minRows: 6, maxRows: 12 }}
+                placeholder="Description"
+                autosize={{ minRows: 3, maxRows: 12 }}
               />
             </Form.Item>
 
+            <Form.Item label=" Steps to Re-create: ">
+              <TextArea placeholder="" autosize={{ minRows: 6, maxRows: 12 }} />
+            </Form.Item>
 
             <Form.Item label=" Assigned To: ">
-
-              <Select defaultValue="User 1" style={{ width: '100%' }} onChange={this.onChange}>
+              <Select
+                defaultValue="User 1"
+                style={{ width: "100%" }}
+                onChange={this.onChange}
+              >
                 <Option value="user1">User 1</Option>
                 <Option value="user2">User 2</Option>
                 <Option value="user3">User 3</Option>
@@ -1063,15 +1103,12 @@ class TableFilter extends React.Component {
             </Form.Item>
 
             <Form.Item label="Comments:  ">
-              <TextArea
-                placeholder=""
-                autosize={{ minRows: 2, maxRows: 8 }}
-              />
+              <TextArea placeholder="" autosize={{ minRows: 2, maxRows: 8 }} />
             </Form.Item>
           </Form>
         </Modal>
-       {/* More Details View */}
-       <Modal
+        {/* More Details View */}
+        <Modal
           title="More Details"
           visible={this.state.showModalView}
           onOk={this.handleOkView}
@@ -1079,7 +1116,7 @@ class TableFilter extends React.Component {
           width="600px"
         >
           <Row>
-             {/*<Col span={10} style={{ padding: '5px' }}>
+            {/*<Col span={10} style={{ padding: '5px' }}>
            <p><b>Module name:</b></p>
               <p><b>Description:</b></p>
               <p><b>Steps to re-create:</b></p>
@@ -1098,7 +1135,7 @@ class TableFilter extends React.Component {
              <p><b>Comments:</b></p>
 
               </Col>*/}
-             
+
             <Col span={10} style={{ padding: "5px" }}>
               <p>
                 <b>Module name:</b>
@@ -1134,10 +1171,10 @@ class TableFilter extends React.Component {
                 <b>Fixed By:</b>
               </p>
               <p>
-                <b>Status:</b>
+                <b>Available Date:</b>
               </p>
               <p>
-                <b>Available Date:</b>
+                <b>Status:</b>
               </p>
               <p>
                 <b>Comments:</b>
@@ -1164,13 +1201,11 @@ class TableFilter extends React.Component {
               <p>UI</p>
               <p>Open</p>
               <p>Tom</p>
-              <p>05.05.2019</p> 
-              <p>Release1</p>
-              <p>User1</p>
-               <p>Tom</p>
+              <p>05.05.2019</p>
               <p>Sam</p>
+              <p>User1</p>
+              <p>Tom</p>
               <p>
-                
                 <Select
                   showSearch
                   style={{ width: 200 }}
@@ -1192,15 +1227,17 @@ class TableFilter extends React.Component {
                   <Option value="reopen">reopen</Option>
                   <Option value="rejected">rejected</Option>
                 </Select>
-                
               </p>
-              
+
               <p>{this.state.comment}</p>
             </Col>
           </Row>
           <Row>
             <Col span={10} style={{ padding: "5px" }}>
-              <Button type="primary" onClick={this.attachment}>
+              <Button
+                type="primary"
+                onClick={() => this.attachment(this.state.defectId)}
+              >
                 View Attachments
               </Button>
               {isOpen && (
@@ -1227,7 +1264,7 @@ class TableFilter extends React.Component {
             </Col>
 
             <Col span={14} style={{ padding: "5px" }}>
-              <Upload {...props}>
+              <Upload {...this.state.addAttachment}>
                 <Button>
                   <Icon type="upload" /> Click to Upload
                 </Button>
