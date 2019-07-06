@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Table, Divider, Modal, Button, Icon, Form, Input, Popconfirm, message } from 'antd';
-import { SketchPicker } from 'react-color';
-import reactCSS from 'reactcss';
+// import { SketchPicker } from 'react-color';
+// import reactCSS from 'reactcss';
 import axios from 'axios';
 import { Row, Col } from 'antd';
 
@@ -75,6 +75,13 @@ export default class DefectTypeConfic extends React.Component {
   //     value: e.target.value
   //   })
   //};
+
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
   getdefectType() {
     const url = 'http://localhost:8081/defectservice/defecttypes';
     axios.get(url)
@@ -100,11 +107,6 @@ export default class DefectTypeConfic extends React.Component {
 
   }
 
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
 
   editDefect = (id) => {
     this.showEditModal();
@@ -144,15 +146,6 @@ export default class DefectTypeConfic extends React.Component {
     message.error("Defect Type Successfully Deleted");
   }
 
-
-
-  showEditModal = () => {
-    console.log("showEditModal clicked");
-    this.setState({
-      visibleEditModal: true,
-    });
-  };
-
   handleOk = e => {
     this.getdefectType();
     const obj = {
@@ -176,14 +169,23 @@ export default class DefectTypeConfic extends React.Component {
       })
         .catch((error) => {
           console.log(error);
-          message.warn("Defect Type Already Exist");
+          message.warn("Invalid Data");
         });
     }
 
+    // else if (newName.length < 2 || newName.length > 15 || newValue.length < 10 || newValue.length > 50) {
+    //   message.warn("aaaa");
+    // }
+
     this.setState({
-      name: '',
-      value: '',
+      formErrors: {
+        name: "",
+        value: ""
+        //id: ""
+      },
       visible: false,
+      name: "",
+      value: ""
     })
 
   };
@@ -203,12 +205,13 @@ export default class DefectTypeConfic extends React.Component {
           //console.log(response.data);
           this.setState({ events: response.data })
           if (response.data.status === "OK") {
-            message.success("Defect Type Successfully Updated").then(res => this.getdefectType());
+            message.success("Defect Type Successfully Updated");
+            this.getdefectType();
           }
         })
         .catch((error) => {
           console.log(error);
-          message.warn("Defect Type Already Exist");
+          message.warn("Invalid Data");
         });
     }
 
@@ -219,6 +222,13 @@ export default class DefectTypeConfic extends React.Component {
       visibleEditModal: false
     })
 
+  };
+
+  showEditModal = () => {
+    console.log("showEditModal clicked");
+    this.setState({
+      visibleEditModal: true,
+    });
   };
 
   handleCancel = e => {
@@ -234,6 +244,8 @@ export default class DefectTypeConfic extends React.Component {
     console.log(e);
     this.setState({
       visibleEditModal: false,
+      name: null,
+      value: null
     });
 
   };
@@ -255,10 +267,6 @@ export default class DefectTypeConfic extends React.Component {
   handleClose = () => {
     this.setState({ displayColorPicker: false })
   };
-
-  // handleChange = (color) => {
-  //   this.setState({ color: color.rgb })
-  // };
 
   handleChange = e => {
     e.preventDefault();
@@ -307,7 +315,6 @@ export default class DefectTypeConfic extends React.Component {
     }
 
     this.setState({ formErrors, [name]: value }, () => console.log(this.state));
-
   };
 
   // handleSubmit = e => {
@@ -331,6 +338,8 @@ export default class DefectTypeConfic extends React.Component {
     } else {
       console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
+
+
   }
 
   normFile = e => {
@@ -523,12 +532,10 @@ export default class DefectTypeConfic extends React.Component {
                 </Form.Item>
                 <Form.Item label="Description">
                   <Input type="text"
-                    //className="form-control"
                     className={formErrors.value.length > 0 ? "error" : null}
                     name="value"
                     value={this.state.value}
                     onChange={this.handleChange}
-                  //onChange={this.onChangeValue}
                   />
                   {formErrors.value.length > 0 && (
                     <span
