@@ -17,7 +17,6 @@ import {
   List,
   Popconfirm,
   message,
-  Typography,
   Divider
 } from "antd";
 import moment from "moment";
@@ -708,6 +707,18 @@ class TableFilter extends React.Component {
         sortOrder: sortedInfo.columnKey === "statusId" && sortedInfo.order
       },
       {
+        title: "Found In",
+        dataIndex: "foundIn",
+        key: "foundIn",
+              
+      },
+      {
+        title: "Available In",
+        dataIndex: "availableIn",
+        key: "availableIn",
+        
+      },
+      {
         title: "Action",
         key: "action",
         render: (text, data = this.state.defect, record) => (
@@ -780,18 +791,24 @@ class TableFilter extends React.Component {
           width="600px"
         >
           <Form onSubmit={this.handleAddDefect}>
-            <Row>
-              <Col span={12} style={{ padding: "5px" }}>
-                <Form.Item label="Defect Id: ">
-                  <Input
-                    placeholder="Defect Id"
-                    className="defectId"
-                    name="defectId"
-                    disabled="true"
-                    onChange={event => this.handleChangeState(event)}
-                  />
+          <Row>
+          <Col span={12} style={{ padding: "5px" }}>
+          <Form.Item label="Project Name">
+                  <Select
+                    defaultValue="Project Name"
+                    style={{ width: "100%" }}
+                    onChange={this.handleChangeProjectName}
+                  >
+                    <Option value="Defect System">Defect System</Option>
+                    <Option value="HRM">HRM</Option>
+                    <Option value="Leave System">Leave System</Option>
+                  </Select>
                 </Form.Item>
-              </Col>
+         
+            </Col>
+            
+            
+             
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Module: ">
                   <TreeSelect
@@ -818,14 +835,7 @@ class TableFilter extends React.Component {
               </Col>
             </Row>
 
-            <Form.Item label="Project Name: ">
-              <Input
-                placeholder="ProjectName"
-                className="ProjectName"
-                name="projectName"
-                onChange={event => this.handleChangeState(event)}
-              />
-            </Form.Item>
+            
 
             <Form.Item label="Description: ">
               <TextArea
