@@ -1,21 +1,21 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-//import './ab.css';
-import { Transfer, Switch, Table, Tag,InputNumber } from 'antd';
+import { Transfer, Switch, Table, Tag } from 'antd';
 import difference from 'lodash/difference';
+import axios from "axios";
 
 // Customize Table Transfer
 const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
-  <Transfer {...restProps} showSelectAll={false}>
+  <Transfer {...restProps} showSelectAll={false} >
+    
     {({
       direction,
       filteredItems,
       onItemSelectAll,
       onItemSelect,
       selectedKeys: listSelectedKeys,
-      disabled: listDisabled,
+      disabled: listDisabled
     }) => {
-      const columns = direction === 'left' ? leftColumns : rightColumns;
+      const columns = direction === "left" ? leftColumns : rightColumns;
 
       const rowSelection = {
         getCheckboxProps: item => ({ disabled: listDisabled || item.disabled }),
@@ -31,81 +31,96 @@ const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
         onSelect({ key }, selected) {
           onItemSelect(key, selected);
         },
-        selectedRowKeys: listSelectedKeys,
+        selectedRowKeys: listSelectedKeys
       };
-      
+
       return (
         <Table
           rowSelection={rowSelection}
           columns={columns}
           dataSource={filteredItems}
           size="small"
-          style={{ pointerEvents: listDisabled ? 'none' : null }}
+          style={{ pointerEvents: listDisabled ? "none" : null }}
           onRow={({ key, disabled: itemDisabled }) => ({
             onClick: () => {
               if (itemDisabled || listDisabled) return;
               onItemSelect(key, !listSelectedKeys.includes(key));
-            },
+            }
           })}
         />
       );
     }}
   </Transfer>
-  
 );
-function onChange(value) {
-  console.log('changed', value);
-}
 
-const mockTags = ['cat', 'dog', 'bird'];
+axios.get('http://localhost:8081/defectservices/GetAllresources')
+  .then(function (response) {
+    // handle success
+    console.log(response.data);
+    // this.setState()
 
-const mockData = [];
-for (let i = 0; i < 20; i++) {
-  mockData.push({
-    key: i.toString(),
-    empname: `content${i + 1}`,
-    percentage:  <InputNumber
-    defaultValue={100}
-    min={10}
-    max={100}
-    formatter={value => `${value}%`}
-    parser={value => value.replace('%', '')}
-    onChange={onChange}
-  />,
-    disabled: i % 4 === 0,
-    tag: mockTags[i % 3],
   });
-}
 
-const originTargetKeys = mockData.filter(item => +item.key % 3 > 1).map(item => item.key);
+const employee = []
+const originTargetKeys = employee.filter(item => +item.key % 5 > 1).map(item => item.key);
 
 const leftTableColumns = [
   {
-    dataIndex: 'key',
-    title: 'Emp ID',
+    title: "EmpId",
+    dataIndex: "employeeid",
+    key: "employeeid",
+  },
+
+  {
+    title: "EmpName",
+    dataIndex: "name",
+    key: "name",
   },
   {
-    dataIndex: 'empname',
-    title: 'Full name',
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
   },
   {
-    dataIndex: 'percentage',
-    title: 'Percentage',
+    title: "Designation",
+    dataIndex: "designationname",
+    key: "designationname",
+  },
+  {
+    title: "Availability",
+    dataIndex: "availability",
+    key: "availability",
   },
 ];
+
 const rightTableColumns = [
   {
-    dataIndex: 'key',
-    title: 'Emp ID',
+    title: "EmpId",
+    dataIndex: "employeeid",
+    key: "employeeid",
+  },
+
+  {
+    title: "EmpName",
+    dataIndex: "name",
+    key: "name",
   },
   {
-    dataIndex: 'empname',
-    title: 'Full name',
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
   },
   {
-    dataIndex: 'percentage',
-    title: 'Percentage',
+    title: "Designation",
+    dataIndex: "designationname",
+    key: "designationname",
   },
+  {
+    title: "Availability",
+    dataIndex: "availability",
+    key: "availability",
+  },
+
 ];
 
 class AddMember extends React.Component {
@@ -123,6 +138,40 @@ class AddMember extends React.Component {
     this.setState({ disabled });
   };
 
+  
+
+  componentDidMount() {
+    this.fetchEmployee();
+  }
+  fetchEmployee() {
+    var _this = this;
+    axios.get('http://localhost:8081/defectservices/GetAllresources')
+      .then(function (response) {
+        // handle success
+        console.log(response.data);
+        let emp = response.data
+        _this.setState({ emp: emp });
+        console.log(_this.state.employee);
+        const list = []
+        console.log("dfgdgdgd" + emp)
+        response.data.map((post, index) => {
+          list.push({
+            key: index,
+            employeeid: post.employeeid,
+            name: post.name,
+            email: post.email,
+            designationname: post.designationname,
+            availability:post.availability,
+
+          });
+          _this.setState({
+            list: list
+          })
+        })
+
+
+      });
+  }
   triggerShowSearch = showSearch => {
     this.setState({ showSearch });
   };
@@ -132,13 +181,16 @@ class AddMember extends React.Component {
     return (
       <div>
         <TableTransfer
-          dataSource={mockData}
+          dataSource={this.state.list}
           targetKeys={targetKeys}
           disabled={disabled}
           showSearch={showSearch}
           onChange={this.onChange}
           filterOption={(inputValue, item) =>
-            item.title.indexOf(inputValue) !== -1 || item.tag.indexOf(inputValue) !== -1
+            item.employeeid.indexOf(inputValue) !== -1 ||
+            item.name.indexOf(inputValue) !== -1 ||
+            item.email.indexOf(inputValue) !== -1 ||
+            item.designationname.indexOf(inputValue) !== -1
           }
           leftColumns={leftTableColumns}
           rightColumns={rightTableColumns}
@@ -148,14 +200,14 @@ class AddMember extends React.Component {
           checkedChildren="disabled"
           checked={disabled}
           onChange={this.triggerDisable}
-          style={{ marginTop: 16 }}
+          style={{ marginTop: 10 }}
         />
         <Switch
           unCheckedChildren="showSearch"
           checkedChildren="showSearch"
           checked={showSearch}
           onChange={this.triggerShowSearch}
-          style={{ marginTop: 16 }}
+          style={{ marginTop: 10 }}
         />
       </div>
     );

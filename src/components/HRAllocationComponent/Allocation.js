@@ -1,6 +1,7 @@
 import { Modal, Button, Select } from 'antd';
 import React from 'react';
 import AddMember from './AddMember';
+import axios from "axios";
 
 
 const { Option, OptGroup } = Select;
@@ -9,6 +10,8 @@ export default class Allocation extends React.Component {
     state = {
         loading: false,
         visible: false,
+        project:[],
+        employee:[]
     };
 
     handleChange(value) {
@@ -20,6 +23,40 @@ export default class Allocation extends React.Component {
             visible: true,
         });
     };
+
+    componentDidMount() {
+    
+        this.fetchProjects();
+        console.log("mounting");
+        // this.GetAllproject();
+        this.fetchEmployee();
+      }
+    
+      fetchProjects() {
+        var _this = this;
+        axios.get('http://localhost:8081/defectservices/GetAllproject')
+        .then(function (response) {
+          // handle success
+          console.log(response.data);
+         _this.setState({ project: response.data});    
+          console.log(_this.state.project);
+      
+        });
+      }
+    
+      fetchEmployee() {
+        var _this = this;
+        axios.get('http://localhost:8081/defectservices/GetAllresources')
+        .then(function (response) {
+          // handle success
+          console.log(response.data);
+         _this.setState({ employee: response.data});    
+          console.log(_this.state.employee);
+      
+        });
+      }
+
+
 
     handleOk = () => {
         this.setState({ loading: true });
@@ -46,8 +83,8 @@ export default class Allocation extends React.Component {
 
                     visible={visible}
                     title="Allocating Members for Project"
-                    width="60%"
-                    height="30%"
+                    width="90%"
+                    height="40%"
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
                     footer={[
@@ -60,10 +97,15 @@ export default class Allocation extends React.Component {
                     ]}>
                     <div><Select defaultValue="Project" style={{ width: 200 }} onChange={this.handleChange}>
                         <OptGroup label="Projects">
-                            <Option value="School Management System">School Management System</Option>
+                        {this.state.project.map(function(item, index){
+                      return <Option key={index} value={item.pid}> {item.projectName}</Option> })}
+                        {/* <Select>
+                  
+                    </Select> */}
+                            {/* <Option value="School Management System">School Management System</Option>
                             <Option value="Defect Tracker System">Defect Tracker System</Option>
                             <Option value="Library Management System">Library Management System</Option>
-                            <Option value="Wedding Hall System">Wedding Hall System</Option>
+                            <Option value="Wedding Hall System">Wedding Hall System</Option> */}
                         </OptGroup>
                     </Select></div>
                     <br />

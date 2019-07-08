@@ -13,16 +13,13 @@ import {
 } from "antd";
 import Highlighter from "react-highlight-words";
 import React from "react";
-import EmployeeView from "./EmployeeViewModal";
 import axios from "axios";
-import { yieldExpression } from "@babel/types";
-// import axios from 'axios';
 
 const { Option } = Select;
 
- function confirm(e) {
+function confirm(e) {
   console.log(e);
-  message.success('Successfully Deleted');
+  message.success("Successfully Deleted");
 }
 
 function cancel(e) {
@@ -31,8 +28,10 @@ function cancel(e) {
 }
 
 function onChange(sorter) {
-  console.log('params', sorter);
+  console.log("params", sorter);
 }
+
+
 
 export default class App extends React.Component {
   constructor(props) {
@@ -44,8 +43,10 @@ export default class App extends React.Component {
       this
     );
     this.handleOk = this.handleOk.bind(this);
+    this.fetchDesignations = this.fetchDesignations.bind(this);
 
     this.state = {
+      employeeautoId: "",
       employeeId: "",
       employeeName: "",
       employeeDesignation: "",
@@ -55,7 +56,8 @@ export default class App extends React.Component {
     this.state = {
       searchText: "",
       employees: [],
-      patients: []
+      patients: [],
+      Total: ""
     };
   }
 
@@ -74,8 +76,9 @@ export default class App extends React.Component {
     this.setState({
       employeeDesignation: `${value}`
     });
-    //console.log(this.state.employeeDesignation)
+    console.log(this.state.employeeDesignation);
   }
+
   onChangeEmployeeEmail(e) {
     this.setState({
       employeeEmail: e.target.value
@@ -95,18 +98,39 @@ export default class App extends React.Component {
     });
   };
 
+  componentDidMount() {
+    this.fetchDesignations();
+    console.log("mounting");
+    this.getAllEmployees();
+    this.getTotalEmployee();
+  }
+
+  fetchDesignations() {
+    var _this = this;
+    axios
+      .get("http://localhost:8084/employeeservice/getAllDesignation")
+      .then(function(response) {
+        // handle success
+        console.log(response.data);
+        _this.setState({ designations: response.data });
+        console.log(_this.state.designations);
+      });
+  }
+
   handleOk = empId => {
     console.log(empId);
     const obj = {
-      empId: this.state.employeeId,
+      empId: this.state.employeeautoId,
+      employeeid: this.state.employeeId,
       name: this.state.employeeName,
-      designation: this.state.employeeDesignation,
+      designationid: this.state.employeeDesignation,
       email: this.state.employeeEmail
     };
     axios
       .put("http://localhost:8084/employeeservice/update/" + empId, obj)
       .then(response => this.getAllEmployees());
     this.setState({
+      employeeautoId: "",
       employeeId: "",
       employeeName: "",
       employeeDesignation: "",
@@ -114,7 +138,7 @@ export default class App extends React.Component {
       visible: false
     });
 
-   message.success("Updated Successfully!!!");
+    message.success("Updated Successfully!!!");
   };
 
   handleCancel = e => {
@@ -132,24 +156,21 @@ export default class App extends React.Component {
     const data = await response.json();
     console.log(data);
     this.setState({
-      employees: data,
-      empId: data
+      employees: data
     });
     console.log(this.state.employees);
-
-    // data.forEach(element => {
-    //     console.log(element.severity);
-    // });
   }
-
-  componentDidMount() {
-    this.getAllEmployees();
+  async getTotalEmployee() {
+    const url = "http://localhost:8084/employeeservice/getcount";
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data);
+    this.setState({
+      Total: data
+    });
+    console.log(this.state.Total);
   }
-
   handleDelete = empId => {
-    // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
-    //     .then(console.log('Deleted'))
-    //     .catch(err => console.log(err))
     fetch("http://localhost:8084/employeeservice/deletebyid/" + empId, {
       method: "DELETE",
       headers: {
@@ -187,16 +208,16 @@ export default class App extends React.Component {
       .then(response => {
         console.log(response);
         this.setState({
-          employeeId: response.data.empId,
+          employeeautoId: response.data.empId,
+          employeeId: response.data.employeeid,
           employeeName: response.data.name,
-          employeeDesignation: response.data.designation,
+          employeeDesignation: response.data.designationid,
           employeeEmail: response.data.email
         });
       })
-      .catch(function (error) {
+      .catch(function(error) {
         console.log(error);
       });
-
   };
 
   getColumnSearchProps = dataIndex => ({
@@ -206,37 +227,37 @@ export default class App extends React.Component {
       confirm,
       clearFilters
     }) => (
-        <div style={{ padding: 8 }}>
-          <Input
-            ref={node => {
-              this.searchInput = node;
-            }}
-            placeholder={`Search ${dataIndex}`}
-            value={selectedKeys[0]}
-            onChange={e =>
-              setSelectedKeys(e.target.value ? [e.target.value] : [])
-            }
-            onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
-            style={{ width: 188, marginBottom: 8, display: "block" }}
-          />
-          <Button
-            type="primary"
-            onClick={() => this.handleSearch(selectedKeys, confirm)}
-            icon="search"
-            size="small"
-            style={{ width: 90, marginRight: 8 }}
-          >
-            Search
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+          style={{ width: 188, marginBottom: 8, display: "block" }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          Search
         </Button>
-          <Button
-            onClick={() => this.handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
+        <Button
+          onClick={() => this.handleReset(clearFilters)}
+          size="small"
+          style={{ width: 90 }}
+        >
+          Reset
         </Button>
-        </div>
-      ),
+      </div>
+    ),
     filterIcon: filtered => (
       <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
@@ -270,13 +291,6 @@ export default class App extends React.Component {
     this.setState({ searchText: "" });
   };
 
-  // handleClick(param, e) {
-  //       console.log(param);
-  //       deletePatient(param);
-  //       // message.success('Successfully deleted patient!');
-  //       this.forceUpdate();
-  //     }
-
   render() {
     // For Table functions
     let { sortedInfo, filteredInfo } = this.state;
@@ -285,16 +299,11 @@ export default class App extends React.Component {
     const columns = [
       {
         title: "Emp Id",
-        dataIndex: "empId",
-        key: "empId",
+        dataIndex: "employeeid",
+        key: "employeeid",
         width: "10%",
-        // //  ...this.getColumnSearchProps("empId")
-        // filteredValue: filteredInfo.empId || null,
-        // onFilter: (value, record) => record.empId.includes(value),
-        // sorter: (a, b) => a.empId.length - b.empId.length,
-        // sortOrder: sortedInfo.columnKey === "empId" && sortedInfo.order
-        defaultSortOrder: 'descend',
-        sorter: (a, b) => a.empId - b.empId,
+        defaultSortOrder: "descend",
+        sorter: (a, b) => a.employeeid.length - b.employeeid.length
       },
       {
         title: "Employee Name",
@@ -306,10 +315,10 @@ export default class App extends React.Component {
 
       {
         title: "Designation",
-        dataIndex: "designation",
-        key: "designation",
+        dataIndex: "designationname",
+        key: "designationname",
         width: "25%",
-        ...this.getColumnSearchProps("designation")
+        ...this.getColumnSearchProps("designationname")
       },
 
       {
@@ -338,25 +347,22 @@ export default class App extends React.Component {
         dataIndex: "empId",
         key: "empId",
         // ...this.getColumnSearchProps("empId"),
-        render: ( text, data = this.state.patients) => (
+        render: (text, data = this.state.patients) => (
           <Popconfirm
-          title="Are you sure delete this Row?"
-          onConfirm={this.handleDelete.bind(this, data.empId)}
-          onCancel={cancel}
-          okText="Yes"
-          cancelText="No"
-        >
-         <a>
-              <Icon
-                type="delete"
-                style={{ fontSize: "18px", color: "red" }}
-              />
+            title="Are you sure delete this Row?"
+            onConfirm={this.handleDelete.bind(this, data.empId)}
+            onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          >
+            <a>
+              <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />
             </a>
-        </Popconfirm>
+          </Popconfirm>
         ),
         key: "delete",
         width: "8%"
-      },
+      }
 
       // {
       //   title: "More Details",
@@ -404,26 +410,23 @@ export default class App extends React.Component {
               </Row>
               <Row>
                 <Col span={8} style={{ padding: "5px" }}>
-                  <Form.Item label="Role">
+                  <Form.Item label="Designation">
                     <Select
-                      placeholder="Role"
+                      // defaultValue="Select Designation"
                       onChange={this.onChangeEmployeeDesignation}
                       value={this.state.employeeDesignation}
                     >
-                      <Option value="ADMIN"> ADMIN</Option>
-                      <Option value="USER"> USER</Option>
-                      <Option value="HR">HR</Option>
-                      <Option value="PM">PM</Option>
-                      <Option value="QAL"> QAL</Option>
-                      <Option value="TECL"> TECL</Option>
-                      <Option value="QA"> QA</Option>
-                      <Option value="DEV">DEV</Option>
-                      <Option value="ASSOCQA"> ASSOCQA</Option>
-                      <Option value="ASSOCDEV">ASSOCDEV</Option>
+                      {this.state.employees.map(function(item, index) {
+                        return (
+                          <Option key={index} value={item.designationid}>
+                            {item.designationname}
+                          </Option>
+                        );
+                      })}
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={12} style={{ padding: "5px" }}>
+                <Col span={16} style={{ padding: "5px" }}>
                   <Form.Item label="Email Id">
                     <Input
                       placeholder="Email Id"
@@ -436,7 +439,19 @@ export default class App extends React.Component {
             </Form>
           </Modal>
         </div>
-        <Table columns={columns} dataSource={this.state.employees} />
+        <Table
+          columns={columns}
+          dataSource={this.state.employees}
+          pagination={{
+            total: this.state.Total,
+            //  showTotal: total => `Total ${total} employees`
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`,
+            pageSize: 10,
+            showSizeChanger: true
+            // showQuickJumper: true
+          }}
+        />
       </React.Fragment>
     );
   }

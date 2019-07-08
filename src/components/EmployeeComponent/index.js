@@ -21,13 +21,13 @@ class EmployeeComponent extends React.Component {
   render() {
         const { handleSwitchChange } = this.props;
         const routes = [{
-                path: 'index',
+                path: '',
                 breadcrumbName: 'Home',
             },
-            {
-                path: 'first',
-                breadcrumbName: 'Company',
-            },
+            // {
+            //     path: '',
+            //     breadcrumbName: 'Company',
+            // },
             {
                 path: 'second',
                 breadcrumbName: 'Employee',

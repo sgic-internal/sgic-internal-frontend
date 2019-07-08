@@ -2,47 +2,38 @@ import { Modal, Form, Row, Col, Input, Icon, DatePicker } from "antd";
 import Table from "./Table"
 import React from "react";
 import axios from "axios";
+import moment from "moment";
 
 function onChange(e) {
   console.log(`checked = ${e.target.checked}`);
 }
 
 export default class Model extends React.Component {
-
-
   constructor(props) {
     super(props);
     this.onChangeprojectId = this.onChangeprojectId.bind(this);
-    this.onChangeprojectName =this.onChangeprojectName.bind(this);
-    this.onChangeDuration=this.onChangeDuration.bind(this);
-    this.onChangeStatus=this.onChangeStatus.bind(this);
-    this.onChangeType=this.onChangeType.bind(this);
-    this.onChangeEndDate=this.onChangeEndDate.bind(this);
-    this.onChangeStartDate=this.onChangeStartDate.bind(this);
-    this.handleEditOk= this.handleEditOk.bind(this);
+    this.onChangeprojectName = this.onChangeprojectName.bind(this);
+    this.onChangeDuration = this.onChangeDuration.bind(this);
+    this.onChangeStatus = this.onChangeStatus.bind(this);
+    this.onChangeType = this.onChangeType.bind(this);
+    this.onChangeEndDate = this.onChangeEndDate.bind(this);
+    this.onChangeStartDate = this.onChangeStartDate.bind(this);
+    this.handleEditOk = this.handleEditOk.bind(this);
 
-    
-  
-
-
-  this.state = {
- 
-    projectId:this.props.projectProps,
-    projectName:'',
-    duration:'',
-    startDate:'',
-    endDate:'',
-    status:'',
-    type:'',
-    
-    
-  }
+    this.state = {
+      projectId: this.props.projectProps,
+      projectName: '',
+      duration: '',
+      startDate: '',
+      endDate: '',
+      status: '',
+      type: '',
+    }
   };
+  // state= {visibleEditModal:false};
+  componentDidMount() {
+    this.handleEdit(this.props.projectProps)
 
-
-  componentDidMount(){
-
-    
   }
   toggleDisable = () => {
     this.setState({ disabled: !this.state.disabled });
@@ -84,12 +75,10 @@ export default class Model extends React.Component {
       checked: e.target.checked
     });
   };
-  
 
-  onChangeStartDate(date, startDate) {
+  onChangeStartDate(date, dateString) {
     //this.setState({startDate: dateString});
-
-    this.setState({ startDate: startDate }, () =>
+    this.setState({ startDate: dateString }, () =>
       console.log(this.state.startDate)
     );
     console.log(this.state.startDate);
@@ -99,71 +88,67 @@ export default class Model extends React.Component {
     this.setState({ endDate: dateString }, () =>
       console.log(this.state.endDate)
     );
-
     console.log(this.state.endDate);
   }
- 
+
   showEditModal = () => {
     console.log("showEditModal");
     console.log(this.state.projectId);
     this.handleEdit(this.state.projectId);
     this.setState({
-      visibleEditModal:true,
+      visibleEditModal: true,
     });
   }
 
   handleEdit = (projectId) => {
-
     this.setState({projectId:projectId});
-
     axios
       .get(`http://localhost:8081/project_service/getProjectById/` + projectId)
-
       .then(response => {
         this.setState({
-    
-        projectName:response.data.projectName,
-        duration:response.data.duration,
-        status:response.data.status,
-        startDate:response.data.startDate,
-        endDate:response.data.endDate,
-        type:response.data.type,
-    
-      });
-      console.log(response.data);
-    })
+          projectId:response.data.projectId,
+          projectName: response.data.projectName,
+          duration: response.data.duration,
+          status: response.data.status,
+          startDate: response.data.startDate,
+          endDate: response.data.endDate,
+          type: response.data.type,
+
+        });
+        
+      })
       .catch(err => console.log(err));
-
-    
- 
-
   };
 
+  handleEditOk () {
+    console.log(this.state.projectId);
 
-
-  handleEditOk = (projectId) => {
     const obj = {
-      projectId:this.state.projectId,
-      projectName:this.state.projectName,
-      duration:this.state.duration,
-      status:this.state.status,
-      startDate:this.state.startDate,
-      endDate:this.state.endDate,
-      type:this.state.type
+      projectId: this.state.projectId,
+      projectName: this.state.projectName,
+      duration: this.state.duration,
+      status: this.state.status,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate,
+      type: this.state.type
     }
-    axios.put(`http://localhost:8081/project_service/updateProject/${projectId}`, obj)
-      .then(res => this.handleGet());
+    console.log("proojectId");
+    console.log("startDate")
 
-      this.setState({
-        projectId:'',
-        projectName:'',
-        duration:'',
-        status:'',
-        startDate:'',
-        endDate:'',
-        type:'',
-        visibleEditModal:false
-       });
+    axios.put('http://localhost:8081/project_service/updateProject/'+ this.state.projectId, obj)
+      .then(res => {
+
+    this.setState({
+      projectId: '',
+      projectName: '',
+      duration: '',
+      status: '',
+      startDate: '',
+      endDate: '',
+      type: '',
+      visibleEditModal: false
+    });
+  });
   };
 
   handleCancel = e => {
@@ -173,11 +158,6 @@ export default class Model extends React.Component {
     });
   };
 
-
-
-
-
- 
   render() {
     return (
       <div>
@@ -234,8 +214,7 @@ export default class Model extends React.Component {
                 <Form.Item label="Start Date">
                   <Form.Item>
                     <DatePicker
-                    // dateRender={this.state.startDate}
-                       startDate={this.state.startDate}
+                      value={moment(this.state.startDate)}
                       onChange={this.onChangeStartDate}
                       placeholder="Start Date"
                     />
@@ -247,7 +226,7 @@ export default class Model extends React.Component {
                 <Form.Item label="End Date">
                   <Form.Item>
                     <DatePicker
-                      endDate={this.state.endDate}
+                      value={moment(this.state.endDate)}
                       onChange={this.onChangeEndDate}
                       placeholder="End Date"
                     />

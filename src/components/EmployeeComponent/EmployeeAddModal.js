@@ -1,27 +1,15 @@
-import {
-  Modal,
-  Button,
-  Form,
-  Icon,
-  Input,
-  Select,
-  Row,
-  Col,
-  Alert
-} from "antd";
+import { Modal, Button, Form, message, Input, Select, Row, Col } from "antd";
 import React from "react";
 import axios from "axios";
-import Employee from "./Employee";
-import { object } from "prop-types";
-
-//import EmployeeDataService from './EmployeeDataService';
 
 const { Option } = Select;
+
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 );
 
 const NameRegex = RegExp(/^[a-zA-Z]+$/);
+const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
 
 const formValid = ({ formerrors, ...rest }) => {
   let valid = true;
@@ -38,8 +26,7 @@ const formValid = ({ formerrors, ...rest }) => {
 
   return valid;
 };
-
-export default class App extends React.Component {
+class EmployeeAddModal extends React.Component {
   //post integration
 
   constructor(props) {
@@ -50,38 +37,64 @@ export default class App extends React.Component {
       employeeName: "",
       employeeDesignation: "",
       employeeEmail: "",
+      visible: false,
       formerrors: {
         employeeId: "",
         employeeName: "",
         employeeEmail: ""
-      }
+      },
+      designations: []
     };
+
+    // this.onhandleChange = this.onhandleChange.bind(this);
     this.handlechange = this.handlechange.bind(this);
+    this.fetchDesignations = this.fetchDesignations.bind(this);
     this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
       this
     );
     this.handleOk = this.handleOk.bind(this);
   }
 
+  componentDidMount() {
+    this.fetchDesignations();
+    console.log("mounting");
+  }
+
+  fetchDesignations() {
+    var _this = this;
+    axios
+      .get("http://localhost:8084/employeeservice/getAllDesignation")
+      .then(function(response) {
+        // handle success
+        console.log(response.data);
+        _this.setState({ designations: response.data });
+        console.log(_this.state.designations);
+      });
+  }
+
   onChangeEmployeeDesignation(value) {
     this.setState({
       employeeDesignation: `${value}`
     });
-    //console.log(this.state.employeeDesignation)
+    console.log(this.state.employeeDesignation);
   }
-
   handlechange = e => {
     e.preventDefault();
 
     const { name, value } = e.target;
     let formerrors = { ...this.state.formerrors };
 
-    // console.log("Name: ", name);
-    // console.log("value: ", value);
     switch (name) {
       case "employeeId":
-        formerrors.employeeId =
-          value.length > 8 ? "Should have 8 characters" : "";
+        if (!ValidRegex.test(value)) {
+          formerrors.employeeId = "Invalid Id";
+        } else if (value.length > 8) {
+          formerrors.employeeId = "Should be less than 8 characters";
+        } else if (value.length < 2) {
+          formerrors.employeeId = "Should be greater than 2 characters";
+        } else {
+          formerrors.employeeId = "";
+        }
         break;
       case "employeeName":
         if (!NameRegex.test(value)) {
@@ -95,17 +108,24 @@ export default class App extends React.Component {
       case "employeeEmail":
         formerrors.employeeEmail = emailRegex.test(value)
           ? ""
-          : "invalid email address";
+          : "Invalid email address";
         break;
       default:
         break;
     }
-
     this.setState({ formerrors, [name]: value }, () => console.log(this.state));
   };
 
   handleOk = e => {
     e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log("Received values of form: ", values);
+        message.success("Successfully Added!!!")
+        this.setState({ visible: false });
+      } else {
+      }
+    });
     if (formValid(this.state)) {
       console.info(`
         --SUBMITTING--
@@ -114,6 +134,22 @@ export default class App extends React.Component {
         Employee Email: ${this.state.employeeEmail}
        
       `);
+
+      const serverport = {
+        employeeid: this.state.employeeId,
+        name: this.state.employeeName,
+        designationid: this.state.employeeDesignation,
+        email: this.state.employeeEmail
+      };
+      axios
+        .post(
+          "http://localhost:8084/employeeservice/createemployee",
+          serverport
+        )
+        .then(res => console.log(res.data))
+        .catch(error => {
+          console.log(error);
+        });
     } else {
       console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
@@ -121,33 +157,11 @@ export default class App extends React.Component {
     // this.setState({
     //   employeeId: "",
     //   employeeName: "",
-    //   employeeDesignation: "USER",
-    //   employeeEmail: "",
-    //   visible: false
+    //   employeeDesignation: "",
+    //   employeeEmail: ""
     // });
-    const serverport = {
-      empId: this.state.employeeId,
-      name: this.state.employeeName,
-      designation: this.state.employeeDesignation,
-      email: this.state.employeeEmail
-    };
-    axios
-      .post("http://localhost:8084/employeeservice/createemployee", serverport)
-      .then(res => console.log(res.data));
-
-
-    alert("New Employee Record Added Successfully!!!") 
-    window.location.reload();
-
-    this.setState({
-      employeeId: "",
-      employeeName: "",
-      employeeDesignation: "USER",
-      employeeEmail: "",
-      visible: false
-    });
-    return <Employee />;
   };
+
   // post integration finishes
   state = { visible: false };
 
@@ -158,14 +172,26 @@ export default class App extends React.Component {
   };
 
   handleCancel = e => {
-    console.log(e);
     this.setState({
+      employeeId: "null",
+      employeeName: "null",
+      employeeDesignation: "null",
+      employeeEmail: "null",
       visible: false
     });
+
+    console.info(`
+        --Cancel--
+        Employee Id: ${this.state.employeeId}
+        Employee Name: ${this.state.employeeName}
+        Employee Email: ${this.state.employeeEmail}
+       
+      `);
   };
 
   render() {
     const { formerrors } = this.state;
+    const { getFieldDecorator } = this.props.form;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>
@@ -180,44 +206,61 @@ export default class App extends React.Component {
         >
           <Form>
             <Row>
-              <Col span={10} style={{ padding: "5px" }}>
+              <Col span={6} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Id">
-                  <div className="employeeId">
-                    <Input
-                      className={
-                        formerrors.employeeId.length > 0 ? "error" : null
-                      }
-                      placeholder="Employee Id"
-                      value={this.state.employeeId}
-                      name="employeeId"
-                      type="text"
-                      onChange={this.handlechange}
-                    />
-
-                    {formerrors.employeeId.length > 0 && (
-                      <span
-                        className="error"
-                        style={{ color: "red", fontSize: "14px" }}
-                      >
-                        {formerrors.employeeId}
-                      </span>
+                  <div>
+                    {getFieldDecorator("employeeId", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input employeeId!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        className={
+                          formerrors.employeeId.length > 0 ? "error" : null
+                        }
+                        placeholder="Employee Id"
+                        value={this.state.employeeId}
+                        name="employeeId"
+                        type="text"
+                        onChange={this.handlechange}
+                      />
                     )}
                   </div>
+
+                  {formerrors.employeeId.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formerrors.employeeId}
+                    </span>
+                  )}
                 </Form.Item>
               </Col>
-              <Col span={14} style={{ padding: "5px" }}>
+              <Col span={18} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Name">
-                  <Input
-                    className={
-                      formerrors.employeeName.length > 0 ? "error" : null
-                    }
-                    placeholder="Employee Name"
-                    value={this.state.employeeName}
-                    onChange={this.handlechange}
-                    name="employeeName"
-                    type="text"
-                  />
-
+                  {getFieldDecorator("employeeName", {
+                    rules: [
+                      {
+                        required: true,
+                        message: "Please input employeeName!"
+                      }
+                    ]
+                  })(
+                    <Input
+                      className={
+                        formerrors.employeeName.length > 0 ? "error" : null
+                      }
+                      placeholder="Employee Name"
+                      value={this.state.employeeName}
+                      onChange={this.handlechange}
+                      name="employeeName"
+                      type="text"
+                    />
+                  )}
                   {formerrors.employeeName.length > 0 && (
                     <span
                       className="error"
@@ -231,47 +274,52 @@ export default class App extends React.Component {
             </Row>
 
             <Row>
-              <Col span={10} style={{ padding: "5px" }}>
+              <Col span={6} style={{ padding: "5px" }}>
                 <Form.Item label="Designation">
-                  <Select
-                    placeholder="Select Designation"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      option.props.children
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    }
-                    value={this.state.employeeDesignation}
-                    onChange={this.onChangeEmployeeDesignation}
-                    name="designation"
-                  >
-                    <Option value="ADMIN"> ADMIN</Option>
-                    <Option value="USER"> USER</Option>
-                    <Option value="HR">HR</Option>
-                    <Option value="PM">PM</Option>
-                    <Option value="QAL"> QAL</Option>
-                    <Option value="TECL"> TECL</Option>
-                    <Option value="QA"> QA</Option>
-                    <Option value="DEV">DEV</Option>
-                    <Option value="ASSOCQA"> ASSOCQA</Option>
-                    <Option value="ASSOCDEV">ASSOCDEV</Option>
-                  </Select>
+                  {getFieldDecorator("gender", {
+                    rules: [
+                      { required: true, message: "Please select designation!" }
+                    ]
+                  })(
+                    <Select
+                      defaultValue="Select Designation"
+                      style={{ width: 120 }}
+                      onChange={this.onChangeEmployeeDesignation}
+                    >
+                      {this.state.designations.map(function(item, index) {
+                        return (
+                          <Option key={index} value={item.designationid}>
+                            {item.designationname}
+                          </Option>
+                        );
+                      })}
+                    </Select>
+                  )}
                 </Form.Item>
               </Col>
 
-              <Col span={14} style={{ padding: "5px" }}>
+              <Col span={18} style={{ padding: "5px" }}>
                 <Form.Item label="Email">
-                  <Input
-                    className={
-                      formerrors.employeeEmail.length > 0 ? "error" : null
-                    }
-                    placeholder="Email"
-                    value={this.state.employeeEmail}
-                    //     value={this.state.employeeEmail}
-                    onChange={this.handlechange}
-                    name="employeeEmail"
-                    type="text"
-                  />
+                  {getFieldDecorator("employeeEmail", {
+                    rules: [
+                      {
+                        required: true,
+                        message: "Please input employeeEmail!"
+                      }
+                    ]
+                  })(
+                    <Input
+                      className={
+                        formerrors.employeeEmail.length > 0 ? "error" : null
+                      }
+                      placeholder="Email"
+                      value={this.state.employeeEmail}
+                      //     value={this.state.employeeEmail}
+                      onChange={this.handlechange}
+                      name="employeeEmail"
+                      type="text"
+                    />
+                  )}
                   {formerrors.employeeEmail.length > 0 && (
                     <span
                       className="error"
@@ -299,9 +347,7 @@ export default class App extends React.Component {
               </Col> */}
 
             {/* <Row>
-
               
-
               <Col span={9} style={{ padding: "5px", marginTop: "44px" }}>
                 <Button>
                   <Icon type="upload" /> Upload Picture
@@ -313,4 +359,12 @@ export default class App extends React.Component {
       </div>
     );
   }
+
+  validateName = name => {
+    if (name.length < 2) {
+      return { validateStatus: "error", errorMsg: "Name is short." };
+    }
+  };
 }
+
+export default Form.create()(EmployeeAddModal);
