@@ -4,6 +4,11 @@ import React from "react";
 import EditModel from "./EditModel";
 import axios from "axios";
 
+function confirm(e){
+  console.log(e)
+  message.success("Delete Successfully!");
+}
+
 function cancel(e) {
   console.log(e);
   message.error("Click on No");
@@ -13,12 +18,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
-    // this.handleEdit= this.handleEdit.bind(this);
-    // this.handleReset= this.handleReset.bind(this);
-    // this.handleSearch=this.handleSearch.bind(this);
-    // this.handleSubmit=this.handleSubmit.bind(this);
-
-    
+  
   }
   state = {
     searchText: "",
@@ -53,7 +53,7 @@ export default class App extends React.Component {
   }
   //DELETE-METHOD 1 = WORKING
   handleDelete = projectId => {
-    axios.delete(`http://localhost:8081/project_service/deleteById/` + projectId)
+    axios.delete(`http://localhost:8081/defectservices/deleteById/` + projectId)
       .then(console.log(projectId))
       .catch(err => console.log(err));
 
@@ -63,6 +63,7 @@ export default class App extends React.Component {
     this.setState({
       projects
     });
+    message.success("Delete Successfully");
   };
   // handleEditOk = (projectId) => {
   //   const obj = {
@@ -91,7 +92,7 @@ export default class App extends React.Component {
       
     }
     axios
-      .get(`http://localhost:8081/project_service/GetAllproject`)
+      .get(`http://localhost:8081/defectservices/GetAllproject`)
       .then(res => {
         //const projects = res.data;
         this.setState({ projects: res.data });
