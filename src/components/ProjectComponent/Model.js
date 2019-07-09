@@ -1,8 +1,14 @@
-import { Modal, Button, Form, Row, Col, Input, DatePicker, Select } from "antd";
+import { Modal, Button, Form, Row, Col, Input, DatePicker, Select,message } from "antd";
 import React from "react";
 import axios from "axios";
 
 import { object } from "prop-types";
+
+function confirm(e){
+  console.log(e)
+  message.success("Delete Successfully!");
+}
+
 
 //import ProjectDataService from './ProjectDataService';
 const { MonthPicker, RangePicker } = DatePicker;
@@ -37,14 +43,6 @@ const formValid = ({ formerrors, ...rest }) => {
 export default class Model extends React.Component {
   constructor(props) {
     super(props);
-    // this.onChangeprojectId = this.onChangeprojectId.bind(this);
-    // this.onChangeprojectName = this.onChangeprojectName.bind(this);
-    // this.onChangeType = this.onChangeType.bind(this);
-    // this.onChangeStartDate = this.onChangeStartDate.bind(this);
-    // this.onChangeEndDate = this.onChangeEndDate.bind(this);
-    // this.onChangeDuration = this.onChangeDuration.bind(this);
-    // this.onChangeStatus = this.onChangeStatus.bind(this);
-    // this.onChangeconfigId = this.onChangeconfigId.bind(this);
 
     this.handleChange = this.handleChange.bind(this);
     this.handleOk = this.handleOk.bind(this);
@@ -94,7 +92,7 @@ export default class Model extends React.Component {
         if (!NameRegex.test(value)) {
           formerrors.projectName = "Invalid Name";
         } else if (value.length > 30) {
-          formerrors.projectName = "Should be less than 30 characters";
+          formerrors.projectName = "Should be less than 70 characters";
         } else {
           formerrors.projectName = "";
         }
@@ -132,11 +130,13 @@ export default class Model extends React.Component {
         break;
 
       case "duration":
-        if (!NameRegex.test(value)) {
+        if (!ValidRegex.test(value)) {
           formerrors.duration = "Invalid Duration";
-        } else if (value.length > 30) {
+        } 
+        else if (value.length > 30) {
           formerrors.duration = "Should be less than 30 characters";
-        } else {
+       } 
+        else {
           formerrors.duration = "";
         }
         break;
@@ -189,7 +189,7 @@ export default class Model extends React.Component {
     });
   }
   onChangeStartDate=(date, dateString)=> {
-    //this.setState({startDate: dateString});
+    // this.setState({startDate: dateString});
 
     this.setState({ startDate: dateString }, () =>
       console.log(this.state.startDate)
@@ -197,7 +197,7 @@ export default class Model extends React.Component {
 
     console.log(this.state.startDate);
   }
-  onChangeEndDate=(date, dateString) =>{
+  onChangeEndDate=(date, dateString)=> {
     this.setState({ endDate: dateString }, () =>
       console.log(this.state.endDate)
     );
@@ -255,7 +255,7 @@ export default class Model extends React.Component {
       status: this.state.status
       // configId: this.state.configId
     };
-    console.log("dfdddfd"+projectData)
+    console.log("dddddddddddddddddddd"+projectData)
     axios
       .post("http://localhost:8081/defectservices/createproject/", projectData)
       .then(res => console.log(res.data));
@@ -271,6 +271,7 @@ export default class Model extends React.Component {
 
       visible: false
     });
+    message.success("Added Successfully!");
   };
 
   handleCancel = e => {
@@ -278,6 +279,7 @@ export default class Model extends React.Component {
     this.setState({
       visible: false
     });
+   
   };
 
   handleChange = e => {
@@ -294,15 +296,6 @@ export default class Model extends React.Component {
         formErrors.type =
           value.length < 3 ? "minimum 3 characaters required" : "";
         break;
-      // case "email":
-      //   formErrors.email = emailRegex.test(value)
-      //     ? ""
-      //     : "invalid email address";
-      //   break;
-      // case "password":
-      //   formErrors.password =
-      //     value.length < 6 ? "minimum 6 characaters required" : "";
-      //   break;
       default:
         break;
     }
@@ -409,7 +402,7 @@ export default class Model extends React.Component {
                       name="startDate"
                       startDate={this.state.startDate}
                       onChange={this.onChangeStartDate}
-                      // onChange={this.handlechange}
+                    
                     />
                     {formerrors.startDate.length > 0 && (
                       <span
