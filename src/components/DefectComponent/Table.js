@@ -17,12 +17,13 @@ import {
   List,
   Popconfirm,
   message,
+  Typography,
   Divider
 } from "antd";
-import moment from "moment";
-import axios from "axios";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
+import moment from "moment";
+import axios from "axios";
 //import axios from "axios";
 const TreeNode = TreeSelect.TreeNode;
 const Option = Select.Option;
@@ -34,7 +35,7 @@ const props = {
   action:
     "http://localhost:8081/defectservices/uploadMultipleFiles?defectId=" + id,
   headers: {
-    authorization: "authorization-text"
+    ContentType: "application/json"
   },
   multiple: true
 };
@@ -77,7 +78,57 @@ const Editor = ({ onChange, onSubmit, submitting, value }) => (
   </div>
 );
 
+// const data = [
+//   {
+//     key: '1',
+//     defectid: '001',
+//     modulename: 'Thanushan',
+//     severity: ['High'],
+//     priority: ['Medium'],
+//     type: 'UI',
+//     status: 'Open',
+//   },
+//   {
+//     key: '2',
+//     defectid: '002',
+//     modulename: 'Romi',
+//     severity: ['Low'],
+//     priority: ['High'],
+//     type: 'Functionality',
+//     status: 'Open',
+//   },
+//   {
+//     key: '3',
+//     defectid: '003',
+//     modulename: 'Thuvi',
+//     severity: ['High'],
+//     priority: ['Low'],
+//     type: 'Performance',
+//     status: 'Open',
+//   },
+//   {
+//     key: '4',
+//     defectid: '004',
+//     modulename: 'Guruji',
+//     severity:['Low'],
+//     priority: ['High'],
+//     type: 'UI',
+//     status: 'Re-opened',
+//   },
+// ];
+
 class TableFilter extends React.Component {
+  state = {
+    filteredInfo: null,
+    sortedInfo: null,
+    visible: false,
+    visible1: false,
+    showModalView: false,
+    comments: [],
+    submitting: false,
+    value: ""
+  };
+
   constructor(props) {
     super(props);
 
@@ -89,7 +140,7 @@ class TableFilter extends React.Component {
         {
           defectId: "",
           projectId: "1",
-          moduleId: "",
+          moduleId: "'",
           severityId: 0,
           priorityId: 0,
           typeId: 0,
@@ -105,89 +156,75 @@ class TableFilter extends React.Component {
           dateAndTime: "2017-05-05"
         }
       ],
-      addAttachment: {
-        name: "",
-        action: "",
-        headers: "",
-        multiple: true
-      },
       images: [],
+      comments: "",
       defectId: "",
       user: "",
       status: "",
       audit: "",
       comment: [],
       photoIndex: 0,
-      isOpen: false,
-      count: 0,
-      filteredInfo: null,
-      sortedInfo: null,
-      visible: false,
-      visible1: false,
-      showModalView: false,
-      comments: [],
-      submitting: false,
-      value: ""
-      //fileList: [],
-      //uploading: false,
+      isOpen: false
     };
-    this.handleDelete = this.handleDelete.bind(this);
+    this.deleteDefect = this.deleteDefect.bind(this);
     this.refreshDefect = this.refreshDefect.bind(this);
-    //this.handleEditOk = this.handleEditOk.bind(this);
-    this.handleOk = this.handleOk.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.showModalView = this.showModalView.bind(this);
   }
   onChange(e) {
     this.setState({
       comments: e.target.value
     });
   }
-  attachment = id => {
-    axios
-      .get("http://localhost:8081/defectservices/listFile/" + id)
-      .then(data => {
-        data.data.map(file => {
+  attachment = () => {
+    axios.get("http://localhost:8081/defectservices/listFile/1").then(data => {
+      data.data.map(file => {
+        if (file.id == 1) {
           console.log(file.fileDownloadUri);
           this.setState({
-            images: [...this.state.images, file.fileDownloadUri],
+            images: [file.fileDownloadUri],
             isOpen: true
           });
-        });
+        }
       });
+    });
+    // this.setState({
+    //   images:['//localhost:8081/defect/downloadFile/1'],
+    //   isOpen: true
+    // })
   };
 
   onSubmit(e) {
-    //e.preventDefault();
+    e.preventDefault();
+
     const commentsu = {
       comments: this.state.comments,
-      defectId: this.state.defectId
+      defectId: "1"
     };
     //var myJSON = JSON.stringify(commentsu);
     console.log(commentsu);
-    if (this.state.count < 5) {
-      axios
-        .post("http://localhost:8081/defectservices/comments", commentsu)
-        .then(res => {
-          console.log(res);
-          console.log(res.data);
-          this.getComment(this.state.defectId);
-        });
-      this.setState({
-        comments: "",
-        count: this.state.count + 1
+
+    axios
+      .post("http://localhost:8081/defectservices/comments", commentsu)
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+        this.getComment();
       });
-    } else {
-      message.error("Can't add more than 5 comments");
-    }
+
+    this.setState({
+      comments: "",
+      defectId: ""
+    });
   }
+
   componentWillMount() {
     this.getAllDefect();
   }
   componentDidMount() {
     this.forceUpdate();
   }
+
   refreshDefect() {
     axios
       .get("http://localhost:8081/defectservices/getAllDefects")
@@ -196,34 +233,18 @@ class TableFilter extends React.Component {
         this.setState({ defect: response.data });
       });
   }
-
-  refresh = () => {
-    this.forceUpdate();
-  };
-
-  onChange1 = value => {
-    console.log(`selected ${value}`);
-
-    const auditinfo = {
-      status: "Status changes to " + value,
-      user: "romi",
-      defectId: this.state.defectId
-    };
-
-    this.setState({
-      audit: auditinfo
-    });
-    console.log(this.state.audit);
-  };
   onBlur() {
     console.log("blur");
   }
+
   onFocus() {
     console.log("focus");
   }
+
   onSearch(val) {
     console.log("search:", val);
   }
+
   showModal = () => {
     this.setState({
       visible: true
@@ -234,28 +255,13 @@ class TableFilter extends React.Component {
       visible1: true
     });
   };
-  showModalView = id => {
+
+  showModalView = () => {
     this.setState({
-      addAttachment: {
-        name: "files",
-        action:
-          "http://localhost:8081/defectservices/uploadMultipleFiles?defectId=" +
-          id,
-        headers: {
-          authorization: "authorization-text"
-        },
-        multiple: true
-      }
-    });
-    console.log(this.state.addAttachment);
-    this.getComment(id);
-    this.setState({
-      showModalView: true,
-      defectId: id,
-      comments: "",
-      images: []
+      showModalView: true
     });
   };
+
   handleOk = e => {
     console.log(e);
     this.setState({
@@ -303,21 +309,13 @@ class TableFilter extends React.Component {
       visible1: false
     });
   };
-
   handleOkView = e => {
     console.log(e);
-    axios
-      .post("http://localhost:8081/defectservices/audit/", this.state.audit)
-      .then(res => {
-        console.log(res);
-        console.log(res.data);
-      });
-
     this.setState({
-      showModalView: false,
-      defectId: ""
+      showModalView: false
     });
   };
+
   handleCancel = e => {
     console.log(e);
     this.setState({
@@ -333,8 +331,7 @@ class TableFilter extends React.Component {
   handleCancelView = e => {
     console.log(e);
     this.setState({
-      showModalView: false,
-      defectId: ""
+      showModalView: false
     });
   };
   handleChange = (pagination, filters, sorter) => {
@@ -425,103 +422,70 @@ class TableFilter extends React.Component {
       }
     })
       .then(res => {
-        this.getComment(this.state.defectId);
+        this.getComment();
       })
       .catch(err => err);
-    message.success("Comment Successfully Deleted");
   };
-  // componentDidMount() {
-  //   this.getComment();
-  // }
-  getComment = id => {
-    axios
-      .get("http://localhost:8081/defectservices/comments/" + id)
-      .then(resp => {
-        let Data = resp.data;
-        this.setState({ count: Data.length });
-        let comment = Data.map(e => {
-          // return <div><p>{e.comments}</p></div>
-          return (
-            <tr key={e.id}>
-              <td
-                style={{
-                  width: "300px",
-                  wordWrap: "break-word",
-                  maxWidth: "250px"
-                }}
+
+  componentDidMount() {
+    this.getComment();
+  }
+  getComment() {
+    axios.get("http://localhost:8081/defectservices/comments/1").then(resp => {
+      let Data = resp.data;
+
+      let comment = Data.map(e => {
+        // return <div><p>{e.comments}</p></div>
+        return (
+          <tr key={e.id}>
+            <td
+              style={{
+                width: "300px",
+                wordWrap: "break-word",
+                maxWidth: "250px"
+              }}
+            >
+              {e.comments}
+            </td>
+            <td />
+            <td>{}</td>
+            <td>
+              {/* <Icon type="minus-circle" style={{ color: 'red' }} onClick={() => this.remove(e.commentId)} /> */}
+              {/* <Button size="sm" color="danger" onClick={() => this.remove(e.commentId)}>Delete</Button> */}
+              <Popconfirm
+                title="Are you sure want to delete this Entry ?"
+                icon={
+                  <Icon
+                    type="question-circle-o"
+                    style={{
+                      color: "red"
+                    }}
+                  />
+                }
+                onConfirm={() => this.remove(e.commentId)}
+                onCancel={cancel}
+                okText="Yes"
+                cancelText="No"
               >
-                {e.comments}
-              </td>
-              <td />
-              <td>{}</td>
-              <td>
-                {/* <Icon type="minus-circle" style={{ color: 'red' }} onClick={() => this.remove(e.commentId)} /> */}
-                {/* <Button size="sm" color="danger" onClick={() => this.remove(e.commentId)}>Delete</Button> */}
-                <Popconfirm
-                  title="Are you sure want to delete this Entry ?"
-                  icon={
-                    <Icon
-                      type="question-circle-o"
-                      style={{
-                        color: "red"
-                      }}
-                    />
-                  }
-                  onConfirm={() => this.remove(e.commentId)}
-                  onCancel={cancel}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <a href="#">
-                    <Icon type="minus-circle" style={{ color: "red" }} />
-                  </a>
-                </Popconfirm>
-              </td>
-            </tr>
-          );
-        });
-        this.setState({ comment });
-        console.log(comment);
+                <a href="#">
+                  <Icon type="minus-circle" style={{ color: "red" }} />
+                </a>
+              </Popconfirm>
+            </td>
+          </tr>
+        );
       });
-  };
+
+      this.setState({ comment });
+
+      console.log(comment);
+    });
+  }
 
   Preloader(props) {
     return <img src="spinner.gif" />;
   }
 
-  //Getting All defect details
-  getdefectStatus() {
-    const url = "http://localhost:8081/defectservices/getAllDefects";
-    axios
-      .get(url)
-      .then(response =>
-        this.setState({
-          defect: response.data
-        })
-      )
-      .catch(function(error) {
-        console.log(error);
-      });
-  }
-
-  componentWillMount() {
-    this.getdefectStatus();
-  }
-
-  //Deleting defect details
-  handleDelete = defectId => {
-    axios
-      .delete("http://localhost:8081/defectservices/deleteDefect/" + defectId)
-      .then(console.log(defectId))
-      .catch(err => console.log(err));
-
-    const defect = this.state.defect.filter(defect => {
-      return defect.defectId !== defectId;
-    });
-    this.setState({
-      defect
-    });
-  };
   //fetching the employee with get all employee
   getAllDefect = () => {
     const _this = this;
@@ -547,62 +511,42 @@ class TableFilter extends React.Component {
     this.setState({ state: this.state });
   };
 
-  //   handleDelete = defectId => {
-  //     // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
-  //     //     .then(console.log('Deleted'))
-  //     //     .catch(err => console.log(err))
-  //     fetch("http://localhost:8081/defectservices//deleteDefect/{defectId}" + defectId, {
-  //       method: "DELETE",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json"
-  //       },
-  //       body: JSON.stringify(this.state)
-  //     });
-  //     console.log(defectId);
-  //     const defect = this.state.defect.filter(defect => {
-  //       return defect.defectId !== defectId;
-  //     });
-  //     this.setState({
-  //       defect
-  //     });
-  //   };
+  handleDelete = defectId => {
+    // axios.get('http://localhost:8081/employeeservice/DeleteById/'+empId)
+    //     .then(console.log('Deleted'))
+    //     .catch(err => console.log(err))
+    fetch(
+      "http://localhost:8081/defectservices//deleteDefect/{defectId}" +
+        defectId,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(this.state)
+      }
+    );
+    console.log(defectId);
+    const defect = this.state.defect.filter(defect => {
+      return defect.defectId !== defectId;
+    });
+    this.setState({
+      defect
+    });
+  };
 
-  //  deleteDefect(defectId) {
-  //   console.log(defectId);
-  //   axios
-  //     .delete("http://localhost:8081/defectservices/deleteDefect/" + defectId)
-  //     .then(response => {
-  //       console.warn("Delete Service is working");
-  //       //  this.refreshBook(response);
-  //       this.forceUpdate();
-  //       // alert(" Defect deleted successfully");
-  //     });
-  // }
-
-  // //Edting Defect Details
-  //   handleEdit = defectId => {
-  //     this.showModal();
-  //     console.log(defectId);
-  //     this.setState({
-  //       defectId: defectId
-  //     });
-  //     axios
-  //       .get("http://localhost:8081/defectservices/getDefectById" + defectId)
-  //       .then(response => {
-  //         console.log(response);
-  //         this.setState({
-  //           defectId:response.data.defectId,
-  //           moduleId:response.data.moduleId,
-  //           defectDescription:response.data.defectDescription,
-
-  //         });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-
-  //   };
+  deleteDefect(defectId) {
+    console.log(defectId);
+    axios
+      .delete("http://localhost:8081/defectservices/deleteDefect/" + defectId)
+      .then(response => {
+        console.warn("Delete Service is working");
+        //  this.refreshBook(response);
+        this.forceUpdate();
+        // alert(" Defect deleted successfully");
+      });
+  }
 
   render() {
     const { photoIndex, isOpen, images } = this.state;
@@ -620,16 +564,6 @@ class TableFilter extends React.Component {
         onFilter: (value, record) => record.defectId.includes(value),
         sorter: (a, b) => a.defectId.length - b.defectId.length,
         sortOrder: sortedInfo.columnKey === "defectId" && sortedInfo.order
-      },
-      {
-        title: "Project Name",
-        dataIndex: "projectId",
-        key: "projectId",
-        //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
-        filteredValue: filteredInfo.projectName || null,
-        onFilter: (value, record) => record.projectName.includes(value),
-        sorter: (a, b) => a.projectName.length - b.projectName.length,
-        sortOrder: sortedInfo.columnKey === "projectId" && sortedInfo.order
       },
       {
         title: "Module Name",
@@ -730,7 +664,6 @@ class TableFilter extends React.Component {
             <Icon
               type="edit"
               style={{ fontSize: "18px", color: "blue" }}
-              // onClick={this.handleEdit.bind(this, data.defectId)}
               onClick={this.showModal}
             />
             <Divider type="vertical" />
@@ -745,7 +678,7 @@ class TableFilter extends React.Component {
                   }}
                 />
               }
-              onConfirm={this.handleDelete.bind(this, data.defectId)}
+              onConfirm={confirm}
               onCancel={cancel}
               okText="Yes"
               cancelText="No"
@@ -757,8 +690,7 @@ class TableFilter extends React.Component {
                     color: "red",
                     fontSize: "18px"
                   }}
-
-                  // onClick={() => this.handleDelete(data.defectId)}
+                  onClick={() => this.deleteDefect(data.defectId)}
                 />
               </a>
             </Popconfirm>
@@ -768,12 +700,12 @@ class TableFilter extends React.Component {
       {
         title: "More",
         key: "more",
-        render: (text, data = this.state.defect, record) => (
+        render: (text, record) => (
           <span>
             <Icon
               type="arrows-alt"
               style={{ fontSize: "18px", color: "green" }}
-              onClick={() => this.showModalView(data.defectId)}
+              onClick={this.showModalView}
             />
           </span>
         )
@@ -849,25 +781,6 @@ class TableFilter extends React.Component {
               </Col>
             </Row>
 
-            <Form.Item label="Description: ">
-              <TextArea
-                className="defectDescription"
-                name="defectDescription"
-                autosize={{ minRows: 4, maxRows: 10 }}
-                onChange={this.handleChangeState}
-                placeholder="Description"
-              />
-            </Form.Item>
-
-            <Form.Item label="Steps to Re-create: ">
-              <TextArea
-                className="stepsToRecreate"
-                name="stepsToRecreate"
-                placeholder="Step to Create"
-                autosize={{ minRows: 6, maxRows: 12 }}
-                onChange={this.handleChangeState}
-              />
-            </Form.Item>
             <Row>
               <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Type: ">
@@ -910,48 +823,44 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Found In: ">
-                  <Select
-                    defaultValue="Release"
-                    style={{ width: "100%" }}
-                    onChange={this.onChange}
-                  >
-                    <Option value="Release1">Release1</Option>
-                    <Option value="Release2">Release2</Option>
-                    <Option value="Release3">Release3</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Available In">
-                  <Select
-                    defaultValue="Release"
-                    style={{ width: "100%" }}
-                    onChange={this.onChangeSeverityId}
-                  >
-                    <Option value="Release1">Release1</Option>
-                    <Option value="Release2">Release2</Option>
-                    <Option value="Release3">Release3</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Assigned To: ">
-                  <Select
-                    defaultValue="user1"
-                    style={{ width: "100%" }}
-                    onChange={this.handleChangeAssignTo}
-                  >
-                    <Option value="user1">User 1</Option>
-                    <Option value="user2">User 2</Option>
-                    <Option value="user3">User 3</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
+
+            <Form.Item label="Description: ">
+              <TextArea
+                className="defectDescription"
+                name="defectDescription"
+                onChange={this.handleChangeState}
+                placeholder="Description"
+                autosize
+              />
+            </Form.Item>
+
+            <Form.Item label="Steps to Re-create: ">
+              <TextArea
+                className="stepsToRecreate"
+                name="stepsToRecreate"
+                placeholder="Step to Create"
+                autosize={{ minRows: 2, maxRows: 6 }}
+                onChange={this.handleChangeState}
+              />
+            </Form.Item>
+
+            <Form.Item label="Assigned To: ">
+              <Select
+                defaultValue="user1"
+                style={{ width: "100%" }}
+                onChange={this.handleChangeAssignTo}
+              >
+                <Option value="user1">User 1</Option>
+                <Option value="user2">User 2</Option>
+                <Option value="user3">User 3</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item label="Comments:  ">
+              <TextArea placeholder="" autosize={{ minRows: 2, maxRows: 8 }} />
+            </Form.Item>
           </Form>
+
           <Upload {...props}>
             <Button>
               <Icon type="upload" /> Click to Upload
@@ -960,7 +869,7 @@ class TableFilter extends React.Component {
         </Modal>
         <Table
           columns={columns}
-          dataSource={this.state.defect}
+          dataSource={defect}
           onChanger={this.handleChange}
         />
 
@@ -968,19 +877,19 @@ class TableFilter extends React.Component {
         <Modal
           title="Edit Defects"
           visible={this.state.visible}
-          // onOk={this.handleEditOk.bind(this, this.state.defectId)}
+          onOk={this.handleOk}
           onCancel={this.handleCancel}
           width="600px"
         >
           <Form onSubmit={this.handleSubmit}>
             <Row>
               <Col span={12} style={{ padding: "5px" }}>
-                <Form.Item label=" Defect Id: ">
+                <Form.Item label="Edit Defect Id: ">
                   <Input placeholder="Defect Id" disabled="true" />
                 </Form.Item>
               </Col>
               <Col span={12} style={{ padding: "5px" }}>
-                <Form.Item label=" Module: ">
+                <Form.Item label="Edit Module: ">
                   <TreeSelect
                     showSearch
                     style={{ width: "100%" }}
@@ -1005,7 +914,7 @@ class TableFilter extends React.Component {
 
             <Row>
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label=" Type: ">
+                <Form.Item label="Edit Type: ">
                   <Select
                     defaultValue="UI"
                     style={{ width: "100%" }}
@@ -1019,11 +928,11 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label=" Severity">
+                <Form.Item label="Edit Severity">
                   <Select
                     defaultValue="high"
                     style={{ width: "100%" }}
-                    onChange={this.onChangeSeverityId}
+                    onChange={this.onChange}
                   >
                     <Option value="high">High</Option>
                     <Option value="medium">Medium</Option>
@@ -1032,7 +941,7 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label=" Priority:  ">
+                <Form.Item label="Edit Priority:  ">
                   <Select
                     defaultValue="high"
                     style={{ width: "100%" }}
@@ -1045,74 +954,16 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Fixed In: ">
-                  <Select
-                    defaultValue="Fixed In"
-                    style={{ width: "100%" }}
-                    onChange={this.onChange}
-                  >
-                    <Option value="User1">User1</Option>
-                    <Option value="User2">User2</Option>
-                    <Option value="User3">User3</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Found In: ">
-                  <Select
-                    defaultValue="Release"
-                    style={{ width: "100%" }}
-                    onChange={this.onChange}
-                  >
-                    <Option value="Release1">Release1</Option>
-                    <Option value="Release2">Release2</Option>
-                    <Option value="Release3">Release3</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Status:  ">
-                  <Select
-                    defaultValue="New"
-                    style={{ width: "100%" }}
-                    onChange={this.onChange}
-                  >
-                    <Option value="New">New</Option>
-                    <Option value="Open">Open</Option>
-                    <Option value="Fixed">Fixed</Option>
-                    <Option value="closed">Closed</Option>
-                    <Option value="Reject">Reject</Option>
-                    <Option value="ReOpen">ReOpen</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
 
-            <Form.Item label="Available In">
-              <Select
-                defaultValue="Release"
-                style={{ width: "100%" }}
-                onChange={this.onChangeSeverityId}
-              >
-                <Option value="Release1">Release1</Option>
-                <Option value="Release2">Release2</Option>
-                <Option value="Release3">Release3</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label=" Description: ">
-              <TextArea
-                placeholder="Description"
-                autosize={{ minRows: 3, maxRows: 12 }}
-              />
+            <Form.Item label="Edit Description: ">
+              <TextArea placeholder="Description" autosize />
             </Form.Item>
 
-            <Form.Item label=" Steps to Re-create: ">
-              <TextArea placeholder="" autosize={{ minRows: 6, maxRows: 12 }} />
+            <Form.Item label="Edit Steps to Re-create: ">
+              <TextArea placeholder="" autosize={{ minRows: 2, maxRows: 6 }} />
             </Form.Item>
 
-            <Form.Item label=" Assigned To: ">
+            <Form.Item label="Edit Assigned To: ">
               <Select
                 defaultValue="User 1"
                 style={{ width: "100%" }}
@@ -1124,6 +975,12 @@ class TableFilter extends React.Component {
               </Select>
             </Form.Item>
           </Form>
+
+          <Upload {...props}>
+            <Button>
+              <Icon type="upload" /> Click to Upload
+            </Button>
+          </Upload>
         </Modal>
         {/* More Details View */}
         <Modal
@@ -1134,26 +991,6 @@ class TableFilter extends React.Component {
           width="600px"
         >
           <Row>
-            {/*<Col span={10} style={{ padding: '5px' }}>
-           <p><b>Module name:</b></p>
-              <p><b>Description:</b></p>
-              <p><b>Steps to re-create:</b></p>
-              <p><b>Severity:</b></p>
-              <p><b>Priority:</b></p>
-              <p><b>Defect Type:</b></p>
-              <p><b>Status:</b></p>
-              <p><b>Entered By:</b></p>
-              <p><b>Entered Date:</b></p>
-              <p><b>Found In:</b></p>
-              <p><b>Available In:</b></p>
-              <p><b>Assigned To:</b></p>
-              <p><b>Fixed By:</b></p>
-              <p><b>Fixed Date:</b></p>
-              <p><b>Fixed In:</b></p>
-             <p><b>Comments:</b></p>
-
-              </Col>*/}
-
             <Col span={10} style={{ padding: "5px" }}>
               <p>
                 <b>Module name:</b>
@@ -1189,10 +1026,10 @@ class TableFilter extends React.Component {
                 <b>Fixed By:</b>
               </p>
               <p>
-                <b>Available Date:</b>
+                <b>Fixed Date:</b>
               </p>
               <p>
-                <b>Status:</b>
+                <b>Available Date:</b>
               </p>
               <p>
                 <b>Comments:</b>
@@ -1220,42 +1057,16 @@ class TableFilter extends React.Component {
               <p>Open</p>
               <p>Tom</p>
               <p>05.05.2019</p>
-              <p>Sam</p>
-              <p>User1</p>
               <p>Tom</p>
-              <p>
-                <Select
-                  showSearch
-                  style={{ width: 200 }}
-                  placeholder="Select a person"
-                  optionFilterProp="children"
-                  onChange={this.onChange1}
-                  onFocus={this.onFocus}
-                  onBlur={this.onBlur}
-                  onSearch={this.onSearch}
-                  filterOption={(input, option) =>
-                    option.props.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  <Option value="open">open</Option>
-                  <Option value="fixed">fixed</Option>
-                  <Option value="close">close</Option>
-                  <Option value="reopen">reopen</Option>
-                  <Option value="rejected">rejected</Option>
-                </Select>
-              </p>
-
+              <p>Sam</p>
+              <p>05.05.2020</p>
+              <p>05.10.2020</p>
               <p>{this.state.comment}</p>
             </Col>
           </Row>
           <Row>
-            <Col span={10} style={{ padding: "5px" }}>
-              <Button
-                type="primary"
-                onClick={() => this.attachment(this.state.defectId)}
-              >
+            <div>
+              <Button type="primary" onClick={this.attachment}>
                 View Attachments
               </Button>
               {isOpen && (
@@ -1279,15 +1090,7 @@ class TableFilter extends React.Component {
                   }
                 />
               )}
-            </Col>
-
-            <Col span={14} style={{ padding: "5px" }}>
-              <Upload {...this.state.addAttachment}>
-                <Button>
-                  <Icon type="upload" /> Click to Upload
-                </Button>
-              </Upload>
-            </Col>
+            </div>
           </Row>
           <Divider />
           <h3>Comments</h3>
