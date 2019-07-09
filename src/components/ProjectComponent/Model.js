@@ -188,7 +188,7 @@ export default class Model extends React.Component {
       type: e.target.value
     });
   }
-  onChangeStartDate(date, dateString) {
+  onChangeStartDate=(date, dateString)=> {
     //this.setState({startDate: dateString});
 
     this.setState({ startDate: dateString }, () =>
@@ -197,14 +197,14 @@ export default class Model extends React.Component {
 
     console.log(this.state.startDate);
   }
-  onChangeEndDate(date, dateString) {
+  onChangeEndDate=(date, dateString) =>{
     this.setState({ endDate: dateString }, () =>
       console.log(this.state.endDate)
     );
 
     console.log(this.state.endDate);
   }
-  onChangeDuration(e) {
+  onChangeDuration=(e) =>{
     this.setState({
       duration: e.target.value
     });
@@ -255,8 +255,9 @@ export default class Model extends React.Component {
       status: this.state.status
       // configId: this.state.configId
     };
+    console.log("dfdddfd"+projectData)
     axios
-      .post("http://localhost:8081/project_service/createproject", projectData)
+      .post("http://localhost:8081/defectservices/createproject/", projectData)
       .then(res => console.log(res.data));
 
     this.setState({
@@ -407,8 +408,8 @@ export default class Model extends React.Component {
                       placeholder="Start Date"
                       name="startDate"
                       startDate={this.state.startDate}
-                      // onChange={this.onChangeStartDate}
-                      onChange={this.handlechange}
+                      onChange={this.onChangeStartDate}
+                      // onChange={this.handlechange}
                     />
                     {formerrors.startDate.length > 0 && (
                       <span
@@ -429,8 +430,8 @@ export default class Model extends React.Component {
                       placeholder="End Date"
                       name="endDate"
                       endDate={this.state.endDate}
-                      // onChange={this.onChangeEndDate}
-                      onChange={this.handlechange}
+                      onChange={this.onChangeEndDate}
+                      // onChange={this.handlechange}
                     />
                     {formerrors.endDate.length > 0 && (
                       <span
@@ -452,8 +453,8 @@ export default class Model extends React.Component {
                     placeholder="Duration"
                     name="duration"
                     value={this.state.duration}
-                    // onChange={this.onChangeDuration}
-                    onChange={this.handlechange}
+                    onChange={this.onChangeDuration}
+                    // onChange={this.handlechange}
                   />
                   {formerrors.duration.length > 0 && (
                     <span
