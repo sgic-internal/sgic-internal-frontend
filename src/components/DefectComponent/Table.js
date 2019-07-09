@@ -443,12 +443,18 @@ class TableFilter extends React.Component {
           // return <div><p>{e.comments}</p></div>
           return (
             <tr key={e.id}>
-              <td style={{ whiteSpace: "nowrap", width: "20%" }}>
+              <td
+                style={{
+                  width: "300px",
+                  wordWrap: "break-word",
+                  maxWidth: "250px"
+                }}
+              >
                 {e.comments}
               </td>
               <td />
               <td>{}</td>
-              <td style={{ paddingLeft: "140px" }}>
+              <td>
                 {/* <Icon type="minus-circle" style={{ color: 'red' }} onClick={() => this.remove(e.commentId)} /> */}
                 {/* <Button size="sm" color="danger" onClick={() => this.remove(e.commentId)}>Delete</Button> */}
                 <Popconfirm
@@ -709,14 +715,12 @@ class TableFilter extends React.Component {
       {
         title: "Found In",
         dataIndex: "foundIn",
-        key: "foundIn",
-              
+        key: "foundIn"
       },
       {
         title: "Available In",
         dataIndex: "availableIn",
-        key: "availableIn",
-        
+        key: "availableIn"
       },
       {
         title: "Action",
@@ -791,9 +795,22 @@ class TableFilter extends React.Component {
           width="600px"
         >
           <Form onSubmit={this.handleAddDefect}>
-          <Row>
-          <Col span={12} style={{ padding: "5px" }}>
-          <Form.Item label="Project Name">
+            <Row>
+              <Col span={12} style={{ padding: "5px" }}>
+                <Form.Item label="Defect Id: ">
+                  <Input
+                    placeholder="Defect Id"
+                    className="defectId"
+                    name="defectId"
+                    //disabled="true"
+                    onChange={event => this.handleChangeState(event)}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12} style={{ padding: "5px" }}>
+                <Form.Item label="Project Name">
                   <Select
                     defaultValue="Project Name"
                     style={{ width: "100%" }}
@@ -804,11 +821,8 @@ class TableFilter extends React.Component {
                     <Option value="Leave System">Leave System</Option>
                   </Select>
                 </Form.Item>
-         
-            </Col>
-            
-            
-             
+              </Col>
+
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Module: ">
                   <TreeSelect
@@ -834,8 +848,6 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-
-            
 
             <Form.Item label="Description: ">
               <TextArea
@@ -1110,10 +1122,6 @@ class TableFilter extends React.Component {
                 <Option value="user2">User 2</Option>
                 <Option value="user3">User 3</Option>
               </Select>
-            </Form.Item>
-
-            <Form.Item label="Comments:  ">
-              <TextArea placeholder="" autosize={{ minRows: 2, maxRows: 8 }} />
             </Form.Item>
           </Form>
         </Modal>
