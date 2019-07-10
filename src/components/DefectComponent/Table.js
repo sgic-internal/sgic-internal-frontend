@@ -87,26 +87,24 @@ class TableFilter extends React.Component {
       searchText: "",
       defect: [],
       moduleId: "",
-      defectList: [
-        {
-          defectId: "",
-          projectId: "1",
-          moduleId: "",
-          severityId: 0,
-          priorityId: 0,
-          typeId: 0,
-          statusId: 1,
-          defectDescription: "",
-          stepsToRecreate: "",
-          assignTo: "",
-          reassignTo: "none",
-          enteredBy: "pinky",
-          fixedBy: "none",
-          commentId: 1,
-          attachmentId: 1,
-          dateAndTime: "2017-05-05"
-        }
-      ],
+      defectId: "",
+      abbre: "",
+      projectId: "",
+      moduleId: "",
+      priority: "",
+      severity: "",
+      type: "",
+      status: "",
+      defectDescription: "",
+      stepsToRecreate: "",
+      assignTo: "",
+      reassignTo: "",
+      enteredBy: "",
+      fixedBy: "",
+      availableIn: "",
+      foundIn: "",
+      fixedIn: "",
+      dateAndTime: "",
       addAttachment: {
         name: "",
         action: "",
@@ -114,7 +112,6 @@ class TableFilter extends React.Component {
         multiple: true
       },
       images: [],
-      defectId: "",
       user: "",
       status: "",
       audit: "",
@@ -137,11 +134,11 @@ class TableFilter extends React.Component {
     this.refreshDefect = this.refreshDefect.bind(this);
     //this.handleEditOk = this.handleEditOk.bind(this);
     this.handleOk = this.handleOk.bind(this);
-    this.onChange = this.onChange.bind(this);
+    // this.onChange1 = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.showModalView = this.showModalView.bind(this);
   }
-  onChange(e) {
+  onChange2 = (e) => {
     this.setState({
       comments: e.target.value
     });
@@ -258,53 +255,59 @@ class TableFilter extends React.Component {
       images: []
     });
   };
-  handleOk = e => {
-    console.log(e);
+
+  handleOk = () => {
+    this.onSubmit();
     this.setState({
       visible: false
     });
-  };
-  handleOkAddDefect = e => {
-    console.log(e);
-    console.log(this.state.assignTo);
-
     const defectList = {
-      defectId: this.state.defectId, //OK
-      projectId: "1", //Needs to add ui to get project id
-      moduleId: "1", //OK
-      severityId: parseInt(this.state.severityId), //OK
-      priorityId: parseInt(this.state.priorityId), //OK
-      typeId: parseInt(this.state.typeId), //OK
-      statusId: 1, //OK predefined 1 = NEW
-      defectDescription: this.state.defectDescription, //OK
-      stepsToRecreate: this.state.stepsToRecreate, //OK
-      assignTo: this.state.assignTo, //OK
-      reassignTo: "none", // predefined
-      enteredBy: "mathu", // integrate after login done
-      fixedBy: "pinky", // need to be done
-      commentId: 1, //Merge this
-      attachmentId: 1, //Merge this
-      dateAndTime: "2017-05-05" // Change format in back end
+      defectId: this.state.defectId,
+      moduleId: this.state.moduleId,
+      projectId: this.state.projectId,
+      severity: this.state.severity,
+      priority: this.state.priority,
+      type: this.state.type,
+      status: this.state.status,
+      fixedIn: "gkgjgjj",
+      abbre: "gg",
+      defectDescription: "gg",
+      stepsToRecreate: "gggggggggggggggggggggggg",
+      assignTo: "gg",
+      reassignTo: "gg",
+      enteredBy: "gg",
+      fixedBy: "gg",
+      availableIn: "gg",
+      foundIn: "gggg",
+      dateAndTime: "2015-05-05"
     };
-    console.log(defectList);
-    axios({
-      method: "post",
-      url: "http://localhost:8081/defectservices/saveDefect",
-      data: defectList,
-      config: { headers: { "Content-Type": "application/json" } }
-    })
-      .then(function(response) {
-        //handle success
-        console.log(response);
-      })
-      .catch(function(response) {
-        //handle error
-        console.log(response);
-      });
+
+    console.log("dddddddddddddddddddd" + defectList)
+    axios
+      .post("http://localhost:8081/defectservices/saveDefect", defectList)
+      .then(res => {
+
+
+        this.getdefectStatus()
+        console.log(res.data)
+      }
+      );
+
     this.setState({
+      defectId: "",
+      moduleId: "",
+      projectId: "",
+      severity: "",
+      priority: "",
+      type: "",
+      status: "",
+      fixedIn: "",
+
       visible1: false
     });
+    message.success("Added Successfully!");
   };
+
 
   handleOkView = e => {
     console.log(e);
@@ -402,16 +405,20 @@ class TableFilter extends React.Component {
     });
   };
   handleChangeSeverity = value => {
-    this.setState({ severityId: value });
+    this.setState({ severity: value });
   };
 
   handleChangePriority = value => {
-    this.setState({ priorityId: value });
+    this.setState({ priority: value });
   };
 
   handleChangeType = value => {
-    this.setState({ typeId: value });
+    this.setState({ type: value });
   };
+  handleChangeStatus = value => {
+    this.setState({ status: value });
+  };
+
 
   handleChangeAssignTo = value => {
     this.setState({ assignTo: value });
@@ -501,7 +508,7 @@ class TableFilter extends React.Component {
           defect: response.data
         })
       )
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
   }
@@ -529,18 +536,19 @@ class TableFilter extends React.Component {
     const _this = this;
     axios
       .get("http://localhost:8081/defectservices/getAllDefects")
-      .then(function(response) {
+      .then(function (response) {
         // handle success
         console.log(response);
         var data = response.data;
         for (let a = 0; a < data.length; a++) {
           _this.state.defect.push({
             defectId: data[a].defectId,
-            moduleId: data[a].moduleId,
-            severityId: data[a].severityId,
-            priorityId: data[a].priorityId,
-            typeId: data[a].typeId,
-            statusId: data[a].statusId
+            projectName: data[a].projectName,
+            moduleName: data[a].moduleName,
+            severity: data[a].severity,
+            priority: data[a].priority,
+            type: data[a].type,
+            status: data[a].status
           });
         }
         console.log(_this.state.defect);
@@ -625,8 +633,8 @@ class TableFilter extends React.Component {
       },
       {
         title: "Project Name",
-        dataIndex: "projectId",
-        key: "projectId",
+        dataIndex: "projectName",
+        key: "projectName",
         //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
         filteredValue: filteredInfo.projectName || null,
         onFilter: (value, record) => record.projectName.includes(value),
@@ -635,8 +643,8 @@ class TableFilter extends React.Component {
       },
       {
         title: "Module Name",
-        dataIndex: "moduleId",
-        key: "moduleId",
+        dataIndex: "moduleName",
+        key: "moduleName",
         //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
         filteredValue: filteredInfo.moduleId || null,
         onFilter: (value, record) => record.moduleId.includes(value),
@@ -645,8 +653,8 @@ class TableFilter extends React.Component {
       },
       {
         title: "Severity",
-        dataIndex: "severityId",
-        key: "severityId",
+        dataIndex: "severity",
+        key: "severity",
         filters: [
           { text: "High", value: "High" },
           { text: "Medium", value: "Medium" },
@@ -674,8 +682,8 @@ class TableFilter extends React.Component {
       },
       {
         title: "Priority",
-        dataIndex: "priorityId",
-        key: "priorityId",
+        dataIndex: "priority",
+        key: "priority",
         filters: [
           { text: "High", value: "High" },
           { text: "Medium", value: "Medium" },
@@ -687,9 +695,9 @@ class TableFilter extends React.Component {
         sortOrder: sortedInfo.columnKey === "priorityId" && sortedInfo.order
       },
       {
-        title: "typeId",
-        dataIndex: "typeId",
-        key: "typeId",
+        title: "Type",
+        dataIndex: "type",
+        key: "type",
         filters: [
           { text: "UI", value: "UI" },
           { text: "Functinality", value: "Functinality" },
@@ -702,8 +710,8 @@ class TableFilter extends React.Component {
       },
       {
         title: "Status",
-        dataIndex: "statusId",
-        key: "statusId",
+        dataIndex: "status",
+        key: "status",
         filters: [
           { text: "Open", value: "Open" },
           { text: "Re-opened", value: "Re-opened" },
@@ -714,6 +722,34 @@ class TableFilter extends React.Component {
         sorter: (a, b) => a.status.length - b.status.length,
         sortOrder: sortedInfo.columnKey === "statusId" && sortedInfo.order
       },
+      {
+        title: "FixedIn",
+        dataIndex: "fixedIn",
+        key: "fixedIn",
+        // filters: [
+        //   { text: "Release1", value: "Release1" },
+        //   { text: "Release2", value: "Release2" },
+        //   { text: "Release3", value: "Release3" }
+        // ],
+        filteredValue: filteredInfo.status || null,
+        onFilter: (value, record) => record.status.includes(value),
+        sorter: (a, b) => a.status.length - b.status.length,
+        sortOrder: sortedInfo.columnKey === "fixedIn" && sortedInfo.order
+      },
+      // {
+      //   title: "Status",
+      //   dataIndex: "status",
+      //   key: "status",
+      //   filters: [
+      //     { text: "Open", value: "Open" },
+      //     { text: "Re-opened", value: "Re-opened" },
+      //     { text: "Defrred", value: "Defrred" }
+      //   ],
+      //   filteredValue: filteredInfo.status || null,
+      //   onFilter: (value, record) => record.status.includes(value),
+      //   sorter: (a, b) => a.status.length - b.status.length,
+      //   sortOrder: sortedInfo.columnKey === "statusId" && sortedInfo.order
+      // },
       {
         title: "Action",
         key: "action",
@@ -750,7 +786,7 @@ class TableFilter extends React.Component {
                     fontSize: "18px"
                   }}
 
-                  // onClick={() => this.handleDelete(data.defectId)}
+                // onClick={() => this.handleDelete(data.defectId)}
                 />
               </a>
             </Popconfirm>
@@ -783,11 +819,11 @@ class TableFilter extends React.Component {
         <Modal
           title="Add Defects"
           visible={this.state.visible1}
-          onOk={this.handleOkAddDefect}
+          onOk={this.handleOk}
           onCancel={this.handleCancel1}
           width="600px"
         >
-          <Form onSubmit={this.handleAddDefect}>
+          <Form onSubmit={this.handleOk}>
             <Row>
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Defect Id: ">
@@ -801,6 +837,17 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={12} style={{ padding: "5px" }}>
+                <Form.Item label=" ModuleId: ">
+                  <Input
+                    placeholder="Module Id"
+                    className="moduleId"
+                    name="moduleId"
+                    //disabled="true"
+                    onChange={event => this.handleChangeState(event)}
+                  />
+                </Form.Item>
+              </Col>
+              {/* <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Module: ">
                   <TreeSelect
                     showSearch
@@ -823,14 +870,14 @@ class TableFilter extends React.Component {
                     </TreeNode>
                   </TreeSelect>
                 </Form.Item>
-              </Col>
+              </Col> */}
             </Row>
 
-            <Form.Item label="Project Name: ">
+            <Form.Item label="Project Id: ">
               <Input
-                placeholder="ProjectName"
-                className="ProjectName"
-                name="projectName"
+                placeholder="ProjectId"
+                className="projectId"
+                name="projectId"
                 onChange={event => this.handleChangeState(event)}
               />
             </Form.Item>
@@ -856,42 +903,42 @@ class TableFilter extends React.Component {
             </Form.Item>
             <Row>
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Type: ">
+                <Form.Item label="type: ">
                   <Select
                     defaultValue="UI"
                     style={{ width: "100%" }}
                     onChange={this.handleChangeType}
                   >
-                    <Option value="1">UI</Option>
-                    <Option value="2">Functionality</Option>
-                    <Option value="3">Enhancement</Option>
-                    <Option value="4">Performance</Option>
+                    <Option value="UI">UI</Option>
+                    <Option value="Functionality">Functionality</Option>
+                    <Option value="Enhancement">Enhancement</Option>
+                    <Option value="Performance">Performance</Option>
                   </Select>
                 </Form.Item>
               </Col>
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Severity">
+                <Form.Item label="severity">
                   <Select
                     defaultValue="high"
                     style={{ width: "100%" }}
                     onChange={this.handleChangeSeverity}
                   >
-                    <Option value="1">High</Option>
-                    <Option value="2">Medium</Option>
-                    <Option value="3">Low</Option>
+                    <Option value="High">High</Option>
+                    <Option value="Medium">Medium</Option>
+                    <Option value="Low">Low</Option>
                   </Select>
                 </Form.Item>
               </Col>
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Priority:  ">
+                <Form.Item label="priority:  ">
                   <Select
                     defaultValue="high"
                     style={{ width: "100%" }}
                     onChange={this.handleChangePriority}
                   >
-                    <Option value="1">High</Option>
-                    <Option value="2">Medium</Option>
-                    <Option value="3">Low</Option>
+                    <Option value="High">High</Option>
+                    <Option value="Medium">Medium</Option>
+                    <Option value="Low">Low</Option>
                   </Select>
                 </Form.Item>
               </Col>
@@ -937,8 +984,35 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
+            <Row>
+              <Col span={8} style={{ padding: "5px" }}>
+                <Form.Item label="status">
+                  <Select
+                    defaultValue="high"
+                    style={{ width: "100%" }}
+                    onChange={this.handleChangeStatus}
+                  >
+                    <Option value="New">New</Option>
+                    <Option value="Open">Open</Option>
+                    <Option value="Fixed">Fixed</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Form.Item label="Comments: ">
+                <TextArea
+                  placeholder="Comments"
+                  className="comments"
+                  autosize={{ minRows: 4, maxRows: 10 }}
+                  name="comments"
+                  //disabled="true"
+                  onChange={this.onChange2}
+                />
+              </Form.Item>
+            </Row>
           </Form>
-          <Upload {...props}>
+          <Upload {...this.state.addAttachment}>
             <Button>
               <Icon type="upload" /> Click to Upload
             </Button>
@@ -1287,7 +1361,7 @@ class TableFilter extends React.Component {
             }
             content={
               <Editor
-                onChange={this.onChange}
+                onChange={this.onChange2}
                 onSubmit={this.onSubmit}
                 submitting={submitting}
                 value={this.state.comments}
