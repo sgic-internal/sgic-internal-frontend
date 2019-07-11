@@ -85,6 +85,8 @@ class TableFilter extends React.Component {
 
     this.state = {
       searchText: "",
+      filteredInfo: null,
+      sortedInfo: null,
       defect: [],
       moduleId: "",
       defectId: "",
@@ -156,6 +158,15 @@ class TableFilter extends React.Component {
         });
       });
   };
+
+  handleChange = (pagination, filters, sorter) => {
+    console.log('Various parameters', pagination, filters, sorter);
+    this.setState({
+      filteredInfo: filters,
+      sortedInfo: sorter,
+    });
+  };
+
 
   onSubmit(e) {
     //e.preventDefault();
@@ -660,9 +671,9 @@ class TableFilter extends React.Component {
           { text: "Medium", value: "Medium" },
           { text: "Low", value: "Low" }
         ],
-        filteredValue: filteredInfo.severityId || null,
-        onFilter: (value, record) => record.severityId.includes(value),
-        sorter: (a, b) => a.severityId.length - b.severityId.length,
+        filteredValue: filteredInfo.severity || null,
+        onFilter: (value, record) => record.severity.includes(value),
+        sorter: (a, b) => a.severity.length - b.severity.length,
         sortOrder: sortedInfo.columnKey === "severity" && sortedInfo.order
         // render: severityId => (
         //   <span>
@@ -689,10 +700,10 @@ class TableFilter extends React.Component {
           { text: "Medium", value: "Medium" },
           { text: "Low", value: "Low" }
         ],
-        filteredValue: filteredInfo.priorityId || null,
-        onFilter: (value, record) => record.priorityId.includes(value),
-        sorter: (a, b) => a.priority.length - b.priorityId.length,
-        sortOrder: sortedInfo.columnKey === "priorityId" && sortedInfo.order
+        filteredValue: filteredInfo.priority || null,
+        onFilter: (value, record) => record.priority.includes(value),
+        sorter: (a, b) => a.priority.length - b.priority.length,
+        sortOrder: sortedInfo.columnKey === "priority" && sortedInfo.order
       },
       {
         title: "Type",
@@ -706,7 +717,7 @@ class TableFilter extends React.Component {
         filteredValue: filteredInfo.type || null,
         onFilter: (value, record) => record.type.includes(value),
         sorter: (a, b) => a.type.length - b.type.length,
-        sortOrder: sortedInfo.columnKey === "typeId" && sortedInfo.order
+        sortOrder: sortedInfo.columnKey === "type" && sortedInfo.order
       },
       {
         title: "Status",
@@ -720,18 +731,18 @@ class TableFilter extends React.Component {
         filteredValue: filteredInfo.status || null,
         onFilter: (value, record) => record.status.includes(value),
         sorter: (a, b) => a.status.length - b.status.length,
-        sortOrder: sortedInfo.columnKey === "statusId" && sortedInfo.order
+        sortOrder: sortedInfo.columnKey === "status" && sortedInfo.order
       },
       {
         title: "FixedIn",
         dataIndex: "fixedIn",
         key: "fixedIn",
-        // filters: [
-        //   { text: "Release1", value: "Release1" },
-        //   { text: "Release2", value: "Release2" },
-        //   { text: "Release3", value: "Release3" }
-        // ],
-        filteredValue: filteredInfo.status || null,
+        filters: [
+          { text: "Release1", value: "Release1" },
+          { text: "Release2", value: "Release2" },
+          { text: "Release3", value: "Release3" }
+        ],
+        filteredValue: filteredInfo.fixedIn || null,
         onFilter: (value, record) => record.status.includes(value),
         sorter: (a, b) => a.status.length - b.status.length,
         sortOrder: sortedInfo.columnKey === "fixedIn" && sortedInfo.order
@@ -1021,7 +1032,7 @@ class TableFilter extends React.Component {
         <Table
           columns={columns}
           dataSource={this.state.defect}
-          onChanger={this.handleChange}
+          onChange={this.handleChange}
         />
 
         {/* Edit Defects Part  */}
