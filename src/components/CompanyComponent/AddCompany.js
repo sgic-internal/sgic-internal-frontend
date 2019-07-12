@@ -1,10 +1,13 @@
 import React from "react";
-import { Modal, Button, Icon, Form, Input, Radio, DatePicker } from "antd";
+import { Modal, Button, Icon, Form, Input, Select, DatePicker } from "antd";
 import { InputNumber } from "antd";
 // import moment from "moment";
 import { Row, Col } from "antd";
 import "./index.css";
 import axios from "axios";
+import CompanyController from "./CompanyController";
+import { Link } from 'react-router-dom'
+
 // import AllApi from ".AllApi";
 
 //import { getFieldDecorator } from "antd";
@@ -12,6 +15,7 @@ import axios from "axios";
 // const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY"];
 
 const { TextArea } = Input;
+const { Option } = Select;
 //dropdown for Lisence period s Function
 function onChange(value) {
   console.log("changed", value);
@@ -22,22 +26,44 @@ export default class AddCompany extends React.Component {
     super(props);
 
     this.state = {
+      companyId: "",
       companyName: "",
       companyAbbrivation: "",
       companyRegNo: "",
       companyAdminName: "",
       companyAdminEmail: "",
-      companyLicenseType: "",
+      companyLicenseTypeId: "",
+      licenseTypeCompany: "",
       companyLicensePeriod: "",
       LicenseStartDate: "",
       LicenseEndDate: "",
       companyDescription: "",
       visible: false,
-      loading: false
+      loading: false,
+      getCompany: [],
+      getLicenseTypes: []
     };
     this.onSubmit = this.onSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
   }
+
+  //-----------------------------------------------------------------
+  fetchAllLicenseType = () => {
+    fetch(`http://localhost:8083/productservice/Licenses`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          getLicenseTypes: data
+        });
+        // console.log(data);
+      });
+  };
+
+  componentDidMount() {
+    this.fetchAllLicenseType();
+  }
+
+  //--------------------------------------------------------------
 
   //Get All Method
   onChange(event) {
@@ -46,7 +72,17 @@ export default class AddCompany extends React.Component {
     this.setState({
       [name]: value
     });
+    this.fetchAllLicenseType();
   }
+
+  //Get All Method
+  onChangeLicenseSelect = value => {
+    this.setState({
+      licenseTypeCompany: value
+    });
+    console.log(this.state.licenseTypeCompany);
+    //this.fetchAllLicenseType();
+  };
 
   // function onChange(date, dateString) {
   //   console.log(date, dateString);
@@ -79,55 +115,20 @@ export default class AddCompany extends React.Component {
   //On submit form method
   onSubmit(e) {
     e.preventDefault();
-    const saveCompany = {
+    const Company = {
       companyName: this.state.companyName,
       companyAbbrivation: this.state.companyAbbrivation,
       companyRegNo: this.state.companyRegNo,
       companyAdminName: this.state.companyAdminName,
       companyAdminEmail: this.state.companyAdminEmail,
-      companyLicenseType: this.state.companyLicenseType,
+      companyLicenseTypeId: this.state.licenseTypeCompany,
       companyLicensePeriod: this.state.companyLicensePeriod,
-      LicenseStartDate: this.state.LicenseStartDate,
-      LicenseEndDate: this.state.LicenseEndDate,
       companyDescription: this.state.companyDescription
     };
-    console.log(saveCompany);
-    axios
-      .post("http://localhost:8083/productservice/Company", saveCompany)
-      .then(res => {
-        if (res.status === 200) {
-          alert("Company Successfylly Added...!");
-          console.log(res.data);
-        }
-      });
 
-    this.setState({
-      companyName: "",
-      companyAbbrivation: "",
-      companyRegNo: "",
-      companyAdminName: "",
-      companyAdminEmail: "",
-      companyLicenseType: "",
-      companyLicensePeriod: "",
-      LicenseStartDate: "",
-      LicenseEndDate: "",
-      companyDescription: ""
-    });
-
-    console.log(
-      JSON.stringify({
-        companyName: this.setState.companyName,
-        companyAbbrivation: this.setState.companyAbbrivation,
-        companyRegNo: this.setState.companyRegNo,
-        companyAdminName: this.setState.companyAdminName,
-        companyAdminEmail: this.setState.companyAdminEmail,
-        companyLicenseType: this.setState.companyLicenseType,
-        companyLicensePeriod: this.setState.companyLicensePeriod,
-        LicenseStartDate: this.setState.LicenseStartDate,
-        LicenseEndDate: this.setState.LicenseEndDate,
-        companyDescription: this.setState.companyDescription
-      })
-    );
+    CompanyController.AddCompanyApi(Company);
+    console.log(Company);
+    console.log(Company.licenseTypeCompany);
   }
 
   //-------------------------------------------------------------------------------------------------
@@ -146,9 +147,22 @@ export default class AddCompany extends React.Component {
     const { visible, loading } = this.state;
     return (
       <div>
-        <Button type="primary" onClick={this.showModal}>
+        <Row>
+      <Col span={6}>
+      
+         <Button type="primary" onClick={this.showModal}>
           Add Company
         </Button>
+       </Col>
+      <Col span={6}></Col>
+      <Col span={9}></Col>
+      <Col span={3}>
+      <Link to="/config">
+        <Button type="primary" >
+      configuration
+        </Button>
+        </Link></Col>
+    </Row>
         <Modal
           variant="contained"
           width="675px"
@@ -231,11 +245,10 @@ export default class AddCompany extends React.Component {
                 <Form.Item label="License Period">
                   <InputNumber
                     min={1}
-                    max={10}
+                    max={150}
                     // defaultValue={3}
-
                     onChange={this.onChangeLicense}
-                    placeholder="In Years"
+                    placeholder="In Months"
                     style={{ width: "100%" }}
                     type="number"
                     name="companyLicensePeriod"
@@ -244,49 +257,24 @@ export default class AddCompany extends React.Component {
               </Col>
 
               <Col span={15} style={{ padding: "5px" }}>
-                <Form.Item
-                  label="Lisence Type"
-                  className="collection-create-form_last-form-item"
-                >
-                  <Radio.Group
-                    onChange={event => this.onChange(event)}
-                    type="radio"
-                    name="companyLicenseType"
-                    value={this.state.companyLicenseType}
+                <Form.Item label="License Type">
+                  <Select
+                    name="licenseType"
+                    id="licenseType"
+                    value={this.state.licenseTypeCompany}
+                    defaultValue="Select License Type"
+                    style={{ width: 120 }}
+                    onChange={this.onChangeLicenseSelect}
                   >
-                    <Radio value="basic">Basic</Radio>
-                    <Radio value="medium">Medium</Radio>
-                    <Radio value="advanced">Advanced</Radio>
-                    <Radio value="customized">Customized</Radio>
-                  </Radio.Group>
+                    {this.state.getLicenseTypes.map(e => (
+                      <Option key={e.licenseId} value={e.licenseId}>
+                        {e.licenseType}
+                      </Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
             </Row>
-            {/* <Row>
-              <Col span={12} style={{ padding: "5px" }}>
-                <Form.Item label="Start Date">
-                  <DatePicker
-                    // onChange={event => this.onChange(event)}
-                    onChange={onChange}
-                    defaultValue={moment("01/01/2015", dateFormatList[0])}
-                    format={dateFormatList}
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={12} style={{ padding: "5px" }}>
-                <Form.Item label="End Date">
-                  <DatePicker
-                    // onChange={event => this.onChange(event)}
-                    onChange={onChange}
-                    defaultValue={moment("01/01/2016", dateFormatList[0])}
-                    format={dateFormatList}
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-            </Row> */}
 
             <Form.Item label="E-mail">
               <Input
