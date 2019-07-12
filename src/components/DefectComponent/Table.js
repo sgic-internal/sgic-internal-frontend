@@ -140,11 +140,11 @@ class TableFilter extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.showModalView = this.showModalView.bind(this);
   }
-  onChange2 = (e) => {
+  onChange2 = e => {
     this.setState({
       comments: e.target.value
     });
-  }
+  };
   attachment = id => {
     axios
       .get("http://localhost:8081/defectservices/listFile/" + id)
@@ -160,13 +160,12 @@ class TableFilter extends React.Component {
   };
 
   handleChange = (pagination, filters, sorter) => {
-    console.log('Various parameters', pagination, filters, sorter);
+    console.log("Various parameters", pagination, filters, sorter);
     this.setState({
       filteredInfo: filters,
-      sortedInfo: sorter,
+      sortedInfo: sorter
     });
   };
-
 
   onSubmit(e) {
     //e.preventDefault();
@@ -269,9 +268,6 @@ class TableFilter extends React.Component {
 
   handleOk = () => {
     this.onSubmit();
-    this.setState({
-      visible: false
-    });
     const defectList = {
       defectId: this.state.defectId,
       moduleId: this.state.moduleId,
@@ -293,17 +289,16 @@ class TableFilter extends React.Component {
       dateAndTime: "2015-05-05"
     };
 
-    console.log("dddddddddddddddddddd" + defectList)
+    console.log("dddddddddddddddddddd" + defectList);
     axios
       .post("http://localhost:8081/defectservices/saveDefect", defectList)
       .then(res => {
-
-
-        this.getdefectStatus()
-        console.log(res.data)
-      }
-      );
-
+        this.getdefectStatus();
+        console.log(res.data);
+      });
+    this.setState({
+      visible: false
+    });
     this.setState({
       defectId: "",
       moduleId: "",
@@ -319,7 +314,6 @@ class TableFilter extends React.Component {
     });
     message.success("Added Successfully!");
   };
-
 
   handleOkView = e => {
     console.log(e);
@@ -437,7 +431,6 @@ class TableFilter extends React.Component {
   //    this.setState({ type: value });
   //};
 
-
   handleChangeAssignTo = value => {
     this.setState({ assignTo: value });
   };
@@ -526,7 +519,7 @@ class TableFilter extends React.Component {
           defect: response.data
         })
       )
-      .catch(function (error) {
+      .catch(function(error) {
         console.log(error);
       });
   }
@@ -554,7 +547,7 @@ class TableFilter extends React.Component {
     const _this = this;
     axios
       .get("http://localhost:8081/defectservices/getAllDefects")
-      .then(function (response) {
+      .then(function(response) {
         // handle success
         console.log(response);
         var data = response.data;
@@ -575,10 +568,6 @@ class TableFilter extends React.Component {
 
     this.setState({ state: this.state });
   };
-
-
-
-
 
   render() {
     const { photoIndex, isOpen, images } = this.state;
@@ -627,8 +616,7 @@ class TableFilter extends React.Component {
           { text: "Low", value: "Low" }
         ],
         filteredValue: filteredInfo.severity || null,
-        onFilter: (value, record) => record.severity.includes(value),
-
+        onFilter: (value, record) => record.severity.includes(value)
       },
       {
         title: "Priority",
@@ -640,7 +628,7 @@ class TableFilter extends React.Component {
           { text: "Low", value: "Low" }
         ],
         filteredValue: filteredInfo.priority || null,
-        onFilter: (value, record) => record.priority.includes(value),
+        onFilter: (value, record) => record.priority.includes(value)
         // sorter: (a, b) => a.priority.length - b.priority.length,
         // sortOrder: sortedInfo.columnKey === "priority" && sortedInfo.order
       },
@@ -654,7 +642,7 @@ class TableFilter extends React.Component {
           { text: "Enhancement", value: "Enhancement" }
         ],
         filteredValue: filteredInfo.type || null,
-        onFilter: (value, record) => record.type.includes(value),
+        onFilter: (value, record) => record.type.includes(value)
         // sorter: (a, b) => a.type.length - b.type.length,
         // sortOrder: sortedInfo.columnKey === "type" && sortedInfo.order
       },
@@ -663,7 +651,6 @@ class TableFilter extends React.Component {
         dataIndex: "status",
         key: "status",
         render: () => (
-
           <Select
             showSearch
             style={{ width: 100 }}
@@ -684,8 +671,8 @@ class TableFilter extends React.Component {
             <Option value="Closed">Closed</Option>
             <Option value="Re-Opened">Re-Opened</Option>
             <Option value="Fixed">Fixed</Option>
-
-          </Select>),
+          </Select>
+        ),
         filters: [
           { text: "Open", value: "Open" },
           { text: "Re-opened", value: "Re-opened" },
@@ -716,7 +703,6 @@ class TableFilter extends React.Component {
         key: "fixedIn",
 
         render: () => (
-
           <Select
             showSearch
             style={{ width: 100 }}
@@ -737,8 +723,8 @@ class TableFilter extends React.Component {
             <Option value="Release3">Release3</Option>
             <Option value="Release4">Release4</Option>
             <Option value="Release5">Release5</Option>
-
-          </Select>),
+          </Select>
+        ),
         filters: [
           { text: "Release1", value: "Release1" },
           { text: "Release2", value: "Release2" },
@@ -748,7 +734,6 @@ class TableFilter extends React.Component {
         onFilter: (value, record) => record.status.includes(value),
         sorter: (a, b) => a.status.length - b.status.length,
         sortOrder: sortedInfo.columnKey === "fixedIn" && sortedInfo.order
-
       },
       // {
       //   title: "Status",
@@ -800,7 +785,7 @@ class TableFilter extends React.Component {
                     fontSize: "18px"
                   }}
 
-                // onClick={() => this.handleDelete(data.defectId)}
+                  // onClick={() => this.handleDelete(data.defectId)}
                 />
               </a>
             </Popconfirm>
@@ -861,7 +846,6 @@ class TableFilter extends React.Component {
                   />
                 </Form.Item>
               </Col>
-
             </Row>
 
             <Form.Item label="Project Id: ">
@@ -940,7 +924,7 @@ class TableFilter extends React.Component {
                   <Select
                     defaultValue="Release"
                     style={{ width: "100%" }}
-                  //onChange={this.handleChangeFoundIn}
+                    //onChange={this.handleChangeFoundIn}
                   >
                     <Option value="Release1">Release1</Option>
                     <Option value="Release2">Release2</Option>
@@ -1116,7 +1100,6 @@ class TableFilter extends React.Component {
               </Col>
             </Row>
 
-
             <Form.Item label=" Description: ">
               <TextArea
                 placeholder="Description"
@@ -1150,8 +1133,6 @@ class TableFilter extends React.Component {
           width="600px"
         >
           <Row>
-
-
             <Col span={10} style={{ padding: "5px" }}>
               <p>
                 <b>Module name:</b>
@@ -1199,8 +1180,6 @@ class TableFilter extends React.Component {
               <p>
                 <b>Comments:</b>
               </p>
-
-
             </Col>
             <Col span={14} style={{ padding: "5px" }}>
               <p>Defect Dashboard</p>
