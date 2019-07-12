@@ -219,7 +219,7 @@ export default class App extends React.Component {
         dataIndex: "duration",
         key: "duration",
         width: "20%",
-        ...this.getColumnSearchProps("duration")
+        // ...this.getColumnSearchProps("duration")
       },
 
       {

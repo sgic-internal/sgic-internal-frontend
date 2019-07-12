@@ -7,29 +7,103 @@ import {
   Popconfirm,
   message,
   Button,
-  Popover
+  Popover,
+  Select,
+  
 } from "antd";
+
 import { Component } from "react";
 import React from "react";
 import axios from "axios";
+
+const {Option} =Select;
 
 class Modulesubmodule extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      module:[],
       moduleId: "",
       moduleName: "",
+      projectid: "",
+      projectId:"",
       visible: false,
       formLayout: "horizontal",
-      data: []
+      data: [],
+      project: [],
+     
     };
 
     this.state = { ModuleData: [] };
     this.onChangemoduleId = this.onChangemoduleId.bind(this);
     this.onChangemoduleName = this.onChangemoduleName.bind(this);
-    this.handleOk = this.handleOk.bind(this);
+    this.onChangeprojectid = this.onChangeprojectid.bind(this);
+
+    this.handleOk3 = this.handleOk3.bind(this);
+    this.fetchProject = this.fetchProject.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+  }
+  componentDidMount() {
+    this.fetchProject();
+    console.log("mounting");
+  }
+
+  fetchProject() {
+    var _this = this;
+    axios
+      .get("http://localhost:8081/defectservices/GetAllproject")
+      .then(response=> {
+        // handle success
+        console.log(response);
+        //alert(response.data[0].projectId)
+        _this.setState({ project: response.data });
+
+        let drop=response.data.map((post,index)=>{
+
+          return (
+            <Option key={index} value={post.projectId}>
+              {post.projectName}
+            </Option>
+          );
+
+          
+
+        })
+
+        this.setState({drop});
+        alert(_this.state.project[0].projectId);
+      });
+  }
+
+  //DELETE-METHOD 1 = WORKING
+  handleDelete = moduleId => {
+    axios.delete(`http://localhost:8081/defectservices/deleteModuleById/` + moduleId)
+      .then(console.log(moduleId))
+      .catch(err => console.log(err));
+
+    const module = this.state.module.filter(module => {
+      return module.moduleId !== moduleId;
+    });
+    this.setState({
+      module
+    });
+  };
+
+   handleChange(value){
+    console.log(`selected ${value}`);
+  }
+
+  onChangeprojectId(value) {
+    this.setState({
+      projectId: `${value}`
+    });
+    console.log(this.state.projectId);
+  }
+  onChangemoduleName(e) {
+    this.setState({
+      moduleName: e.target.value
+    });
   }
 
   onChangemoduleId(e) {
@@ -37,10 +111,13 @@ class Modulesubmodule extends Component {
       moduleId: e.target.value
     });
   }
-  onChangemoduleName(e) {
+  onChangeprojectid(e) {
     this.setState({
-      moduleName: e.target.value
+      projectid: e.target.value
     });
+  }
+  handleChange3=(e)=> {
+    this.setState({projectid:e.target.value});
   }
 
   hide = () => {
@@ -134,6 +211,7 @@ class Modulesubmodule extends Component {
   };
 
   showModal3 = () => {
+    this.fetchProject();
     this.setState({
       visible3: true
     });
@@ -148,19 +226,26 @@ class Modulesubmodule extends Component {
   componentDidMount() {
     this.GetAllmodule();
   }
+
   handleOk3 = e => {
     e.preventDefault();
-
+    console.log("handle3");
     const ModuleData = {
       moduleId: this.state.moduleId,
-      moduleName: this.state.moduleName
+      moduleName: this.state.moduleName,
+      projectid: this.state.projectId
     };
+    console.log(ModuleData);
     axios
       .post("http://localhost:8081/defectservices/createmodule", ModuleData)
-      .then(res => console.log(res.data));
-
-    console.log(this.state.handleSubmit);
+      .then(res => console.log(res.data))
+      .catch(error => {
+        console.log(error);
+      });
     this.setState({
+      moduleId: "",
+      moduleName: "",
+      projectid: "",
       visible3: false
     });
   };
@@ -177,7 +262,8 @@ class Modulesubmodule extends Component {
           modulelist[i] = {
             key: i,
             moduleId: res.data[i].moduleId,
-            moduleName: res.data[i].moduleName
+            moduleName: res.data[i].moduleName,
+            projectid: res.data[i].projectid
           };
 
           console.log(i);
@@ -256,6 +342,7 @@ class Modulesubmodule extends Component {
     const columns = [
       { title: "Module ID", dataIndex: "moduleId", key: "moduleId" },
       { title: "Module Name", dataIndex: "moduleName", key: "moduleName" },
+      { title: "Project ID", dataIndex: "projectid", key: "projectid" },
       {
         render: () => (
           <Popover
@@ -282,7 +369,8 @@ class Modulesubmodule extends Component {
         )
       },
       {
-        render: (text, data = this.state.patients) => (
+        render: () => (
+        // render: (text, data = this.state.patients) => (
           <Popconfirm
             placement="topLeft"
             title={text}
@@ -300,15 +388,18 @@ class Modulesubmodule extends Component {
       {
         key: 2,
         moduleId: "01",
-        moduleName: "Login"
+        moduleName: "Login",
+        projectId: "LS"
       },
       {
         key: 3,
         moduleId: "02",
-        moduleName: "QA Dashboard"
+        moduleName: "QA Dashboard",
+        projectId: "LS"
       }
     ];
     const { formLayout } = this.state;
+    const { Option, onBlur, onChange, onSearch, onFocus } = Select;
     const formItemLayout =
       formLayout === "horizontal"
         ? {
@@ -342,7 +433,7 @@ class Modulesubmodule extends Component {
       <div>
         <div style={{ paddingBottom: "20px" }}>
           <Button type="primary" onClick={this.showModal3}>
-            Add Module
+            Add Sub Module
           </Button>
         </div>
         <Table
@@ -365,6 +456,23 @@ class Modulesubmodule extends Component {
             <Form.Item label="Submodule Name:">
               <Input placeholder="input placeholder" />
             </Form.Item>
+            <Select
+              showSearch
+              style={{ width: 300 }}
+              placeholder="Select projectId"
+              optionFilterProp="children"
+              onChange={onChange}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onSearch={onSearch}
+              filterOption={(input, option) =>
+                option.props.children
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              <Option value="jack">Jack</Option>
+            </Select>
           </Form>
         </Modal>
         <Modal
@@ -381,6 +489,23 @@ class Modulesubmodule extends Component {
             <Form.Item label="Module Name:">
               <Input placeholder="input placeholder" />
             </Form.Item>
+            <Select
+              showSearch
+              style={{ width: 300 }}
+              placeholder="Select ProjectID"
+              optionFilterProp="children"
+              onChange={onChange}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onSearch={onSearch}
+              filterOption={(input, option) =>
+                option.props.children
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              <Option value="" />
+            </Select>
           </Form>
         </Modal>
         <Modal
@@ -397,6 +522,23 @@ class Modulesubmodule extends Component {
             <Form.Item label="Sub Module Name:">
               <Input placeholder="input placeholder" />
             </Form.Item>
+            <Select
+              showSearch
+              style={{ width: 300 }}
+              placeholder="Select ProjectID"
+              optionFilterProp="children"
+              onChange={onChange}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onSearch={onSearch}
+              filterOption={(input, option) =>
+                option.props.children
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              <Option value="jack">Jack</Option>
+            </Select>
           </Form>
         </Modal>
         <Modal
@@ -421,6 +563,26 @@ class Modulesubmodule extends Component {
                 onChange={this.onChangemoduleName}
               />
             </Form.Item>
+            <Form.Item>
+            <Select
+              showSearch
+              style={{ width: 200 }}
+              placeholder="Select ProjectID"
+              optionFilterProp="children"
+              onChange={(e) => this.onChangeprojectId(e)} value={this.state.projectId}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onSearch={onSearch}
+              filterOption={(input, option) =>
+                option.props.children
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+            >
+                      {this.state.drop}
+            </Select>
+           
+           </Form.Item>
           </Form>
         </Modal>
       </div>
