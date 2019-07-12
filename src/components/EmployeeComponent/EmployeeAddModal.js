@@ -35,12 +35,14 @@ class EmployeeAddModal extends React.Component {
     this.state = {
       employeeId: "",
       employeeName: "",
+      employeeFirstName:"",
       employeeDesignation: "",
       employeeEmail: "",
       visible: false,
       formerrors: {
         employeeId: "",
         employeeName: "",
+        employeeFirstName:"",
         employeeEmail: ""
       },
       designations: []
@@ -104,6 +106,14 @@ class EmployeeAddModal extends React.Component {
         } else {
           formerrors.employeeName = "";
         }
+        case "employeeFirstName":
+        if (!NameRegex.test(value)) {
+          formerrors.employeeFirstName = "Invalid Name";
+        } else if (value.length > 30) {
+          formerrors.employeeFirstName = "Should be less than 30 characters";
+        } else {
+          formerrors.employeeFirstName = "";
+        }
         break;
       case "employeeEmail":
         formerrors.employeeEmail = emailRegex.test(value)
@@ -131,13 +141,14 @@ class EmployeeAddModal extends React.Component {
         --SUBMITTING--
         Employee Id: ${this.state.employeeId}
         Employee Name: ${this.state.employeeName}
-        Employee Email: ${this.state.employeeEmail}
-       
+        Employee FirstName:${this.state.employeeFirstName}
+        Employee Email: ${this.state.employeeEmail}      
       `);
 
       const serverport = {
         employeeid: this.state.employeeId,
         name: this.state.employeeName,
+        firstname:this.state.employeeFirstName,
         designationid: this.state.employeeDesignation,
         email: this.state.employeeEmail
       };
@@ -153,13 +164,6 @@ class EmployeeAddModal extends React.Component {
     } else {
       console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
-
-    // this.setState({
-    //   employeeId: "",
-    //   employeeName: "",
-    //   employeeDesignation: "",
-    //   employeeEmail: ""
-    // });
   };
 
   // post integration finishes
@@ -175,6 +179,7 @@ class EmployeeAddModal extends React.Component {
     this.setState({
       employeeId: "null",
       employeeName: "null",
+      employeeFirstName:"null",
       employeeDesignation: "null",
       employeeEmail: "null",
       visible: false
@@ -184,6 +189,7 @@ class EmployeeAddModal extends React.Component {
         --Cancel--
         Employee Id: ${this.state.employeeId}
         Employee Name: ${this.state.employeeName}
+        Employee FirstName:${this.state.employeeFirstName}
         Employee Email: ${this.state.employeeEmail}
        
       `);
@@ -240,7 +246,7 @@ class EmployeeAddModal extends React.Component {
                   )}
                 </Form.Item>
               </Col>
-              <Col span={18} style={{ padding: "5px" }}>
+              <Col span={9} style={{ padding: "5px" }}>
                 <Form.Item label="Employee Name">
                   {getFieldDecorator("employeeName", {
                     rules: [
@@ -267,6 +273,37 @@ class EmployeeAddModal extends React.Component {
                       style={{ color: "red", fontSize: "14px" }}
                     >
                       {formerrors.employeeName}
+                    </span>
+                  )}
+                </Form.Item>
+              </Col>
+              <Col span={9} style={{ padding: "5px" }}>
+                <Form.Item label="Employee FirstName">
+                  {getFieldDecorator("employeeFirstName", {
+                    rules: [
+                      {
+                        required: true,
+                        message: "Please input employeeFirstName!"
+                      }
+                    ]
+                  })(
+                    <Input
+                      className={
+                        formerrors.employeeFirstName.length > 0 ? "error" : null
+                      }
+                      placeholder="Employee FirstName"
+                      value={this.state.employeeFirstName}
+                      onChange={this.handlechange}
+                      name="employeeFirstName"
+                      type="text"
+                    />
+                  )}
+                  {formerrors.employeeFirstName.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formerrors.employeeFirstName}
                     </span>
                   )}
                 </Form.Item>
@@ -314,7 +351,6 @@ class EmployeeAddModal extends React.Component {
                       }
                       placeholder="Email"
                       value={this.state.employeeEmail}
-                      //     value={this.state.employeeEmail}
                       onChange={this.handlechange}
                       name="employeeEmail"
                       type="text"
@@ -331,29 +367,6 @@ class EmployeeAddModal extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-
-            {/* <Col span={7} style={{ padding: "5px" }}>
-                <Form.Item label="Gender">
-                  <Select placeholder="Gender">
-                    <Option value="male">Male</Option>
-                    <Option value="female">Female</Option>
-                  </Select>
-                </Form.Item>
-              </Col> */}
-            {/* <Col span={9} style={{ padding: "5px" }}>
-                <Form.Item label="Contact No">
-                  <Input placeholder="Contact No" />
-                </Form.Item>
-              </Col> */}
-
-            {/* <Row>
-              
-              <Col span={9} style={{ padding: "5px", marginTop: "44px" }}>
-                <Button>
-                  <Icon type="upload" /> Upload Picture
-                </Button>
-              </Col>
-            </Row> */}
           </Form>
         </Modal>
       </div>

@@ -38,10 +38,9 @@ export default class App extends React.Component {
     super(props);
     this.onChangeEmployeeId = this.onChangeEmployeeId.bind(this);
     this.onChangeEmployeeName = this.onChangeEmployeeName.bind(this);
+    this.onChangeEmployeeFirstName = this.onChangeEmployeeFirstName.bind(this);
     this.onChangeEmployeeEmail = this.onChangeEmployeeEmail.bind(this);
-    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(
-      this
-    );
+    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(this);
     this.handleOk = this.handleOk.bind(this);
     this.fetchDesignations = this.fetchDesignations.bind(this);
 
@@ -49,6 +48,7 @@ export default class App extends React.Component {
       employeeautoId: "",
       employeeId: "",
       employeeName: "",
+      employeeFirstName:"",
       employeeDesignation: "",
       employeeEmail: ""
     };
@@ -69,6 +69,12 @@ export default class App extends React.Component {
   onChangeEmployeeName(e) {
     this.setState({
       employeeName: e.target.value
+    });
+  }
+
+  onChangeEmployeeFirstName(e){
+    this.setState({
+      employeeFirstName:e.target.value
     });
   }
 
@@ -123,6 +129,7 @@ export default class App extends React.Component {
       empId: this.state.employeeautoId,
       employeeid: this.state.employeeId,
       name: this.state.employeeName,
+      firstname:this.state.employeeFirstName,
       designationid: this.state.employeeDesignation,
       email: this.state.employeeEmail
     };
@@ -133,6 +140,7 @@ export default class App extends React.Component {
       employeeautoId: "",
       employeeId: "",
       employeeName: "",
+      employeeFirstName:"",
       employeeDesignation: "",
       employeeEmail: "",
       visible: false
@@ -180,7 +188,7 @@ export default class App extends React.Component {
       body: JSON.stringify(this.state)
     });
     console.log(empId);
-    confirm(empId);
+    // confirm(empId);
     const employees = this.state.employees.filter(employees => {
       return employees.empId !== empId;
     });
@@ -211,6 +219,7 @@ export default class App extends React.Component {
           employeeautoId: response.data.empId,
           employeeId: response.data.employeeid,
           employeeName: response.data.name,
+          employeeFirstName:response.data.firstname,
           employeeDesignation: response.data.designationid,
           employeeEmail: response.data.email
         });
@@ -312,6 +321,13 @@ export default class App extends React.Component {
         width: "25%",
         ...this.getColumnSearchProps("name")
       },
+      {
+        title: "Employee FirstName",
+        dataIndex: "firstname",
+        key: "firstname",
+        width: "25%",
+        ...this.getColumnSearchProps("firstname")
+      },
 
       {
         title: "Designation",
@@ -398,12 +414,21 @@ export default class App extends React.Component {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={16} style={{ padding: "5px" }}>
+                <Col span={8} style={{ padding: "5px" }}>
                   <Form.Item label="Employee Name">
                     <Input
                       placeholder="Employee Name"
                       value={this.state.employeeName}
                       onChange={this.onChangeEmployeeName}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8} style={{ padding: "5px" }}>
+                  <Form.Item label="Employee FirstName">
+                    <Input
+                      placeholder="Employee FirstName"
+                      value={this.state.employeeFirstName}
+                      onChange={this.onChangeEmployeeFirstName}
                     />
                   </Form.Item>
                 </Col>
