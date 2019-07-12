@@ -103,7 +103,8 @@ export default class Model extends React.Component {
   handleEdit = (projectId) => {
     this.setState({projectId:projectId});
     axios
-      .get("localhost:8081/defectservices/getProjectById/LB")
+      .get(`http://localhost:8081/defectservices/getProjectById/${projectId}`
+      )
       .then(response => {
 
         console.log("dsdss"+response.data)
