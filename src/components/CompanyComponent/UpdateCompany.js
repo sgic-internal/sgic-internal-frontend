@@ -212,7 +212,7 @@ export default class UpdateCompany extends React.Component {
                 <Form.Item label="License Period">
                   <InputNumber
                     min={1}
-                    max={10}
+                    max={150}
                     // defaultValue={3}
 
                     onChange={this.onChangeLicense}
