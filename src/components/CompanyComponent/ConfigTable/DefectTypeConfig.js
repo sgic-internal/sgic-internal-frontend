@@ -49,7 +49,7 @@ export default class DefectTypeConfic extends React.Component {
     super(props);
 
     this.state = {
-      defectTypeName: "",
+      defectTypeName: "Type",
       defectTypeValue: "",
       defectTypes: []
     };
@@ -329,6 +329,7 @@ export default class DefectTypeConfic extends React.Component {
                     value={this.state.defectTypeName}
                     onChange={this.onChangeDefectTypeName}
                     name="typeName"
+                    readOnly
                   />
                 </Form.Item>
                 <Form.Item label="DefectTypeValue">
