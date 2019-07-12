@@ -280,7 +280,7 @@ class TableFilter extends React.Component {
       priority: this.state.priority,
       type: this.state.type,
       status: this.state.status,
-      fixedIn: "gkgjgjj",
+      fixedIn: "Release3",
       abbre: "gg",
       defectDescription: "gg",
       stepsToRecreate: "gggggggggggggggggggggggg",
@@ -289,7 +289,7 @@ class TableFilter extends React.Component {
       enteredBy: "gg",
       fixedBy: "gg",
       availableIn: "gg",
-      foundIn: "gggg",
+      foundIn: "Release3",
       dateAndTime: "2015-05-05"
     };
 
@@ -312,6 +312,7 @@ class TableFilter extends React.Component {
       priority: "",
       type: "",
       status: "",
+      foundIn: "",
       fixedIn: "",
 
       visible1: false
@@ -429,6 +430,12 @@ class TableFilter extends React.Component {
   handleChangeStatus = value => {
     this.setState({ status: value });
   };
+  //handleChangeFoundIn = value => {
+  //  this.setState({ type: value });
+  //};
+  // handleChangeFixedIn = value => {
+  //    this.setState({ type: value });
+  //};
 
 
   handleChangeAssignTo = value => {
@@ -559,6 +566,7 @@ class TableFilter extends React.Component {
             severity: data[a].severity,
             priority: data[a].priority,
             type: data[a].type,
+            foundIn: data[a].foundIn,
             status: data[a].status
           });
         }
@@ -568,62 +576,9 @@ class TableFilter extends React.Component {
     this.setState({ state: this.state });
   };
 
-  //   handleDelete = defectId => {
-  //     // axios.get('http://localhost:8080/employeeservice/DeleteById/'+empId)
-  //     //     .then(console.log('Deleted'))
-  //     //     .catch(err => console.log(err))
-  //     fetch("http://localhost:8081/defectservices//deleteDefect/{defectId}" + defectId, {
-  //       method: "DELETE",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json"
-  //       },
-  //       body: JSON.stringify(this.state)
-  //     });
-  //     console.log(defectId);
-  //     const defect = this.state.defect.filter(defect => {
-  //       return defect.defectId !== defectId;
-  //     });
-  //     this.setState({
-  //       defect
-  //     });
-  //   };
 
-  //  deleteDefect(defectId) {
-  //   console.log(defectId);
-  //   axios
-  //     .delete("http://localhost:8081/defectservices/deleteDefect/" + defectId)
-  //     .then(response => {
-  //       console.warn("Delete Service is working");
-  //       //  this.refreshBook(response);
-  //       this.forceUpdate();
-  //       // alert(" Defect deleted successfully");
-  //     });
-  // }
 
-  // //Edting Defect Details
-  //   handleEdit = defectId => {
-  //     this.showModal();
-  //     console.log(defectId);
-  //     this.setState({
-  //       defectId: defectId
-  //     });
-  //     axios
-  //       .get("http://localhost:8081/defectservices/getDefectById" + defectId)
-  //       .then(response => {
-  //         console.log(response);
-  //         this.setState({
-  //           defectId:response.data.defectId,
-  //           moduleId:response.data.moduleId,
-  //           defectDescription:response.data.defectDescription,
 
-  //         });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-
-  //   };
 
   render() {
     const { photoIndex, isOpen, images } = this.state;
@@ -673,23 +628,7 @@ class TableFilter extends React.Component {
         ],
         filteredValue: filteredInfo.severity || null,
         onFilter: (value, record) => record.severity.includes(value),
-        sorter: (a, b) => a.severity.length - b.severity.length,
-        sortOrder: sortedInfo.columnKey === "severity" && sortedInfo.order
-        // render: severityId => (
-        //   <span>
-        //     {/*severityId.map(tag => {
-        //       let color = tag.length > 5 ? 'geekblue' : 'green';
-        //       if (tag === 'loser') {
-        //         color = 'volcano';
-        //       }
-        //       return (
-        //         <Tag color={color} key={tag}>
-        //           {tag.toUpperCase()}
-        //         </Tag>
-        //       );
-        //     })*/}
-        //   </span>
-        // ),
+
       },
       {
         title: "Priority",
@@ -702,8 +641,8 @@ class TableFilter extends React.Component {
         ],
         filteredValue: filteredInfo.priority || null,
         onFilter: (value, record) => record.priority.includes(value),
-        sorter: (a, b) => a.priority.length - b.priority.length,
-        sortOrder: sortedInfo.columnKey === "priority" && sortedInfo.order
+        // sorter: (a, b) => a.priority.length - b.priority.length,
+        // sortOrder: sortedInfo.columnKey === "priority" && sortedInfo.order
       },
       {
         title: "Type",
@@ -716,13 +655,37 @@ class TableFilter extends React.Component {
         ],
         filteredValue: filteredInfo.type || null,
         onFilter: (value, record) => record.type.includes(value),
-        sorter: (a, b) => a.type.length - b.type.length,
-        sortOrder: sortedInfo.columnKey === "type" && sortedInfo.order
+        // sorter: (a, b) => a.type.length - b.type.length,
+        // sortOrder: sortedInfo.columnKey === "type" && sortedInfo.order
       },
       {
         title: "Status",
         dataIndex: "status",
         key: "status",
+        render: () => (
+
+          <Select
+            showSearch
+            style={{ width: 100 }}
+            defaultValue="New"
+            optionFilterProp="children"
+            onChange={this.onChange1}
+            onFocus={this.onFocus}
+            onBlur={this.onBlur}
+            onSearch={this.onSearch}
+            filterOption={(input, option) =>
+              option.props.children
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            <Option value="New">New</Option>
+            <Option value="Open">Open</Option>
+            <Option value="Closed">Closed</Option>
+            <Option value="Re-Opened">Re-Opened</Option>
+            <Option value="Fixed">Fixed</Option>
+
+          </Select>),
         filters: [
           { text: "Open", value: "Open" },
           { text: "Re-opened", value: "Re-opened" },
@@ -734,9 +697,9 @@ class TableFilter extends React.Component {
         sortOrder: sortedInfo.columnKey === "status" && sortedInfo.order
       },
       {
-        title: "FixedIn",
-        dataIndex: "fixedIn",
-        key: "fixedIn",
+        title: "Found In",
+        dataIndex: "foundIn",
+        key: "foundIn",
         filters: [
           { text: "Release1", value: "Release1" },
           { text: "Release2", value: "Release2" },
@@ -746,6 +709,46 @@ class TableFilter extends React.Component {
         onFilter: (value, record) => record.status.includes(value),
         sorter: (a, b) => a.status.length - b.status.length,
         sortOrder: sortedInfo.columnKey === "fixedIn" && sortedInfo.order
+      },
+      {
+        title: "Fixed In",
+        dataIndex: "fixedIn",
+        key: "fixedIn",
+
+        render: () => (
+
+          <Select
+            showSearch
+            style={{ width: 100 }}
+            placeholder="Select a Release"
+            optionFilterProp="children"
+            onChange={this.onChange1}
+            onFocus={this.onFocus}
+            onBlur={this.onBlur}
+            onSearch={this.onSearch}
+            filterOption={(input, option) =>
+              option.props.children
+                .toLowerCase()
+                .indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            <Option value="Release1">Release1</Option>
+            <Option value="Release2">Release2</Option>
+            <Option value="Release3">Release3</Option>
+            <Option value="Release4">Release4</Option>
+            <Option value="Release5">Release5</Option>
+
+          </Select>),
+        filters: [
+          { text: "Release1", value: "Release1" },
+          { text: "Release2", value: "Release2" },
+          { text: "Release3", value: "Release3" }
+        ],
+        filteredValue: filteredInfo.fixedIn || null,
+        onFilter: (value, record) => record.status.includes(value),
+        sorter: (a, b) => a.status.length - b.status.length,
+        sortOrder: sortedInfo.columnKey === "fixedIn" && sortedInfo.order
+
       },
       // {
       //   title: "Status",
@@ -858,30 +861,7 @@ class TableFilter extends React.Component {
                   />
                 </Form.Item>
               </Col>
-              {/* <Col span={12} style={{ padding: "5px" }}>
-                <Form.Item label="Module: ">
-                  <TreeSelect
-                    showSearch
-                    style={{ width: "100%" }}
-                    className="moduleId"
-                    name="moduleId"
-                    value={this.state.defect.moduleId}
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    placeholder="Module / SubModule name"
-                    allowClear
-                    treeDefaultExpandAll
-                    onChange={this.onChange}
-                  >
-                    <TreeNode value="parent 1" title="Module" key="0-1">
-                      <TreeNode
-                        value="parent 1-0"
-                        title="Sub Module"
-                        key="0-1-1"
-                      />
-                    </TreeNode>
-                  </TreeSelect>
-                </Form.Item>
-              </Col> */}
+
             </Row>
 
             <Form.Item label="Project Id: ">
@@ -960,7 +940,7 @@ class TableFilter extends React.Component {
                   <Select
                     defaultValue="Release"
                     style={{ width: "100%" }}
-                    onChange={this.onChange}
+                  //onChange={this.handleChangeFoundIn}
                   >
                     <Option value="Release1">Release1</Option>
                     <Option value="Release2">Release2</Option>
@@ -968,19 +948,7 @@ class TableFilter extends React.Component {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="Available In">
-                  <Select
-                    defaultValue="Release"
-                    style={{ width: "100%" }}
-                    onChange={this.onChangeSeverityId}
-                  >
-                    <Option value="Release1">Release1</Option>
-                    <Option value="Release2">Release2</Option>
-                    <Option value="Release3">Release3</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
+
               <Col span={8} style={{ padding: "5px" }}>
                 <Form.Item label="Assigned To: ">
                   <Select
@@ -995,21 +963,7 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
-              <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="status">
-                  <Select
-                    defaultValue="high"
-                    style={{ width: "100%" }}
-                    onChange={this.handleChangeStatus}
-                  >
-                    <Option value="New">New</Option>
-                    <Option value="Open">Open</Option>
-                    <Option value="Fixed">Fixed</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
+
             <Row>
               <Form.Item label="Comments: ">
                 <TextArea
@@ -1033,6 +987,7 @@ class TableFilter extends React.Component {
           columns={columns}
           dataSource={this.state.defect}
           onChange={this.handleChange}
+          scroll={{ x: 1300 }}
         />
 
         {/* Edit Defects Part  */}
@@ -1161,17 +1116,7 @@ class TableFilter extends React.Component {
               </Col>
             </Row>
 
-            <Form.Item label="Available In">
-              <Select
-                defaultValue="Release"
-                style={{ width: "100%" }}
-                onChange={this.onChangeSeverityId}
-              >
-                <Option value="Release1">Release1</Option>
-                <Option value="Release2">Release2</Option>
-                <Option value="Release3">Release3</Option>
-              </Select>
-            </Form.Item>
+
             <Form.Item label=" Description: ">
               <TextArea
                 placeholder="Description"
@@ -1205,25 +1150,7 @@ class TableFilter extends React.Component {
           width="600px"
         >
           <Row>
-            {/*<Col span={10} style={{ padding: '5px' }}>
-           <p><b>Module name:</b></p>
-              <p><b>Description:</b></p>
-              <p><b>Steps to re-create:</b></p>
-              <p><b>Severity:</b></p>
-              <p><b>Priority:</b></p>
-              <p><b>Defect Type:</b></p>
-              <p><b>Status:</b></p>
-              <p><b>Entered By:</b></p>
-              <p><b>Entered Date:</b></p>
-              <p><b>Found In:</b></p>
-              <p><b>Available In:</b></p>
-              <p><b>Assigned To:</b></p>
-              <p><b>Fixed By:</b></p>
-              <p><b>Fixed Date:</b></p>
-              <p><b>Fixed In:</b></p>
-             <p><b>Comments:</b></p>
 
-              </Col>*/}
 
             <Col span={10} style={{ padding: "5px" }}>
               <p>
@@ -1245,8 +1172,12 @@ class TableFilter extends React.Component {
                 <b>Defect Type:</b>
               </p>
               <p>
-                <b>Status:</b>
+                <b>Found In:</b>
               </p>
+              <p>
+                <b>Fixed In:</b>
+              </p>
+
               <p>
                 <b>Entered By:</b>
               </p>
@@ -1269,12 +1200,7 @@ class TableFilter extends React.Component {
                 <b>Comments:</b>
               </p>
 
-              {/* <p label="Priority: "> </p>
-              <br />
-              <br />
-              <br />
-              <br />
-              <p label="Status: "></p> */}
+
             </Col>
             <Col span={14} style={{ padding: "5px" }}>
               <p>Defect Dashboard</p>
@@ -1288,7 +1214,8 @@ class TableFilter extends React.Component {
                 <Tag color="orange">Low</Tag>
               </p>
               <p>UI</p>
-              <p>Open</p>
+              <p>Release1</p>
+              <p>Release1</p>
               <p>Tom</p>
               <p>05.05.2019</p>
               <p>Sam</p>
@@ -1298,7 +1225,7 @@ class TableFilter extends React.Component {
                 <Select
                   showSearch
                   style={{ width: 200 }}
-                  placeholder="Select a person"
+                  defaultValue="New"
                   optionFilterProp="children"
                   onChange={this.onChange1}
                   onFocus={this.onFocus}
@@ -1310,6 +1237,7 @@ class TableFilter extends React.Component {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                 >
+                  <Option value="New">New</Option>
                   <Option value="open">open</Option>
                   <Option value="fixed">fixed</Option>
                   <Option value="close">close</Option>
