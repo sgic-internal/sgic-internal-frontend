@@ -1,4 +1,4 @@
-import { Modal, Button, Select,Transfer, Switch, Table, Tag  } from 'antd';
+import { Modal, Button, Select,Transfer, Switch, Table, Tag, message  } from 'antd';
 import React from 'react';
 
 import axios from "axios";
@@ -187,15 +187,7 @@ export default class Allocation extends React.Component {
           projectId:this.state.projectId
         }
        // console.log(this.state.filteredItems)
-        axios
-        .post(
-          "http://localhost:8081/defectservices/saveresource",
-          this.state.data
-        )
-        .then(res => console.log(res.data))
-        .catch(error => {
-          console.log(error);
-        });
+       
     };
 
     handleCancel = () => {
@@ -260,18 +252,26 @@ export default class Allocation extends React.Component {
       console.log(_this.state.list);
       _this.state.employee.map((post,index)=>{
         console.log(post.key)
-        if(targetKeys==index){
+        for(var i=0;i<11;i++){
+        if(targetKeys[i]==index){
           console.log(post.empId)
-         let data1={
+         let data1=[{ empId:post.empId,
+          projectId:this.state.value1 }]
             
-            empId:post.empId,
-            projectId:this.state.value1 
-          }
-         
+          
           console.log(data1)
+          axios
+          .post(
+            "http://localhost:8081/defectservices/saveresourceTable",
+            data1
+          )
+          .then(res => console.log(res.data))
+          .catch(error => {
+            console.log(error);
+          });
          
         }
-       
+      }
        });
       
     }
