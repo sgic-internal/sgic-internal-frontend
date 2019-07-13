@@ -6,7 +6,7 @@ import { Row, Col } from "antd";
 import "./index.css";
 import axios from "axios";
 import CompanyController from "./CompanyController";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 // import AllApi from ".AllApi";
 
@@ -148,21 +148,19 @@ export default class AddCompany extends React.Component {
     return (
       <div>
         <Row>
-      <Col span={6}>
-      
-         <Button type="primary" onClick={this.showModal}>
-          Add Company
-        </Button>
-       </Col>
-      <Col span={6}></Col>
-      <Col span={9}></Col>
-      <Col span={3}>
-      <Link to="/config">
-        <Button type="primary" >
-      configuration
-        </Button>
-        </Link></Col>
-    </Row>
+          <Col span={6}>
+            <Button type="primary" onClick={this.showModal}>
+              Add Company
+            </Button>
+          </Col>
+          <Col span={6} />
+          <Col span={9} />
+          <Col span={3}>
+            <Link to="/config">
+              <Button type="primary">configuration</Button>
+            </Link>
+          </Col>
+        </Row>
         <Modal
           variant="contained"
           width="675px"

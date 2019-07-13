@@ -19,44 +19,20 @@ import SeverityConfigController from "./SeverityConfigController";
 
 // const { Option } = Select;
 
-const data = [
-  {
-    key: "1",
-    name: "High",
-    Description: "High",
-    Icon: "arrow-up",
-    Colour: "#ff3f34"
-  },
-  {
-    key: "2",
-    name: "Medium",
-    Description: "Medium",
-    Icon: "swap",
-    Colour: "#0be881"
-  },
-  {
-    key: "3",
-    name: "Low",
-    Description: "Low",
-    Icon: "arrow-down",
-    Colour: "#ffc048"
-  }
-];
-
-const props = {
-  action: "//jsonplaceholder.typicode.com/posts/",
-  listType: "picture",
-  previewFile(file) {
-    console.log("Your upload file:", file);
-    // Your process logic. Here we just mock to the same file
-    return fetch("https://next.json-generator.com/api/json/get/4ytyBoLK8", {
-      method: "POST",
-      body: file
-    })
-      .then(res => res.json())
-      .then(({ thumbnail }) => thumbnail);
-  }
-};
+// const props = {
+//   action: "//jsonplaceholder.typicode.com/posts/",
+//   listType: "picture",
+//   previewFile(file) {
+//     console.log("Your upload file:", file);
+//     // Your process logic. Here we just mock to the same file
+//     return fetch("https://next.json-generator.com/api/json/get/4ytyBoLK8", {
+//       method: "POST",
+//       body: file
+//     })
+//       .then(res => res.json())
+//       .then(({ thumbnail }) => thumbnail);
+//   }
+// };
 
 export default class SeverityConfig extends React.Component {
   state = {
@@ -66,7 +42,7 @@ export default class SeverityConfig extends React.Component {
     severityName: "Severity",
     severityValue: "",
     severityIcon: "",
-    severityColor: "#fffa",
+    severityColor: "",
     getAllSeverity: []
   };
 
@@ -111,24 +87,6 @@ export default class SeverityConfig extends React.Component {
     console.log(Severity);
   };
 
-  //  onSubmit(e) {
-  //   e.preventDefault();
-  //   const Company = {
-  //     companyName: this.state.companyName,
-  //     companyAbbrivation: this.state.companyAbbrivation,
-  //     companyRegNo: this.state.companyRegNo,
-  //     companyAdminName: this.state.companyAdminName,
-  //     companyAdminEmail: this.state.companyAdminEmail,
-  //     companyLicenseTypeId: this.state.licenseTypeCompany,
-  //     companyLicensePeriod: this.state.companyLicensePeriod,
-  //     companyDescription: this.state.companyDescription
-  //   };
-
-  //   CompanyController.AddCompanyApi(Company);
-  //   console.log(Company);
-  //   console.log(Company.licenseTypeCompany);
-  // }
-
   handleCancel = e => {
     console.log(e);
     this.setState({
@@ -162,7 +120,8 @@ export default class SeverityConfig extends React.Component {
   };
 
   handleChange = color => {
-    this.setState({ color: color.rgb });
+    this.setState({ color: color.rgb, severityColor: color.hex });
+    console.log(color.hex);
   };
   handleSubmit = e => {
     e.preventDefault();
@@ -198,6 +157,7 @@ export default class SeverityConfig extends React.Component {
     });
     console.log(e.target.value);
   };
+
   componentDidMount() {
     this.fetchAllSeverity();
   }
@@ -234,8 +194,8 @@ export default class SeverityConfig extends React.Component {
         render: icon => <Icon type={icon} />
       },
       {
-        title: "Colour",
-        key: "Colour",
+        title: "Color",
+        key: "Color",
         dataIndex: "severityColor",
         render: colour => (
           <Icon
@@ -249,10 +209,10 @@ export default class SeverityConfig extends React.Component {
         key: "action",
         render: (data = this.state.getAllSeverity) => (
           <span>
-            <a onClick={this.showEditModal}>
+            {/* <a onClick={this.showEditModal}>
               <Icon type="edit" style={{ fontSize: "17px", color: "blue" }} />
             </a>
-            <Divider type="vertical" />
+            <Divider type="vertical" /> */}
             <Popconfirm
               title="Are you sure, Do you want to delete this ?"
               icon={<Icon type="delete" style={{ color: "red" }} />}
@@ -391,6 +351,9 @@ export default class SeverityConfig extends React.Component {
                     style={{ width: 120 }}
                     onChange={this.onChangeIcon}
                   >
+                    <Option key="up" value="caret-up">
+                      <Icon type="caret-up" />
+                    </Option>
                     <Option key="up" value="up">
                       <Icon type="up" />
                     </Option>
@@ -400,9 +363,32 @@ export default class SeverityConfig extends React.Component {
                     <Option key="up" value="arrow-up">
                       <Icon type="arrow-up" />
                     </Option>
+                    <Option key="up" value="vertical-align-middle">
+                      <Icon type="vertical-align-middle" />
+                    </Option>
+                    <Option key="up" value="swap">
+                      <Icon type="swap" />
+                    </Option>
+                    <Option key="up" value="minus">
+                      <Icon type="minus" />
+                    </Option>
+                    <Option key="up" value="column-width">
+                      <Icon type="column-width" />
+                    </Option>
+                    <Option key="up" value="down">
+                      <Icon type="down" />
+                    </Option>
+                    <Option key="up" value="vertical-align-bottom">
+                      <Icon type="vertical-align-bottom" />
+                    </Option>
+                    <Option key="up" value="arrow-down">
+                      <Icon type="arrow-down" />
+                    </Option>
+                    <Option key="up" value="caret-down">
+                      <Icon type="caret-down" />
+                    </Option>
                   </Select>
                 </Form.Item>
-
                 <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color} />
@@ -446,13 +432,13 @@ export default class SeverityConfig extends React.Component {
                 <Form.Item label="Description">
                   <Input />
                 </Form.Item>
-                <Form.Item label="Icon">
+                {/* <Form.Item label="Icon">
                   <Upload {...props}>
                     <Button>
                       <Icon type="upload" /> Upload
                     </Button>
                   </Upload>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
