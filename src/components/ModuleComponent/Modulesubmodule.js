@@ -9,36 +9,47 @@ import {
   Button,
   Popover,
   Select,
-  
+
 } from "antd";
 
 import { Component } from "react";
 import React from "react";
 import axios from "axios";
 
-const {Option} =Select;
+const { Option } = Select;
 
 class Modulesubmodule extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      module:[],
+      module: [],
       moduleId: "",
       moduleName: "",
       projectid: "",
-      projectId:"",
+      projectId: "",
+      subModuleId: "",
+      subModuleName: "",
       visible: false,
       formLayout: "horizontal",
       data: [],
+      data1: [],
       project: [],
-     
+      ModuleData: [],
+      SubmoduleData: [],
+      key: '',
+      date: '',
+      name: ''
+
     };
 
     this.state = { ModuleData: [] };
     this.onChangemoduleId = this.onChangemoduleId.bind(this);
     this.onChangemoduleName = this.onChangemoduleName.bind(this);
     this.onChangeprojectid = this.onChangeprojectid.bind(this);
+    this.onChangesubModuleId = this.onChangesubModuleId.bind(this);
+    this.onChangesubModuleName = this.onChangesubModuleName.bind(this);
+
 
     this.handleOk3 = this.handleOk3.bind(this);
     this.fetchProject = this.fetchProject.bind(this);
@@ -53,25 +64,22 @@ class Modulesubmodule extends Component {
     var _this = this;
     axios
       .get("http://localhost:8081/defectservices/GetAllproject")
-      .then(response=> {
+      .then(response => {
         // handle success
         console.log(response);
         //alert(response.data[0].projectId)
         _this.setState({ project: response.data });
 
-        let drop=response.data.map((post,index)=>{
+        let drop = response.data.map((post, index) => {
 
           return (
             <Option key={index} value={post.projectId}>
               {post.projectName}
             </Option>
           );
-
-          
-
         })
 
-        this.setState({drop});
+        this.setState({ drop });
         alert(_this.state.project[0].projectId);
       });
   }
@@ -90,7 +98,7 @@ class Modulesubmodule extends Component {
     });
   };
 
-   handleChange(value){
+  handleChange(value) {
     console.log(`selected ${value}`);
   }
 
@@ -116,8 +124,23 @@ class Modulesubmodule extends Component {
       projectid: e.target.value
     });
   }
-  handleChange3=(e)=> {
-    this.setState({projectid:e.target.value});
+
+  onChangesubModuleId(value) {
+    this.setState({
+      subModuleId: `${value}`
+    });
+    console.log(this.state.subModuleId);
+  }
+
+  onChangesubModuleName(value) {
+    this.setState({
+      subModuleName: `${value}`
+    });
+    console.log(this.state.subModuleName);
+  }
+
+  handleChange3 = (e) => {
+    this.setState({ projectid: e.target.value });
   }
 
   hide = () => {
@@ -130,6 +153,8 @@ class Modulesubmodule extends Component {
     this.setState({
       hovered: visible
     });
+
+    console.log("gghghfghf")
   };
 
   handleClickChange = visible => {
@@ -224,7 +249,9 @@ class Modulesubmodule extends Component {
     });
   };
   componentDidMount() {
+    this.getallsub();
     this.GetAllmodule();
+
   }
 
   handleOk3 = e => {
@@ -233,7 +260,9 @@ class Modulesubmodule extends Component {
     const ModuleData = {
       moduleId: this.state.moduleId,
       moduleName: this.state.moduleName,
-      projectid: this.state.projectId
+      projectid: this.state.projectId,
+      subModuleId: this.state.subModuleId,
+      subModuleName: this.state.subModuleName,
     };
     console.log(ModuleData);
     axios
@@ -246,6 +275,8 @@ class Modulesubmodule extends Component {
       moduleId: "",
       moduleName: "",
       projectid: "",
+      subModuleId: "",
+      subModuleName: "",
       visible3: false
     });
   };
@@ -255,7 +286,8 @@ class Modulesubmodule extends Component {
     axios
       .get(`http://localhost:8081/defectservices/GetAllmodule`)
       .then(res => {
-        // const ModuleData = res.data;
+        let ModuleData = res.data;
+        // let SubModuleData=res.data;
         console.log(res.data.length);
         const modulelist = Object.assign([], this.state.data);
         for (let i = 0; i < res.data.length; i++) {
@@ -269,13 +301,81 @@ class Modulesubmodule extends Component {
           console.log(i);
           console.log(this.state.data);
         }
-        this.setState({ data: modulelist });
+
+
+        this.setState({
+          data: modulelist,
+          ModuleData: res.data,
+
+        });
+
         console.log(this.state.data);
+        console.log(this.state.ModuleData)
+        
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
+
   };
+
+  getallsub() {
+
+    
+      axios
+
+        .get(`http://localhost:8081/defectservices/FindallMain`)
+        .then(res => {
+
+          this.setState({
+            data4:res.data
+          })
+         
+    console.log(this.state.data3)
+  })
+  }
+  openRow = (index) => {
+    console.log(index.moduleId)
+    let data5=this.state.data4;
+    console.log(data5)
+
+
+   
+        console.log(data5[1].subModule.length)
+        let SubModuleData = Object.assign([], this.state.data1)
+        data5.map((post,index) => {
+          console.log(data5[index].subModule[index].subModuleId)
+          if ("AQW" == post.moduleId) {
+            console.log("dfdfhdjh")
+            
+            for(var i=0;i<data5[index].subModule.length;i++){
+           
+           
+              SubModuleData[index] = {
+                key: index,
+                subModuleId: data5[index].subModule[index].subModuleId,
+                subModuleName: data5[index].subModule[index].subModuleName,
+
+              };
+
+             
+            }
+
+            
+           }
+
+
+        })
+
+
+
+
+        // this.setState({
+        //   data1: SubModuleData
+        // });
+        
+    console.log(this.state.data1)
+  }
 
   handleDelete = moduleId => {
     console.log(moduleId);
@@ -325,17 +425,13 @@ class Modulesubmodule extends Component {
 
       const data = [
         {
-          key: 1,
-          date: "001",
-          name: "Form Design"
+          key: this.state.key,
+          date: this.state.date,
+          name: this.state.name
         },
-        {
-          key: 4,
-          date: "002",
-          name: "Form Design"
-        }
+
       ];
-      return <Table columns={columns} dataSource={data} pagination={false} />;
+      return <Table columns={columns} dataSource={this.state.data1} pagination={false} />;
     };
 
     const text = "Are you sure to delete this item?";
@@ -370,7 +466,7 @@ class Modulesubmodule extends Component {
       },
       {
         render: () => (
-        // render: (text, data = this.state.patients) => (
+          // render: (text, data = this.state.patients) => (
           <Popconfirm
             placement="topLeft"
             title={text}
@@ -403,15 +499,15 @@ class Modulesubmodule extends Component {
     const formItemLayout =
       formLayout === "horizontal"
         ? {
-            labelCol: { span: 4 },
-            wrapperCol: { span: 14 }
-          }
+          labelCol: { span: 4 },
+          wrapperCol: { span: 14 }
+        }
         : null;
     const buttonItemLayout =
       formLayout === "horizontal"
         ? {
-            wrapperCol: { span: 14, offset: 4 }
-          }
+          wrapperCol: { span: 14, offset: 4 }
+        }
         : null;
 
     const rowSelection = {
@@ -439,8 +535,10 @@ class Modulesubmodule extends Component {
         <Table
           className="components-table-demo-nested"
           columns={columns}
-          expandedRowRender={expandedRowRender}
+          expandedRowRender={index => this.openRow(index)}
           dataSource={this.state.data}
+
+          expandRowByClick={value => this.openRow(value)}
         />
         <Modal
           title="Add Submodule"
@@ -489,23 +587,7 @@ class Modulesubmodule extends Component {
             <Form.Item label="Module Name:">
               <Input placeholder="input placeholder" />
             </Form.Item>
-            <Select
-              showSearch
-              style={{ width: 300 }}
-              placeholder="Select ProjectID"
-              optionFilterProp="children"
-              onChange={onChange}
-              onFocus={onFocus}
-              onBlur={onBlur}
-              onSearch={onSearch}
-              filterOption={(input, option) =>
-                option.props.children
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              <Option value="" />
-            </Select>
+
           </Form>
         </Modal>
         <Modal
@@ -564,25 +646,25 @@ class Modulesubmodule extends Component {
               />
             </Form.Item>
             <Form.Item>
-            <Select
-              showSearch
-              style={{ width: 200 }}
-              placeholder="Select ProjectID"
-              optionFilterProp="children"
-              onChange={(e) => this.onChangeprojectId(e)} value={this.state.projectId}
-              onFocus={onFocus}
-              onBlur={onBlur}
-              onSearch={onSearch}
-              filterOption={(input, option) =>
-                option.props.children
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-            >
-                      {this.state.drop}
-            </Select>
-           
-           </Form.Item>
+              <Select
+                showSearch
+                style={{ width: 200 }}
+                placeholder="Select ProjectID"
+                optionFilterProp="children"
+                onChange={(e) => this.onChangeprojectId(e)} value={this.state.projectId}
+                onFocus={onFocus}
+                onBlur={onBlur}
+                onSearch={onSearch}
+                filterOption={(input, option) =>
+                  option.props.children
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+              >
+                {this.state.drop}
+              </Select>
+
+            </Form.Item>
           </Form>
         </Modal>
       </div>
