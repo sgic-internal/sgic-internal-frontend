@@ -1,14 +1,23 @@
-import { Modal, Button, Form, Row, Col, Input, DatePicker, Select,message } from "antd";
+import {
+  Modal,
+  Button,
+  Form,
+  Row,
+  Col,
+  Input,
+  DatePicker,
+  Select,
+  message
+} from "antd";
 import React from "react";
 import axios from "axios";
 
 import { object } from "prop-types";
 
-function confirm(e){
-  console.log(e)
+function confirm(e) {
+  console.log(e);
   message.success("Delete Successfully!");
 }
-
 
 //import ProjectDataService from './ProjectDataService';
 const { MonthPicker, RangePicker } = DatePicker;
@@ -16,10 +25,10 @@ const { MonthPicker, RangePicker } = DatePicker;
 const NameRegex = RegExp(/^[a-zA-Z]+$/);
 const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
 const config = {
-  rules: [{ type: 'object', required: true, message: 'Please select time!' }],
+  rules: [{ type: "object", required: true, message: "Please select time!" }]
 };
 const rangeConfig = {
-  rules: [{ type: 'array', required: true, message: 'Please select time!' }],
+  rules: [{ type: "array", required: true, message: "Please select time!" }]
 };
 
 const formValid = ({ formerrors, ...rest }) => {
@@ -38,8 +47,7 @@ const formValid = ({ formerrors, ...rest }) => {
   return valid;
 };
 
-
- class Model extends React.Component {
+class Model extends React.Component {
   constructor(props) {
     super(props);
 
@@ -64,7 +72,6 @@ const formValid = ({ formerrors, ...rest }) => {
         duration: "",
         status: ""
       }
-
     };
   }
 
@@ -104,7 +111,6 @@ const formValid = ({ formerrors, ...rest }) => {
         }
         break;
 
-
       case "startDate":
         if (!NameRegex.test(value)) {
           formerrors.startDate = "Invalid start date";
@@ -128,11 +134,9 @@ const formValid = ({ formerrors, ...rest }) => {
       case "duration":
         if (!ValidRegex.test(value)) {
           formerrors.duration = "Invalid Duration";
-        } 
-        else if (value.length > 30) {
+        } else if (value.length > 30) {
           formerrors.duration = "Should be less than 30 characters";
-       } 
-        else {
+        } else {
           formerrors.duration = "";
         }
         break;
@@ -184,7 +188,7 @@ const formValid = ({ formerrors, ...rest }) => {
       type: e.target.value
     });
   }
-  onChangeStartDate=(date, dateString)=> {
+  onChangeStartDate = (date, dateString) => {
     // this.setState({startDate: dateString});
 
     this.setState({ startDate: dateString }, () =>
@@ -192,25 +196,24 @@ const formValid = ({ formerrors, ...rest }) => {
     );
 
     console.log(this.state.startDate);
-  }
-  onChangeEndDate=(date, dateString)=> {
+  };
+  onChangeEndDate = (date, dateString) => {
     this.setState({ endDate: dateString }, () =>
       console.log(this.state.endDate)
     );
 
     console.log(this.state.endDate);
-  }
-  onChangeDuration=(e) =>{
+  };
+  onChangeDuration = e => {
     this.setState({
       duration: e.target.value
     });
-  }
+  };
   onChangeStatus(e) {
     this.setState({
       status: e.target.value
     });
   }
-
 
   state = {
     disabled: true,
@@ -240,7 +243,7 @@ const formValid = ({ formerrors, ...rest }) => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
-        message.success("Successfully Added!!!")
+        message.success("Successfully Added!!!");
         this.setState({ visible: false });
       } else {
       }
@@ -248,43 +251,45 @@ const formValid = ({ formerrors, ...rest }) => {
     if (formValid(this.state)) {
       console.info(`
         --SUBMITTING--
-        Employee Id: ${this.state.employeeId}
-        Employee Name: ${this.state.employeeName}
-        Employee FirstName:${this.state.employeeFirstName}
-        Employee Email: ${this.state.employeeEmail}      
-      `);
+        Project Id: ${this.state.projectId}
+        Project Name: ${this.state.projectName}
+        Project Type:${this.state.type}
+        Project Start Date: ${this.state.startDate}
+        Project End Date: ${this.state.endDate}
+        Project Duration: ${this.state.duration}
+        Project Status : ${this.state.status}
+ `);
 
-    const projectData = {
-      projectId: this.state.projectId,
-      projectName: this.state.projectName,
-      type: this.state.type,
-      startDate: this.state.startDate,
-      endDate: this.state.endDate,
-      duration: this.state.duration,
-      status: this.state.status
-      // configId: this.state.configId
-    };
-    // console.log("dddddddddddddddddddd"+projectData)
-    axios
-      .post("http://localhost:8081/defectservices/createproject/", projectData)
-      .then(res => console.log(res.data))
-      .catch(error => {
-        console.log(error);
-      });
-  } else {
-    console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
-  }
-};
+      const projectData = {
+        projectId: this.state.projectId,
+        projectName: this.state.projectName,
+        type: this.state.type,
+        startDate: this.state.startDate,
+        endDate: this.state.endDate,
+        duration: this.state.duration,
+        status: this.state.status
+      };
+    
+      axios
+        .post(
+          "http://localhost:8081/defectservices/createproject/",
+          projectData
+        )
+        .then(res => console.log(res.data))
+        .catch(error => {
+          console.log(error);
+        });
+    } else {
+      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+    }
+  };
   state = { visible: false };
 
-   
-  
   handleCancel = e => {
     console.log(e);
     this.setState({
       visible: false
     });
-   
   };
 
   handleChange = e => {
@@ -331,27 +336,27 @@ const formValid = ({ formerrors, ...rest }) => {
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item label="Project Id">
-                <div>
+                  <div>
                     {getFieldDecorator("projectId", {
                       rules: [
                         {
                           required: true,
-                          message: "Please input employeeId!"
+                          message: "Please input ProjectId!"
                         }
                       ]
                     })(
-                  <Input
-                    className={
-                      formerrors.projectId.length > 0 ? "error" : null}
-                    placeholder="Project Id"
-                    name="projectId"
-                    value={this.state.projectId}
-                    // onChange={this.onChangeprojectId}
-                    onChange={this.handlechange}
-                  />
-                  
-                  )}
-                </div>
+                      <Input
+                        className={
+                          formerrors.projectId.length > 0 ? "error" : null
+                        }
+                        placeholder="Project Id"
+                        name="projectId"
+                        value={this.state.projectId}
+                        // onChange={this.onChangeprojectId}
+                        onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
                   {formerrors.projectId.length > 0 && (
                     <span
                       className="error"
@@ -366,28 +371,31 @@ const formValid = ({ formerrors, ...rest }) => {
 
             <Row gutter={16}>
               <Col span={24}>
-                <Form.Item label="Project Name"
+                <Form.Item
+                  label="Project Name"
                   validateStatus={this.state.projectName.validateStatus}
-                  help={this.state.projectName.errorMsg}>
-                    <div>
+                  help={this.state.projectName.errorMsg}
+                >
+                  <div>
                     {getFieldDecorator("projectName", {
                       rules: [
                         {
                           required: true,
-                          message: "Please input employeeId!"
+                          message: "Please input projectName!"
                         }
                       ]
                     })(
-                  <Input
-                    className={
-                      formerrors.projectName.length > 0 ? "error" : null}
-                    placeholder="Project Name"
-                    name="projectName"
-                    value={this.state.projectName}
-                    // onChange={this.onChangeprojectName}
-                    onChange={this.handlechange}
-                  />
-                  )}
+                      <Input
+                        className={
+                          formerrors.projectName.length > 0 ? "error" : null
+                        }
+                        placeholder="Project Name"
+                        name="projectName"
+                        value={this.state.projectName}
+                        // onChange={this.onChangeprojectName}
+                        onChange={this.handlechange}
+                      />
+                    )}
                   </div>
                   {formerrors.projectName.length > 0 && (
                     <span
@@ -403,19 +411,34 @@ const formValid = ({ formerrors, ...rest }) => {
 
             <Row gutter={16}>
               <Col span={8}>
-                <Form.Item label="Type">
-                  <Input
-                    placeholder="Type"
-                    name="type"
-                    value={this.state.type}
-                    // onChange={this.onChangeType}
-                    onChange={this.handlechange}
-                  />
-
+                <Form.Item
+                  label="Type"
+                  validateStatus={this.state.type.validateStatus}
+                  help={this.state.type.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("type", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input Project Type!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        placeholder="Type"
+                        name="type"
+                        value={this.state.type}
+                        // onChange={this.onChangeType}
+                        onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
                   {formerrors.type.length > 0 && (
                     <span
                       className="error"
-                      style={{ color: "red", fontSize: "14px" }}>
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
                       {formerrors.type}
                     </span>
                   )}
@@ -423,60 +446,103 @@ const formValid = ({ formerrors, ...rest }) => {
               </Col>
 
               <Col span={8}>
-                <Form.Item label="Start Date">
-                  <Form.Item>
-                    <DatePicker
-                      placeholder="Start Date"
-                      name="startDate"
-                      startDate={this.state.startDate}
-                      onChange={this.onChangeStartDate}
-                    
-                    />
-                    {formerrors.startDate.length > 0 && (
-                      <span
-                        className="error"
-                        style={{ color: "red", fontSize: "14px" }}
-                      >
-                        {formerrors.startDate}
-                      </span>
-                    )}
-                  </Form.Item>
+                <Form.Item label="Start Date"
+                 validateStatus={this.state.startDate.validateStatus}
+                 help={this.state.startDate.errorMsg}
+               >
+                 <div>
+                   {getFieldDecorator("startDate", {
+                     rules: [
+                       {
+                         required: true,
+                         message: "Please input startDate!"
+                       }
+                     ]
+                   })(
+               
+                  <DatePicker
+                    placeholder="Start Date"
+                    name="startDate"
+                    startDate={this.state.startDate}
+                    onChange={this.onChangeStartDate}
+                  />
+                  )}
+                  </div>
+                  {formerrors.startDate.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formerrors.startDate}
+                    </span>
+                  )}
+                  {/* </Form.Item> */}
                 </Form.Item>
               </Col>
 
               <Col span={8}>
-                <Form.Item label="End Date">
-                  <Form.Item>
-                    <DatePicker
-                      placeholder="End Date"
-                      name="endDate"
-                      endDate={this.state.endDate}
-                      onChange={this.onChangeEndDate}
-                      // onChange={this.handlechange}
-                    />
-                    {formerrors.endDate.length > 0 && (
-                      <span
-                        className="error"
-                        style={{ color: "red", fontSize: "14px" }}
-                      >
-                        {formerrors.endDate}
-                      </span>
+                {/* <Form.Item label="End Date"> */}
+                <Form.Item
+                  label="End Date"
+                  validateStatus={this.state.endDate.validateStatus}
+                  help={this.state.endDate.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("endDate", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input Project End Date!"
+                        }
+                      ]
+                    })(
+                      <DatePicker
+                        placeholder="End Date"
+                        name="endDate"
+                        endDate={this.state.endDate}
+                        onChange={this.onChangeEndDate}
+                        // onChange={this.handlechange}
+                      />
                     )}
-                  </Form.Item>
+                  </div>
+                  {formerrors.endDate.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formerrors.endDate}
+                    </span>
+                  )}
                 </Form.Item>
+                {/* </Form.Item> */}
               </Col>
             </Row>
 
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Duration">
-                  <Input
-                    placeholder="Duration"
-                    name="duration"
-                    value={this.state.duration}
-                    onChange={this.onChangeDuration}
-                    // onChange={this.handlechange}
-                  />
+                <Form.Item
+                  label="Duration"
+                  validateStatus={this.state.duration.validateStatus}
+                  help={this.state.duration.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("duration", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input Project Duration!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        placeholder="Duration"
+                        name="duration"
+                        value={this.state.duration}
+                        onChange={this.onChangeDuration}
+                        // onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
                   {formerrors.duration.length > 0 && (
                     <span
                       className="error"
@@ -489,14 +555,29 @@ const formValid = ({ formerrors, ...rest }) => {
               </Col>
 
               <Col span={12}>
-                <Form.Item label="Status">
-                  <Input
-                    placeholder="Status"
-                    name="status"
-                    value={this.state.status}
-                    // onChange={this.onChangeStatus}
-                    onChange={this.handlechange}
-                  />
+                <Form.Item
+                  label="Status"
+                  validateStatus={this.state.status.validateStatus}
+                  help={this.state.status.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("status", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input Project Status!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        placeholder="Status"
+                        name="status"
+                        value={this.state.status}
+                        // onChange={this.onChangeStatus}
+                        onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
                   {formerrors.status.length > 0 && (
                     <span
                       className="error"
