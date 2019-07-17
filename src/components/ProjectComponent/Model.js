@@ -39,8 +39,7 @@ const formValid = ({ formerrors, ...rest }) => {
 };
 
 
-
-export default class Model extends React.Component {
+ class Model extends React.Component {
   constructor(props) {
     super(props);
 
@@ -64,10 +63,7 @@ export default class Model extends React.Component {
         endDate: "",
         duration: "",
         status: ""
-
-
       }
-      // configId: "",
 
     };
   }
@@ -214,11 +210,7 @@ export default class Model extends React.Component {
       status: e.target.value
     });
   }
-  // onChangeconfigId(e) {
-  //   this.setState({
-  //     configId: e.target.value
-  //   });
-  // }
+
 
   state = {
     disabled: true,
@@ -245,6 +237,23 @@ export default class Model extends React.Component {
   handleOk = e => {
     e.preventDefault();
 
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log("Received values of form: ", values);
+        message.success("Successfully Added!!!")
+        this.setState({ visible: false });
+      } else {
+      }
+    });
+    if (formValid(this.state)) {
+      console.info(`
+        --SUBMITTING--
+        Employee Id: ${this.state.employeeId}
+        Employee Name: ${this.state.employeeName}
+        Employee FirstName:${this.state.employeeFirstName}
+        Employee Email: ${this.state.employeeEmail}      
+      `);
+
     const projectData = {
       projectId: this.state.projectId,
       projectName: this.state.projectName,
@@ -255,25 +264,21 @@ export default class Model extends React.Component {
       status: this.state.status
       // configId: this.state.configId
     };
-    console.log("dddddddddddddddddddd"+projectData)
+    // console.log("dddddddddddddddddddd"+projectData)
     axios
       .post("http://localhost:8081/defectservices/createproject/", projectData)
-      .then(res => console.log(res.data));
+      .then(res => console.log(res.data))
+      .catch(error => {
+        console.log(error);
+      });
+  } else {
+    console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+  }
+};
+  state = { visible: false };
 
-    this.setState({
-      projectId: "",
-      projectName: "",
-      type: "",
-      startDate: "",
-      endDate: "",
-      duration: "",
-      status: "",
-
-      visible: false
-    });
-    message.success("Added Successfully!");
-  };
-
+   
+  
   handleCancel = e => {
     console.log(e);
     this.setState({
@@ -304,7 +309,7 @@ export default class Model extends React.Component {
   };
 
   render() {
-
+    const { getFieldDecorator } = this.props.form;
     const { formerrors } = this.state;
 
     // const { getFieldDecorator } = this.props.form;
@@ -326,6 +331,15 @@ export default class Model extends React.Component {
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item label="Project Id">
+                <div>
+                    {getFieldDecorator("projectId", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input employeeId!"
+                        }
+                      ]
+                    })(
                   <Input
                     className={
                       formerrors.projectId.length > 0 ? "error" : null}
@@ -335,6 +349,9 @@ export default class Model extends React.Component {
                     // onChange={this.onChangeprojectId}
                     onChange={this.handlechange}
                   />
+                  
+                  )}
+                </div>
                   {formerrors.projectId.length > 0 && (
                     <span
                       className="error"
@@ -352,6 +369,15 @@ export default class Model extends React.Component {
                 <Form.Item label="Project Name"
                   validateStatus={this.state.projectName.validateStatus}
                   help={this.state.projectName.errorMsg}>
+                    <div>
+                    {getFieldDecorator("projectName", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input employeeId!"
+                        }
+                      ]
+                    })(
                   <Input
                     className={
                       formerrors.projectName.length > 0 ? "error" : null}
@@ -361,6 +387,8 @@ export default class Model extends React.Component {
                     // onChange={this.onChangeprojectName}
                     onChange={this.handlechange}
                   />
+                  )}
+                  </div>
                   {formerrors.projectName.length > 0 && (
                     <span
                       className="error"
@@ -496,3 +524,4 @@ export default class Model extends React.Component {
     );
   }
 }
+export default Form.create()(Model);

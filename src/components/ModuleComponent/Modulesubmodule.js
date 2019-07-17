@@ -345,7 +345,7 @@ class Modulesubmodule extends Component {
         let SubModuleData = Object.assign([], this.state.data1)
         data5.map((post,index) => {
           console.log(data5[index].subModule[index].subModuleId)
-          if ("AQW" == post.moduleId) {
+          if ("AB" == post.moduleId) {
             console.log("dfdfhdjh")
             
             for(var i=0;i<data5[index].subModule.length;i++){
@@ -353,8 +353,8 @@ class Modulesubmodule extends Component {
            
               SubModuleData[index] = {
                 key: index,
-                subModuleId: data5[index].subModule[index].subModuleId,
-                subModuleName: data5[index].subModule[index].subModuleName,
+                subModuleId: data5[index].subModule[2].subModuleId,
+                subModuleName: data5[index].subModule[2].subModuleName,
 
               };
 
@@ -370,9 +370,9 @@ class Modulesubmodule extends Component {
 
 
 
-        // this.setState({
-        //   data1: SubModuleData
-        // });
+        this.setState({
+          data1: SubModuleData
+        });
         
     console.log(this.state.data1)
   }
