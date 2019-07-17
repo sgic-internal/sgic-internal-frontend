@@ -6,24 +6,20 @@ import {
   Col,
   Input,
   DatePicker,
-  Select,
   message
 } from "antd";
 import React from "react";
 import axios from "axios";
 
-import { object } from "prop-types";
-
 function confirm(e) {
   console.log(e);
   message.success("Delete Successfully!");
 }
-
-//import ProjectDataService from './ProjectDataService';
 const { MonthPicker, RangePicker } = DatePicker;
 
 const NameRegex = RegExp(/^[a-zA-Z]+$/);
 const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
+const DurationRegex = RegExp(/^[0-9]+$/);
 const config = {
   rules: [{ type: "object", required: true, message: "Please select time!" }]
 };
@@ -132,7 +128,7 @@ class Model extends React.Component {
         break;
 
       case "duration":
-        if (!ValidRegex.test(value)) {
+        if (!DurationRegex.test(value)) {
           formerrors.duration = "Invalid Duration";
         } else if (value.length > 30) {
           formerrors.duration = "Should be less than 30 characters";
@@ -173,21 +169,7 @@ class Model extends React.Component {
       console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
   };
-  onChangeprojectId(e) {
-    this.setState({
-      projectId: e.target.value
-    });
-  }
-  onChangeprojectName(e) {
-    this.setState({
-      projectName: e.target.value
-    });
-  }
-  onChangeType(e) {
-    this.setState({
-      type: e.target.value
-    });
-  }
+
   onChangeStartDate = (date, dateString) => {
     // this.setState({startDate: dateString});
 
@@ -204,17 +186,6 @@ class Model extends React.Component {
 
     console.log(this.state.endDate);
   };
-  onChangeDuration = e => {
-    this.setState({
-      duration: e.target.value
-    });
-  };
-  onChangeStatus(e) {
-    this.setState({
-      status: e.target.value
-    });
-  }
-
   state = {
     disabled: true,
     visible: false
@@ -236,6 +207,8 @@ class Model extends React.Component {
       visible: true
     });
   };
+
+  getall() {}
 
   handleOk = e => {
     e.preventDefault();
@@ -269,13 +242,16 @@ class Model extends React.Component {
         duration: this.state.duration,
         status: this.state.status
       };
-    
+
       axios
         .post(
           "http://localhost:8081/defectservices/createproject/",
           projectData
         )
-        .then(res => console.log(res.data))
+        .then(res => {
+          console.log(res.data);
+          this.getall();
+        })
         .catch(error => {
           console.log(error);
         });
@@ -296,28 +272,12 @@ class Model extends React.Component {
     e.preventDefault();
     const { name, value } = e.target;
     let formErrors = { ...this.state.formErrors };
-
-    switch (name) {
-      case "projectName":
-        formErrors.projectName =
-          value.length < 3 ? "minimum 3 characaters required" : "";
-        break;
-      case "type":
-        formErrors.type =
-          value.length < 3 ? "minimum 3 characaters required" : "";
-        break;
-      default:
-        break;
-    }
-
     this.setState({ formErrors, [name]: value }, () => console.log(this.state));
   };
 
   render() {
     const { getFieldDecorator } = this.props.form;
     const { formerrors } = this.state;
-
-    // const { getFieldDecorator } = this.props.form;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>
@@ -392,7 +352,6 @@ class Model extends React.Component {
                         placeholder="Project Name"
                         name="projectName"
                         value={this.state.projectName}
-                        // onChange={this.onChangeprojectName}
                         onChange={this.handlechange}
                       />
                     )}
@@ -429,7 +388,6 @@ class Model extends React.Component {
                         placeholder="Type"
                         name="type"
                         value={this.state.type}
-                        // onChange={this.onChangeType}
                         onChange={this.handlechange}
                       />
                     )}
@@ -446,27 +404,27 @@ class Model extends React.Component {
               </Col>
 
               <Col span={8}>
-                <Form.Item label="Start Date"
-                 validateStatus={this.state.startDate.validateStatus}
-                 help={this.state.startDate.errorMsg}
-               >
-                 <div>
-                   {getFieldDecorator("startDate", {
-                     rules: [
-                       {
-                         required: true,
-                         message: "Please input startDate!"
-                       }
-                     ]
-                   })(
-               
-                  <DatePicker
-                    placeholder="Start Date"
-                    name="startDate"
-                    startDate={this.state.startDate}
-                    onChange={this.onChangeStartDate}
-                  />
-                  )}
+                <Form.Item
+                  label="Start Date"
+                  validateStatus={this.state.startDate.validateStatus}
+                  help={this.state.startDate.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("startDate", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input startDate!"
+                        }
+                      ]
+                    })(
+                      <DatePicker
+                        placeholder="Start Date"
+                        name="startDate"
+                        startDate={this.state.startDate}
+                        onChange={this.onChangeStartDate}
+                      />
+                    )}
                   </div>
                   {formerrors.startDate.length > 0 && (
                     <span
@@ -499,9 +457,7 @@ class Model extends React.Component {
                       <DatePicker
                         placeholder="End Date"
                         name="endDate"
-                        endDate={this.state.endDate}
                         onChange={this.onChangeEndDate}
-                        // onChange={this.handlechange}
                       />
                     )}
                   </div>
@@ -514,7 +470,6 @@ class Model extends React.Component {
                     </span>
                   )}
                 </Form.Item>
-                {/* </Form.Item> */}
               </Col>
             </Row>
 
@@ -538,8 +493,7 @@ class Model extends React.Component {
                         placeholder="Duration"
                         name="duration"
                         value={this.state.duration}
-                        onChange={this.onChangeDuration}
-                        // onChange={this.handlechange}
+                        onChange={this.handlechange}
                       />
                     )}
                   </div>
@@ -573,7 +527,6 @@ class Model extends React.Component {
                         placeholder="Status"
                         name="status"
                         value={this.state.status}
-                        // onChange={this.onChangeStatus}
                         onChange={this.handlechange}
                       />
                     )}
@@ -588,16 +541,6 @@ class Model extends React.Component {
                   )}
                 </Form.Item>{" "}
               </Col>
-
-              {/* <Col span={8}>
-                <Form.Item label="Config Id">
-                  <Input
-                    placeholder="Config Id"
-                    value={this.state.configId}
-                    onChange={this.onChangeconfigId}
-                  />
-                </Form.Item>{" "}
-              </Col> */}
             </Row>
           </form>
         </Modal>

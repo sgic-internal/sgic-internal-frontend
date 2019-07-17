@@ -1,4 +1,4 @@
-import { Table, Icon, Popconfirm, message, Input, Button } from "antd";
+import { Table, Icon, Popconfirm, message, Input, Button ,Pagination } from "antd";
 import Highlighter from "react-highlight-words";
 import React from "react";
 import EditModel from "./EditModel";
@@ -255,6 +255,14 @@ export default class App extends React.Component {
       }
     ];
 
-    return <Table columns={columns} dataSource={this.state.projects} />;
+    return <Table columns={columns} dataSource={this.state.projects} pagination={{
+      total: this.state.Total,
+      showTotal: (total, range) =>
+        `${range[0]}-${range[1]} of ${total} items`,
+      pageSize: 10,
+      showSizeChanger: true
+      // showQuickJumper: true
+    }} />;
   }
 }
+// ReactDOM.render(<Pagination defaultCurrent={1} total={50} />, document.getElementById('container'));

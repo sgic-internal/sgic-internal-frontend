@@ -529,7 +529,7 @@ class Modulesubmodule extends Component {
       <div>
         <div style={{ paddingBottom: "20px" }}>
           <Button type="primary" onClick={this.showModal3}>
-            Add Sub Module
+            Add Module
           </Button>
         </div>
         <Table
