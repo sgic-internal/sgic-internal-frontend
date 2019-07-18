@@ -1,24 +1,73 @@
 import React, { Component } from 'react';
 import { Chart } from 'primereact/chart';
 import { Card } from 'antd';
+import axios from 'axios';
+
 export default class ChartBar extends Component {
 
-    render() {
+    state={
+        highsev:'',
+        mediumsev:'',
+        lowsev:''
 
+    }
+
+getHigh(){
+
+        axios
+        .get('http://localhost:8081/defectservices/gethightcount')
+        .then(res=>{
+            console.log(res.data)
+            this.setState({
+                highsev:res.data
+            })
+        })
+}
+
+getMedium(){
+    axios
+    .get('http://localhost:8081/defectservices/getcountmedium')
+    .then(res=>{
+        console.log(res.data)
+        this.setState({
+            mediumsev:res.data
+        })
+    })
+}
+
+getLow(){
+    axios
+    .get('http://localhost:8081/defectservices/getlowcount')
+    .then(res=>{
+        console.log(res.data)
+        this.setState({
+            lowsev:res.data
+        })
+    })
+}
+componentDidMount(){
+    this.getHigh();
+    this.getMedium();
+    this.getLow();
+}
+
+
+    render() {
+console.log(this.state.highsev)
 
         const multiAxisData = {
-            labels: ['TMS', 'HMS', 'SMS ', 'DFS'],
+            labels: ['High', 'Medium', 'Low '],
             datasets: [{
-                label: 'Defects',
+                label: 'Severity',
                 backgroundColor: [
                     '#EC407A',
                     '#AB47BC',
                     '#42A5F5',
-                    '#7E57C2'
+                    
 
                 ],
                 yAxisID: 'y-axis-1',
-                data: [65, 59, 80, 81]
+                data: [this.state.highsev, this.state.mediumsev, this.state.lowsev]
             }]
         };
 
