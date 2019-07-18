@@ -169,7 +169,7 @@ getLow1(){
 
 getMedium1(){
     axios
-        .get('http://localhost:8081/defectservices/getcountmudium')
+        .get('http://localhost:8081/defectservices/getcountmedium')
         .then(res=> {
             let color=""
             if(3>res.data){
@@ -357,7 +357,7 @@ getSeverityIndex(){
                                     value={this.state.low}
 
                                     valueStyle={{ color: this.state.color }}
-                                    prefix={<Icon type="arrow-down" />}
+                                    prefix={<Icon type="arrow-down" style={{color:"green"}}/>}
                                     suffix="%"
 
                                 />
@@ -369,7 +369,7 @@ getSeverityIndex(){
                                     value={this.state.severityindex}
                                     valueStyle={{ color: '#007673' }}
                                     prefix={<Icon type="sync" spin />}
-                                    suffix="%"
+                                    // suffix="%"
 
                                 />
                             </Card></Col>
