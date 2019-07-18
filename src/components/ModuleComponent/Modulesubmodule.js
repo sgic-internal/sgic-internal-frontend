@@ -18,6 +18,30 @@ import axios from "axios";
 
 const { Option } = Select;
 
+const emailRegex = RegExp(
+  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+);
+
+const NameRegex = RegExp(/^[a-zA-Z]+$/);
+const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
+
+const formValid = ({ formerrors, ...rest }) => {
+  let valid = true;
+
+  // validate form errors being empty
+  Object.values(formerrors).forEach(val => {
+    val.length > 0 && (valid = false);
+  });
+
+  // validate the form was filled out
+  Object.values(rest).forEach(val => {
+    val === null && (valid = false);
+  });
+
+  return valid;
+};
+
+
 class Modulesubmodule extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +55,9 @@ class Modulesubmodule extends Component {
       subModuleId: "",
       subModuleName: "",
       visible: false,
+      formerrors: {
+        moduleId: "",
+        moduleName: ""},
       formLayout: "horizontal",
       data: [],
       // data1: [],
@@ -40,7 +67,7 @@ class Modulesubmodule extends Component {
       key: '',
       date: '',
       name: '',
-      sub:[]
+      sub: [],
     };
 
     this.state = { ModuleData: [] };
@@ -84,19 +111,19 @@ class Modulesubmodule extends Component {
       });
   }
 
-  //DELETE-METHOD 1 = WORKING
-  handleDelete = moduleId => {
-    axios.delete(`http://localhost:8081/defectservices/deleteModuleById/` + moduleId)
-      .then(console.log(moduleId))
-      .catch(err => console.log(err));
+  // //DELETE-METHOD 1 = WORKING
+  // handleDelete = moduleId => {
+  //   axios.delete(`http://localhost:8081/defectservices/deleteModuleById/` + moduleId)
+  //     .then(console.log(moduleId))
+  //     .catch(err => console.log(err));
 
-    const module = this.state.module.filter(module => {
-      return module.moduleId !== moduleId;
-    });
-    this.setState({
-      module
-    });
-  };
+  //   const module = this.state.module.filter(module => {
+  //     return module.moduleId !== moduleId;
+  //   });
+  //   this.setState({
+  //     module
+  //   });
+  // };
 
   handleChange(value) {
     console.log(`selected ${value}`);
@@ -251,7 +278,7 @@ class Modulesubmodule extends Component {
   componentDidMount() {
     this.getallsub();
     this.GetAllmodule();
-
+//     this. handleOk3();
   }
 
   handleOk3 = e => {
@@ -267,7 +294,10 @@ class Modulesubmodule extends Component {
     console.log(ModuleData);
     axios
       .post("http://localhost:8081/defectservices/createmodule", ModuleData)
-      .then(res => console.log(res.data))
+      .then(res => 
+        {
+          
+        })
       .catch(error => {
         console.log(error);
       });
@@ -297,8 +327,8 @@ class Modulesubmodule extends Component {
             moduleId: res.data[i].moduleId,
             moduleName: res.data[i].moduleName,
             projectid: res.data[i].project.projectId,
-            subModule:res.data[i].subModule,
-            
+            subModule: res.data[i].subModule,
+
 
           };
 
@@ -326,7 +356,7 @@ class Modulesubmodule extends Component {
 
   };
 
-  subModuletable=()=>{
+  subModuletable = () => {
 
   }
 
@@ -345,10 +375,10 @@ class Modulesubmodule extends Component {
         console.log(this.state.data3)
       })
   }
-  deletesub=()=>{
+  deletesub = () => {
     // console.log(id)
   }
- 
+
 
   handleDelete = moduleId => {
     console.log(moduleId);
@@ -359,19 +389,59 @@ class Modulesubmodule extends Component {
       .then(console.log(moduleId))
       .catch(err => console.log(err));
 
-    const data = this.state.data.filter(data => {
-      return data.moduleId !== moduleId;
+    const ModuleData = this.state.ModuleData.filter(ModuleData => {
+      return ModuleData.moduleId !== moduleId;
     });
     this.setState({
-      data
+      ModuleData
     });
     message.success("Delete Successfully!");
   };
 
-  
+  //subModule delete method
+
+  // handleSubDelete = subModuleId => {
+  //   console.log(subModuleId);
+  //   axios
+  //     .delete(
+  //       `http://localhost:8081/defectservices/deleteSubModuleById/` + subModuleId
+  //     )
+  //     .then(console.log(subModuleId))
+  //     .catch(err => console.log(err));
+
+  //   const data = this.state.data.filter(data => {
+  //     return data.subModuleId !== subModuleId;
+  //   });
+  //   this.setState({
+  //     data
+  //   });
+  //   message.success("Delete Successfully!");
+  // };
+
+//   handleRemove = (e) => {
+//     const subModuleId = this.state.subModuleId;
+//     const url = `http://localhost:8081/defectservices/deleteSubModuleById/`;
+//     // const id = document.querySelectorAll("li").props['data-id'];
+//     e.preventDefault();
+//     axios.delete(url + subModuleId)
+//         .then(res => {
+//             console.log(res.data);
+//         })
+//         .catch((err) => {
+//             console.log(err);
+//         })
+// }
+
+
+delete(e) {
+	e.preventDefault();
+	axios.delete('http://localhost:8081/defectservices/deleteSubModuleById/{this.state.subModuleId}')
+	.then(res => console.log(res.data));
+}
+
   render() {
 
-    
+
     const hoverContent = <h5>Add Sub Module</h5>;
     const expandedRowRender = (expanded) => {
       console.log(expanded)
@@ -394,37 +464,39 @@ class Modulesubmodule extends Component {
               title={text}
               okText="Yes"
               cancelText="No"
-              // onConfirm={this.deletesub()}
+            // onConfirm={this.deletesub()}
             >
-              <Icon type="delete" style={{ color: "red" }} />
+              <Icon 
+              onClick={this.delete}
+              type="delete" style={{ color: "red" }} />
             </Popconfirm>
           )
         }
       ];
-for(var i=0;i<5;i++){
-      const data6 = [
-        {
-          key: i,
-          date: expanded.subModule[i].subModuleId,
-          name: expanded.subModule[i].subModuleName
-        }
+      for (var i = 0; i < 5; i++) {
+        const data6 = [
+          {
+            key: i,
+            date: expanded.subModule[i].subModuleId,
+            name: expanded.subModule[i].subModuleName
+          }
 
-      ]
-      // this.setState({data6})
-      return <Table columns={columns} dataSource={data6} pagination={false} />;
-    }
+        ]
+        // this.setState({data6})
+        return <Table columns={columns} dataSource={data6} pagination={false} />;
+      }
 
-// const modulelist = Object.assign([], this.state.data1);
-//         for (let i = 0; i < 5; i++) {
-//           modulelist[i] = {
-//             key: i,
-//             date: expanded.subModule[i].subModuleId,
-//             name: expanded.subModule[i].subModuleName
-//           };
+      // const modulelist = Object.assign([], this.state.data1);
+      //         for (let i = 0; i < 5; i++) {
+      //           modulelist[i] = {
+      //             key: i,
+      //             date: expanded.subModule[i].subModuleId,
+      //             name: expanded.subModule[i].subModuleName
+      //           };
 
-          
-//         }
-        // return <Table columns={columns} dataSource={modulelist} pagination={false} />;
+
+      //         }
+      // return <Table columns={columns} dataSource={modulelist} pagination={false} />;
     };
 
     const text = "Are you sure to delete this item?";
@@ -519,7 +591,7 @@ for(var i=0;i<5;i++){
       }
     };
 
-   
+
 
 
     return (
@@ -532,7 +604,7 @@ for(var i=0;i<5;i++){
         <Table
           className="components-table-demo-nested"
           columns={columns}
-           expandedRowRender={expanded=>expandedRowRender(expanded)}
+          expandedRowRender={expanded => expandedRowRender(expanded)}
           dataSource={this.state.data}
 
           expandRowByClick={value => this.openRow(value)}
