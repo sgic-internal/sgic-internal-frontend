@@ -199,7 +199,7 @@ getSeverityIndex(){
        this.getLow();
        this.getLow1();
        this.getMedium1();
-       this.getSeverityIndex();
+       this.getSeverityIndex();}
 
      getdefectcount() {
         const url = 'http://localhost:8081/defectservices/getCount';
@@ -338,7 +338,9 @@ getSeverityIndex(){
 
                 }}>
                     <Row>
-                        <Col span={6}>
+                        
+
+                            <Col span={6}>
                             <Card style={{ margin: "10px 5px 0 -2px", borderRadius: "5px" }}>
                                 <Statistic
                                     title="High Severity"
@@ -346,13 +348,7 @@ getSeverityIndex(){
                                     // precision={2}
                                     valueStyle={{ color: this.state.color }}
                                     prefix={<Icon type="arrow-up" style={{color:"red"}}/>}
-
-                                    title="Defect to Remarks Ratio"
-                                    value={this.state.value}
-                                    precision={2}
-                                    valueStyle={{ color: '#3f8600' }}
-                                    prefix={<Icon type="safety-certificate" theme="filled" />}
-
+                                  
                                     suffix="%"
                                 />
                             </Card>
@@ -360,8 +356,6 @@ getSeverityIndex(){
 
 
                         </Col>
-
-
                         <Col span={6}>
                             <Card style={{ margin: "10px 5px", borderRadius: "5px" }}>
                                 <Statistic
@@ -372,12 +366,7 @@ getSeverityIndex(){
                                     valueStyle={{ color: this.state.color  }}
                                     prefix={<Icon type="arrow-up" style={{color:"orange"}}/>}
 
-                                    title="Defect Density"
-                                    value={this.state.density}
-                                    precision={2}
-                                    valueStyle={{ color: '#3f8600' }}
-                                    prefix={<Icon type="fund" theme="filled" />}
-
+                                    
                                     suffix="%"
                                 />
                             </Card></Col>
@@ -404,6 +393,40 @@ getSeverityIndex(){
                                     prefix={<Icon type="sync" spin />}
                                     // suffix="%"
 
+                                />
+                            </Card></Col>
+                            <Col span={6}>
+                            <Card style={{ margin: "10px 5px 0 -2px", borderRadius: "5px" }}>
+                                <Statistic
+                                    
+                                    title="Defect to Remarks Ratio"
+                                    value={this.state.value}
+                                    precision={2}
+                                    valueStyle={{ color: '#3f8600' }}
+                                    prefix={<Icon type="safety-certificate" theme="filled" />}
+
+                                    suffix="%"
+                                />
+                            </Card>
+
+
+
+                        </Col>
+
+
+                        <Col span={6}>
+                            <Card style={{ margin: "10px 5px", borderRadius: "5px" }}>
+                                <Statistic
+
+                                    
+
+                                    title="Defect Density"
+                                    value={this.state.density}
+                                    precision={2}
+                                    valueStyle={{ color: '#3f8600' }}
+                                    prefix={<Icon type="fund" theme="filled" />}
+
+                                    suffix="%"
                                 />
                             </Card></Col>
                     </Row>
