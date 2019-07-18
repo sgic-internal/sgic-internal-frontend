@@ -46,7 +46,7 @@ class ProjectManagerDashboard extends React.Component {
 getHigh(){
 
         axios
-        .get('http://localhost:8081/defectservices/getcounthigh')
+        .get('http://localhost:8081/defectservices/gethightcount')
         .then(res=>{
             console.log(res.data)
             this.setState({
@@ -57,7 +57,7 @@ getHigh(){
 
 getMedium(){
     axios
-    .get('http://localhost:8081/defectservices/getcountmudium')
+    .get('http://localhost:8081/defectservices/getcountmedium')
     .then(res=>{
         console.log(res.data)
         this.setState({
@@ -129,7 +129,7 @@ getLow(){
       */
 getHigh1(){
     axios
-        .get('http://localhost:8081/defectservices/getcounthigh')
+        .get('http://localhost:8081/defectservices/gethightcount')
         .then(res=> {
             let color=""
             if(3>res.data){
