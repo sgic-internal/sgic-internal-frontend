@@ -9,10 +9,12 @@ import difference from 'lodash/difference';
 const { Option, OptGroup } = Select;
 
 
+
 // axios.get("http://localhost:8081/defectservices/GetAllresources")
 //   .then(function (response) {
 //     console.log(response.data);
 //   });
+
 
 const employee = []
 const originTargetKeys = employee.filter(item => +item.key % 5 > 1).map(item => item.key);
@@ -90,6 +92,7 @@ const rightTableColumns = [
 
 export default class Allocation extends React.Component {
 
+
   // constructor(props){
   //   super(props);
 
@@ -100,6 +103,7 @@ export default class Allocation extends React.Component {
   //   }
   //   this.handleOk = this.handleOk.bind(this);
   // }
+
     state = {
         loading: false,
         visible: false,
@@ -187,7 +191,9 @@ export default class Allocation extends React.Component {
           projectId:this.state.projectId
         }
        // console.log(this.state.filteredItems)
+
        
+
     };
 
     handleCancel = () => {
@@ -252,6 +258,7 @@ export default class Allocation extends React.Component {
       console.log(_this.state.list);
       _this.state.employee.map((post,index)=>{
         console.log(post.key)
+
         for(var i=0;i<11;i++){
         if(targetKeys[i]==index){
           console.log(post.empId)
@@ -272,6 +279,7 @@ export default class Allocation extends React.Component {
          
         }
       }
+
        });
       
     }

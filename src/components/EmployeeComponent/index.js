@@ -1,5 +1,7 @@
 import React from "react";
+
 import { PageHeader,Col } from "antd";
+
 import Employee from "./Employee";
 import EmployeeAddModal from "./EmployeeAddModal";
 import ImportEmployee from "./ImportEmployee";
@@ -20,6 +22,7 @@ class EmployeeComponent extends React.Component {
   componentDidMount() {}
 
   render() {
+
         const { handleSwitchChange } = this.props;
         const routes = [{
                 path: '',
@@ -53,6 +56,7 @@ class EmployeeComponent extends React.Component {
                  
                     <br/>
                     <br/>
+
           <Employee />
         </div>
       </React.Fragment>

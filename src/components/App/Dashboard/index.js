@@ -34,6 +34,14 @@ import GeneralSetting from '../../SettingComponent/GeneralConfiguration/GeneralS
 import CompanyAdministration from '../../CompanyAdministrationComponent/';
 import ProfileScreen from '../../SettingComponent/ProfileScreen';
 import ProductAdministration from '../../ProductAdministration';
+import Configuration from '../../CompanyComponent/Configuration';
+import ProjectConfigurePrivilege from '../../PrivilegeComponent/ProjectConfigurePrivilege';
+
+
+import DefectTypeConfigcom from '../../CompanyComponent/ConfigTable/DefectTypeConfig';
+import PriorityConfigcom from '../../CompanyComponent/ConfigTable/PriorityConfig';
+import SeverityConfigcom from '../../CompanyComponent/ConfigTable/SeverityConfig';
+import DefectStatusConfigcom from '../../CompanyComponent/ConfigTable/StatusConfig';
 
 // Company Components
 
@@ -101,6 +109,28 @@ class Dashboard extends React.Component {
                             <Route exact path='/company'>
                                 <CompanyComponent/>
                             </Route> 
+
+                            
+                            {/* Company Route New Add*/}
+                            <Route exact path='/config'>
+                                <Configuration/>
+                            </Route> 
+
+                            <Route exact path='/DefectType'>
+                                <DefectTypeConfigcom/>
+                            </Route> 
+
+                            <Route exact path='/Priority'>
+                                <PriorityConfigcom/>
+                            </Route>
+
+                            <Route exact path='/Severity'>
+                                <SeverityConfigcom/>
+                            </Route>
+
+                            <Route exact path='/Status'>
+                                <DefectStatusConfigcom/>
+                            </Route>
 
                             {/* Company Route*/}
                             <Route exact path='/project'>
@@ -192,6 +222,11 @@ class Dashboard extends React.Component {
                                 <Route path='/privilege/techlead'>
                                     <TechLeadPrivilege/>
                                 </Route>
+
+                                <Route path='/privilege/projectConfig'>
+                                    <ProjectConfigurePrivilege/>
+                                </Route>
+
 
 
                                 {/* Work Flow -----------------------------------*/}

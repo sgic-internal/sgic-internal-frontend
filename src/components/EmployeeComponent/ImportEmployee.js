@@ -1,6 +1,7 @@
 import React from "react";
 import { Modal, Button, message, Upload, Icon } from "antd";
 
+
 const props = {
   name: "uploadfile",
   action: "http://localhost:8084/employeeservice/database",
@@ -15,6 +16,7 @@ export default class ImportEmployee extends React.Component {
       visible: true
     });
   };
+
   onChange(info) {
     if (info.file.status !== "uploading") {
       console.log(info.file, info.fileList);
@@ -25,6 +27,7 @@ export default class ImportEmployee extends React.Component {
       message.error(`${info.file.name} file upload failed.`);
     }
   }
+
   handleOk = e => {
     console.log(e);
     this.setState({
@@ -37,6 +40,7 @@ export default class ImportEmployee extends React.Component {
     this.setState({
       visible: false
     });
+
   };
   handleSubmit = e => {
     e.preventDefault();
@@ -48,6 +52,7 @@ export default class ImportEmployee extends React.Component {
   };
 
   render() {
+
     //const {props}=this.props;
     return (
       <React.Fragment>
@@ -63,13 +68,16 @@ export default class ImportEmployee extends React.Component {
           onCancel={this.handleCancel}
           width="600px"
         >
+
           <Upload {...props}>
             <Button>
               <Icon type="upload" /> Click to Upload
             </Button>
           </Upload>
         </Modal>
+
       </React.Fragment>
+
     );
   }
 }

@@ -7,8 +7,8 @@
     "@fullcalendar/core": "^4.1.0",
     "@progress/kendo-inputs-react-wrapper": "^2018.3.1017",
     "@progress/kendo-ui": "^2019.2.517",
-    "antd": "^3.19.6",
-    "axios": "^0.18.0",
+    "antd": "^3.19.2",
+    "axios": "^0.18.1",
     "bootstrap": "^4.3.1",
     "chart.js": "^2.8.0",
     "gg-editor": "^2.0.4",
@@ -25,7 +25,10 @@
     "react-data-export": "^0.5.0",
     "react-dom": "^16.5.2",
     "react-highlight-words": "^0.16.0",
+    "react-image-lightbox": "^5.1.0",
+    "react-inline-editing": "^1.0.10",
     "react-inputs-validation": "^3.2.2",
+    "react-ions": "^5.1.58",
     "react-redux": "^7.0.3",
     "react-router-dom": "^4.3.1",
     "react-scripts": "3.0.0",
@@ -33,6 +36,7 @@
     "reactstrap": "^8.0.0",
     "redux-thunk": "^2.3.0",
     "reqwest": "^2.0.5",
+    "router": "^1.3.3",
     "update": "^0.7.4",
     "xlsx": "^0.14.3"
   },
@@ -46,6 +50,7 @@
   },
   "devDependencies": {
     "babel-plugin-import": "^1.6.5",
+    "react-edit-inline": "^1.0.8",
     "redux": "^4.0.1",
     "redux-devtools": "^3.5.0"
   },

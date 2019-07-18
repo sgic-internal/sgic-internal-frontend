@@ -1,12 +1,27 @@
 import React from "react";
-import { Table, Button, Icon, Divider, Modal, Form, Input, Radio, DatePicker, Row, Col, InputNumber, Popconfirm, message } from "antd";
+import {
+  Table,
+  Button,
+  Icon,
+  Divider,
+  Modal,
+  Form,
+  Input,
+  Radio,
+  Row,
+  Col,
+  InputNumber,
+  Popconfirm,
+  message,
+  Select
+} from "antd";
 import moment from "moment";
 import "./index.css";
-//import { getFieldDecorator } from "antd";
-
-const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY"];
+import axios from "axios";
+import CompanyController from "./CompanyController";
 
 const { TextArea } = Input;
+const { Option } = Select;
 //dropdown for Lisence period s Function
 function onChange(value) {
   console.log("changed", value);
@@ -22,72 +37,48 @@ function cancel(e) {
   message.error("Click on No");
 }
 
-
-
-const data = [
-  {
-    key: "1",
-    registrationid: "Sl200585",
-    companyname: "Samuel Gnanam IT Centre",
-    abbreviation: "SGIC",
-    licenseperiod: "2yrs",
-    itaministrator: "Sujeeban",
-    action: "",
-    more: ""
-  },
-  {
-    key: "2",
-    registrationid: "Sl199576",
-    companyname: "Virtusa Technologies",
-    abbreviation: "VT",
-    licenseperiod: "3yrs",
-    itaministrator: "Thanushan",
-    action: "",
-    more: ""
-  },
-  {
-    key: "3",
-    registrationid: "Sl200843",
-    companyname: "Keeran Software Solutions",
-    abbreviation: "KSS",
-    licenseperiod: "5yrs",
-    itaministrator: "Dayanshan",
-    action: "",
-    more: ""
-  },
-  {
-    key: "4",
-    registrationid: "Sl201198",
-    companyname: "Unicom Consultant Technoligies",
-    abbreviation: "SGIC",
-    licenseperiod: "2yrs",
-    itaministrator: "Lineshwaran",
-    action: "",
-    more: ""
-  },
-  {
-    key: "5",
-    registrationid: "Sl200585",
-    companyname: "Thuviyan Technologies Pvt Ltd",
-    abbreviation: "TTPL",
-    licenseperiod: "2yrs",
-    itaministrator: "Thuviyan",
-    action: "",
-    more: ""
-  }
-];
-
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleOk = this.handleOk.bind(this);
+  }
   state = {
     filteredInfo: null,
     sortedInfo: null,
     showModalView: false,
+    editModalVisible: false,
     loading: false,
     visible: false,
     comments: [],
     submitting: false,
-    value: ""
+    value: "",
+    data: "",
+    getCompany: [],
+    licenseTypeCompany: "",
+    getLicenseTypes: []
   };
+
+  //-----------------------------------------------------------------
+  fetchAllLicenseType = () => {
+    fetch(`http://localhost:8083/productservice/Licenses`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          getLicenseTypes: data
+        });
+        console.log(data);
+      });
+  };
+
+  onChangeLicenseSelect = value => {
+    this.setState({
+      licenseTypeCompany: value
+    });
+    console.log(this.state.licenseTypeCompany);
+    //this.fetchAllLicenseType();
+  };
+
+  //--------------------------------------------------------------
 
   handleChange = (pagination, filters, sorter) => {
     console.log("Various parameters", pagination, filters, sorter);
@@ -103,22 +94,73 @@ export default class App extends React.Component {
     });
   };
 
+  showEditModal = () => {
+    this.setState({
+      editModalVisible: true
+    });
+  };
+
+  // txtOnChange (event) {
+  //   const name = event.target.name;
+  //   const value = event.target.value;
+  //   this.setState({
+  //     [name]: value
+  //   });
+  // }
+
+  txtOnChange = e => {
+    this.setState({
+      [e.target.id]: e.target.value
+    });
+    console.log(e.target.value);
+    this.fetchAllLicenseType();
+  };
+
+  onChangeLicense = value => {
+    console.log("changed", value);
+    this.setState({ companyLicensePeriod: value });
+  };
+
+  handleDelete = companyId => {
+    CompanyController.DeleteCompanyApi(companyId);
+    console.log(" Successfully deleted " + companyId);
+    const getCompany = this.state.getCompany.filter(getCompany => {
+      return getCompany.companyId != companyId;
+    });
+
+    this.setState({
+      getCompany
+    });
+  };
+
+  handleOk = () => {
+    this.setState({ loading: true, visible: false });
+    // setTimeout(() => {
+    //   this.setState({ loading: false, visible: false });
+    // }, 1000);
+  };
+
+  // -------------------  EDIT MODEL ---------------------------------
   showModalView = () => {
     this.setState({
       showModalView: true
     });
   };
 
-  handleOk = () => {
-    this.setState({ loading: true });
-    setTimeout(() => {
-      this.setState({ loading: false, visible: false });
-    }, 1000);
+  editModalHandleOk = () => {
+    this.setState({ loading: false, editModalVisible: false });
   };
+
+  editModalHandleCancel = () => {
+    this.setState({ editModalVisible: false });
+  };
+
+  //-------------------------------------------------------------------
 
   handleCancel = () => {
     this.setState({ visible: false });
   };
+
   handleViewOk = e => {
     console.log(e);
     this.setState({ showModalView: true });
@@ -134,6 +176,7 @@ export default class App extends React.Component {
       value: e.target.value
     });
   };
+
   handleSubmit = () => {
     if (!this.state.value) {
       return;
@@ -158,19 +201,121 @@ export default class App extends React.Component {
           ...this.state.comments
         ]
       });
-    }, 1000);
+    }, 10);
   };
+
+  fetchAllCompany = () => {
+    fetch(`http://localhost:8083/productservice/Companys`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          getCompany: data
+        });
+        console.log(data);
+      });
+
+    // const Company = {
+    //   companyName: this.state.companyName,
+    //   companyAbbrivation: this.state.companyAbbrivation,
+    //   companyRegNo: this.state.companyRegNo,
+    //   companyAdminName: this.state.companyAdminName,
+    //   companyAdminEmail: this.state.companyAdminEmail,
+    //   companyLicenseTypeId: this.state.companyLicenseTypeId,
+    //   companyLicenseTypeName: this.state.companyLicenseTypeName,
+    //   companyLicensePeriod: this.state.companyLicensePeriod,
+    //   companyDescription: this.state.companyDescription
+    // };
+    // let newCompany = [...this.state.getCompany, Company];
+    // this.setState({
+    //   getCompany: newCompany
+    // });
+  };
+
+  componentDidMount() {
+    this.fetchAllCompany();
+    this.fetchAllLicenseType();
+  }
+
+  handleOk = companyId => {
+    console.log(companyId);
+    const Company = {
+      companyId: this.state.companyId,
+      companyName: this.state.companyName,
+      companyAbbrivation: this.state.companyAbbrivation,
+      companyRegNo: this.state.companyRegNo,
+      companyAdminName: this.state.companyAdminName,
+      companyAdminEmail: this.state.companyAdminEmail,
+      companyLicenseTypeId: this.state.licenseTypeCompany,
+      companyLicenseTypeName: this.state.companyLicenseTypeName,
+      companyLicensePeriod: this.state.companyLicensePeriod,
+      companyDescription: this.state.companyDescription
+    };
+    axios
+      .put("http://localhost:8083/productservice/Company", Company)
+      .then(response => this.fetchAllCompany());
+    this.setState({
+      companyId: "",
+      companyName: "",
+      companyAbbrivation: "",
+      companyRegNo: "",
+      companyAdminName: "",
+      companyAdminEmail: "",
+      companyLicenseTypeId: "",
+      companyLicenseTypeName: "",
+      companyLicensePeriod: "",
+      companyDescription: "",
+      visible: false
+    });
+    message.success("Updated Successfully!!!");
+  };
+
+  fetchCompanyById = companyId => {
+    axios
+      .get("http://localhost:8083/productservice/Company/" + companyId)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          companyId: response.data.companyId,
+          companyName: response.data.companyName,
+          companyAbbrivation: response.data.companyAbbrivation,
+          companyRegNo: response.data.companyRegNo,
+          companyAdminName: response.data.companyAdminName,
+          companyAdminEmail: response.data.companyAdminEmail,
+          companyLicenseTypeId: response.data.companyLicenseTypeId,
+          companyLicenseTypeName: response.data.companyLicenseTypeName,
+          licenseStartDate: response.data.licenseStartDate,
+          licenseEndDate: response.data.licenseEndDate,
+          companyLicensePeriod: response.data.companyLicensePeriod,
+          companyDescription: response.data.companyDescription
+        });
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  };
+  handleEdit = companyId => {
+    this.showEditModal();
+    console.log(companyId);
+    this.fetchCompanyById(companyId);
+  };
+
+  handleView = companyId => {
+    this.showModalView();
+    console.log(companyId);
+    this.fetchCompanyById(companyId);
+  };
+
   render() {
-   
-    const { visible, loading } = this.state;
+    const { visible, loading } = this.state.getCompany;
     let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
     filteredInfo = filteredInfo || {};
     const columns = [
       {
         title: "Registration Id",
-        dataIndex: "registrationid",
-        key: "registrationid",
+        dataIndex: "companyRegNo",
+        key: "companyRegNo",
         // filters: [{ text: "Joe", value: "Joe" }, { text: "Jim", value: "Jim" }],
         filteredValue: filteredInfo.registrationid || null,
         onFilter: (value, record) => record.registrationid.includes(value),
@@ -179,8 +324,8 @@ export default class App extends React.Component {
       },
       {
         title: "Company Name",
-        dataIndex: "companyname",
-        key: "companyname",
+        dataIndex: "companyName",
+        key: "companyName",
         // filters: [{ text: "Joe", value: "Joe" }, { text: "Jim", value: "Jim" }],
         filteredValue: filteredInfo.companyname || null,
         onFilter: (value, record) => record.companyname.includes(value),
@@ -189,8 +334,8 @@ export default class App extends React.Component {
       },
       {
         title: "Abbreviation",
-        dataIndex: "abbreviation",
-        key: "abbreviation",
+        dataIndex: "companyAbbrivation",
+        key: "companyAbbrivation",
         // filters: [{ text: "Joe", value: "Joe" }, { text: "Jim", value: "Jim" }],
         filteredValue: filteredInfo.abbreviation || null,
         onFilter: (value, record) => record.abbreviation.includes(value),
@@ -199,8 +344,8 @@ export default class App extends React.Component {
       },
       {
         title: "License Period",
-        dataIndex: "licenseperiod",
-        key: "licenseperiod",
+        dataIndex: "companyLicensePeriod",
+        key: "companyLicensePeriod",
         filters: [
           { text: "1yrs", value: "1yrs" },
           { text: "2yrs", value: "2yrs" },
@@ -214,37 +359,53 @@ export default class App extends React.Component {
         sortOrder: sortedInfo.columnKey === "licenseperiod" && sortedInfo.order
       },
       {
-        title: "IT Admin",
-        dataIndex: "itaministrator",
-        key: "itaministrator",
+        title: "Start Date",
+        dataIndex: "licenseStartDate",
+        key: "licenseStartDate",
         // filters: [{ text: "Joe", value: "Joe" }, { text: "Jim", value: "Jim" }],
-        filteredValue: filteredInfo.itaministrator || null,
-        onFilter: (value, record) => record.itaministrator.includes(value),
-        sorter: (a, b) => a.itaministrator.length - b.itaministrator.length,
-        sortOrder: sortedInfo.columnKey === "itaministrator" && sortedInfo.order
+        filteredValue: filteredInfo.licenseStartDate || null,
+        onFilter: (value, record) => record.licenseStartDate.includes(value),
+        sorter: (a, b) => a.licenseStartDate.length - b.licenseStartDate.length,
+        sortOrder:
+          sortedInfo.columnKey === "licenseStartDate" && sortedInfo.order
+      },
+      {
+        title: "End Date",
+        dataIndex: "licenseEndDate",
+        key: "licenseEndDate",
+        // filters: [{ text: "Joe", value: "Joe" }, { text: "Jim", value: "Jim" }],
+        filteredValue: filteredInfo.licenseEndDate || null,
+        onFilter: (value, record) => record.licenseEndDate.includes(value),
+        sorter: (a, b) => a.licenseEndDate.length - b.licenseEndDate.length,
+        sortOrder: sortedInfo.columnKey === "licenseEndDate" && sortedInfo.order
       },
       {
         title: "Action",
-        dataIndex: "action",
-        key: "action",
-        render: (text, record) => (
+        dataIndex: "Action",
+        key: "Action",
+        render: (text, data = this.state.getCompany) => (
           <span>
             <Icon
               type="edit"
               style={{ color: "blue" }}
-              onClick={this.showModal}
+              onClick={this.handleEdit.bind(this, data.companyId)}
             />
+
             <Divider type="vertical" />
             <Popconfirm
               title="Are you sure want to delete this Entry ?"
               icon={<Icon type="question-circle-o" style={{ color: "red" }} />}
-              onConfirm={confirm}
+              onConfirm={() => this.handleDelete(data.companyId)}
               onCancel={cancel}
               okText="Yes"
               cancelText="No"
             >
               <a href="#">
-                <Icon type="delete" style={{ color: "red" }} />
+                <Icon
+                  type="delete"
+                  style={{ color: "red" }}
+                  // onClick={this.handleDelete.bind(this, data.companyId)}
+                />
               </a>
             </Popconfirm>
           </span>
@@ -254,12 +415,12 @@ export default class App extends React.Component {
         title: "More",
         dataIndex: "more",
         key: "more",
-        render: (text, record) => (
+        render: (text, data = this.state.getCompany) => (
           <span>
             <Icon
               type="fullscreen"
               style={{ color: "black" }}
-              onClick={this.showModalView}
+              onClick={this.handleView.bind(this, data.companyId)}
             />
           </span>
         )
@@ -270,7 +431,7 @@ export default class App extends React.Component {
         <div className="table-operations" />
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={this.state.getCompany}
           onChange={this.handleChange}
         />
         <br />
@@ -278,16 +439,16 @@ export default class App extends React.Component {
         <Modal
           variant="contained"
           width="675px"
-          visible={this.state.visible}
+          visible={this.state.editModalVisible}
           title="Edit Company"
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          // onOk={this.editModalHandleOk}
+          onCancel={this.editModalHandleCancel}
           footer={[
             <Button
               key="back"
               type="secondary"
               color="danger"
-              onClick={this.handleCancel}
+              onClick={this.editModalHandleCancel}
             >
               Cancel
             </Button>,
@@ -295,7 +456,7 @@ export default class App extends React.Component {
               key="submit"
               type="primary"
               //loading={loading}
-              onClick={this.handleOk}
+              onClick={this.handleOk.bind(this, this.state.companyId)}
             >
               OK
             </Button>
@@ -305,26 +466,46 @@ export default class App extends React.Component {
             <Row>
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Company Name">
-                  <Input placeholder="eg: Samuel Gnanam IT Centre" />
+                  <Input
+                    id="companyName"
+                    placeholder="eg: Samuel Gnanam IT Centre"
+                    value={this.state.companyName || ""}
+                    onChange={e => this.txtOnChange(e)}
+                  />
                 </Form.Item>{" "}
               </Col>
 
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label=" Abbreviation">
-                  <Input placeholder="eg: SGIC" />
+                  <Input
+                    id="companyAbbrivation"
+                    placeholder="eg: SGIC"
+                    value={this.state.companyAbbrivation || ""}
+                    onChange={e => this.txtOnChange(e)}
+                  />
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Reg ID">
-                  <Input placeholder="Registration Number" />
+                  <Input
+                    id="companyRegNo"
+                    placeholder="Registration Number"
+                    value={this.state.companyRegNo || ""}
+                    onChange={e => this.txtOnChange(e)}
+                  />
                 </Form.Item>
               </Col>
 
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="IT InCharge">
-                  <Input placeholder="IT Administrator" />
+                  <Input
+                    id="companyAdminName"
+                    placeholder="IT Administrator"
+                    value={this.state.companyAdminName || ""}
+                    onChange={e => this.txtOnChange(e)}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -332,31 +513,41 @@ export default class App extends React.Component {
               <Col span={9} style={{ padding: "5px" }}>
                 <Form.Item label="License Period">
                   <InputNumber
+                    id="companyLicensePeriod"
                     min={1}
-                    max={10}
+                    max={150}
                     // defaultValue={3}
-                    onChange={onChange}
                     placeholder="In Years"
                     style={{ width: "100%" }}
+                    value={this.state.companyLicensePeriod || ""}
+                    onChange={this.onChangeLicense}
                   />{" "}
                 </Form.Item>
               </Col>
 
               <Col span={15} style={{ padding: "5px" }}>
-                <Form.Item
-                  label="Licence Type"
-                  className="collection-create-form_last-form-item"
-                >
-                  <Radio.Group>
-                    <Radio value="Basic">Basic</Radio>
-                    <Radio value="Medium">Medium</Radio>
-                    <Radio value="Advanced">Advanced</Radio>
-                    <Radio value="Customized">Customized</Radio>
-                  </Radio.Group>
+                <Form.Item label="License Type">
+                  <Select
+                    name="licenseType"
+                    id="licenseType"
+                    value={this.state.licenseTypeCompany}
+                    defaultValue="Select License Type"
+                    style={{ width: 200 }}
+                    onChange={this.onChangeLicenseSelect}
+                  >
+                    {/* <Option value={this.state.companyLicenseTypeId || ""}>
+                      {this.state.companyLicenseTypeName || ""}
+                    </Option> */}
+                    {this.state.getLicenseTypes.map(e => (
+                      <Option key={e.licenseId} value={e.licenseId}>
+                        {e.licenseType}
+                      </Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
+            {/* <Row>
               <Col span={12} style={{ padding: "5px" }}>
                 <Form.Item label="Start Date">
                   <DatePicker
@@ -376,19 +567,28 @@ export default class App extends React.Component {
                   />
                 </Form.Item>
               </Col>
-            </Row>
+            </Row> */}
 
             <Form.Item label="E-mail">
               <Input
+                id="companyAdminEmail"
                 prefix={
                   <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
                 }
                 placeholder="samuelgnanamitcentre@gmail.com"
                 style={{ width: "50%" }}
+                value={this.state.companyAdminEmail || ""}
+                onChange={e => this.txtOnChange(e)}
               />
             </Form.Item>
             <Form.Item label="Description">
-              <TextArea rows={3} placeholder="company description" />
+              <TextArea
+                id="companyDescription"
+                rows={3}
+                placeholder="company description"
+                value={this.state.companyDescription || ""}
+                onChange={e => this.txtOnChange(e)}
+              />
             </Form.Item>
           </Form>
         </Modal>
@@ -403,9 +603,9 @@ export default class App extends React.Component {
         >
           <Row>
             <Col span={9} style={{ padding: "5px" }}>
-              <p>
+              {/* <p>
                 <b>Registration Id :</b>
-              </p>
+              </p> */}
               <p>
                 <b>Company Name: </b>
               </p>
@@ -413,22 +613,26 @@ export default class App extends React.Component {
                 <b>Abbreviation: </b>
               </p>
               <p>
+                <b>Company Reg. No: </b>
+              </p>
+              <p>
                 <b>License Period</b>
               </p>
               <p>
-                <b>IT Admin</b>
+                <b>License Start Date</b>
+              </p>
+              <p>
+                <b>License End Date</b>
               </p>
               <p>
                 <b>License Type</b>
               </p>
               <p>
-                <b>Start Date</b>
+                <b>IT Admin Name</b>
               </p>
+
               <p>
-                <b>End Date</b>
-              </p>
-              <p>
-                <b>E-mail</b>
+                <b>IT Admin E-mail</b>
               </p>
               <p>
                 <b>Description</b>
@@ -441,6 +645,9 @@ export default class App extends React.Component {
               <p label="Status: "></p> */}
             </Col>
             <Col span={1} style={{ padding: "5px" }}>
+              {/* <p>
+                <b>:</b>
+              </p> */}
               <p>
                 <b>:</b>
               </p>
@@ -471,30 +678,26 @@ export default class App extends React.Component {
               <p>
                 <b>:</b>
               </p>
+              {/* <p>
+                <b>:</b>
+              </p>
+              <p>
+                <b>:</b>
+              </p> */}
             </Col>
             <Col span={14} style={{ padding: "5px" }}>
-              <p>Sl200585</p>
-              <p>Samuel Gnanam IT Centre</p>
-              <p>SGIC</p>
-              <p>2yrs</p>
-              <p>Sujeeban</p>
-              <p>Advanced</p>
-              <p>22.05.2009</p>
-              <p>29.05.2020</p>
-              <p>SGIC@gmail.com</p>
-              <p>
-                Samuel Gnanam IT Centre has devoted itself to become the pioneer
-                institution for Industrial Software Engineering Training in
-                Jaffna, which helps and guide the IT graduates to reach heights
-                in their IT career. SGIC is a charitable organization under the
-                Trust of ‘Deshamanya A Y S Gnanam’, who is the founder of
-                Anthony’s Group in Sri Lanka. Deshamanya A Y S Gnanam had done
-                various philanthropic activities in Sri Lanka and his sons are
-                following his footsteps.
-              </p>
+              <p>{this.state.companyName}</p>
+              <p>{this.state.companyAbbrivation}</p>
+              <p>{this.state.companyRegNo}</p>
+              <p>{this.state.companyLicensePeriod}</p>
+              <p>{this.state.licenseStartDate}</p>
+              <p>{this.state.licenseEndDate}</p>
+              <p>{this.state.companyLicenseTypeName}</p>
+              <p>{this.state.companyAdminName}</p>
+              <p>{this.state.companyAdminEmail}</p>
+              <p>{this.state.companyDescription}</p>
             </Col>
           </Row>
-          <Divider />
         </Modal>
       </div>
     );
