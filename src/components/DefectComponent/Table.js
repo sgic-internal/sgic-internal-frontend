@@ -996,11 +996,9 @@ class TableFilter extends React.Component {
           onChange={this.handleChange}
           scroll={{ x: 1300 }}
         />
-          
-          
+                  
           <p>Total Defects :- {this.state.defect.length}</p>
-        
-
+          
         {/* Edit Defects Part  */}
         <Modal
           title="Edit Defects"
