@@ -33,14 +33,14 @@ class Modulesubmodule extends Component {
       visible: false,
       formLayout: "horizontal",
       data: [],
-      data1: [],
+      // data1: [],
       project: [],
       ModuleData: [],
       SubmoduleData: [],
       key: '',
       date: '',
-      name: ''
-
+      name: '',
+      sub:[]
     };
 
     this.state = { ModuleData: [] };
@@ -80,7 +80,7 @@ class Modulesubmodule extends Component {
         })
 
         this.setState({ drop });
-        alert(_this.state.project[0].projectId);
+        // alert(_this.state.project[0].projectId);
       });
   }
 
@@ -284,18 +284,22 @@ class Modulesubmodule extends Component {
   GetAllmodule = () => {
     var _this = this;
     axios
-      .get(`http://localhost:8081/defectservices/GetAllmodule`)
+      .get(`http://localhost:8081/defectservices/FindallMain`)
       .then(res => {
         let ModuleData = res.data;
         // let SubModuleData=res.data;
         console.log(res.data.length);
+        console.log(res.data[0].subModule);
         const modulelist = Object.assign([], this.state.data);
         for (let i = 0; i < res.data.length; i++) {
           modulelist[i] = {
             key: i,
             moduleId: res.data[i].moduleId,
             moduleName: res.data[i].moduleName,
-            projectid: res.data[i].projectid
+            projectid: res.data[i].project.projectId,
+            subModule:res.data[i].subModule,
+            
+
           };
 
           console.log(i);
@@ -309,9 +313,12 @@ class Modulesubmodule extends Component {
 
         });
 
+
+        console.log(this.state.data);
+
         console.log(this.state.data);
         console.log(this.state.ModuleData)
-        
+
       })
       .catch(function (error) {
         console.log(error);
@@ -319,63 +326,29 @@ class Modulesubmodule extends Component {
 
   };
 
+  subModuletable=()=>{
+
+  }
+
   getallsub() {
 
-    
-      axios
 
-        .get(`http://localhost:8081/defectservices/FindallMain`)
-        .then(res => {
+    axios
 
-          this.setState({
-            data4:res.data
-          })
-         
-    console.log(this.state.data3)
-  })
-  }
-  openRow = (index) => {
-    console.log(index.moduleId)
-    let data5=this.state.data4;
-    console.log(data5)
-
-
-   
-        console.log(data5[1].subModule.length)
-        let SubModuleData = Object.assign([], this.state.data1)
-        data5.map((post,index) => {
-          console.log(data5[index].subModule[index].subModuleId)
-          if ("AB" == post.moduleId) {
-            console.log("dfdfhdjh")
-            
-            for(var i=0;i<data5[index].subModule.length;i++){
-           
-           
-              SubModuleData[index] = {
-                key: index,
-                subModuleId: data5[index].subModule[2].subModuleId,
-                subModuleName: data5[index].subModule[2].subModuleName,
-
-              };
-
-             
-            }
-
-            
-           }
-
-
-        })
-
-
-
+      .get(`http://localhost:8081/defectservices/FindallMain`)
+      .then(res => {
 
         this.setState({
-          data1: SubModuleData
-        });
-        
-    console.log(this.state.data1)
+          data4: res.data
+        })
+
+        console.log(this.state.data3)
+      })
   }
+  deletesub=()=>{
+    // console.log(id)
+  }
+ 
 
   handleDelete = moduleId => {
     console.log(moduleId);
@@ -394,9 +367,14 @@ class Modulesubmodule extends Component {
     });
     message.success("Delete Successfully!");
   };
+
+  
   render() {
+
+    
     const hoverContent = <h5>Add Sub Module</h5>;
-    const expandedRowRender = () => {
+    const expandedRowRender = (expanded) => {
+      console.log(expanded)
       const columns = [
         { title: "Submodule ID", dataIndex: "date", key: "date" },
         { title: "Submodule Name", dataIndex: "name", key: "name" },
@@ -416,22 +394,37 @@ class Modulesubmodule extends Component {
               title={text}
               okText="Yes"
               cancelText="No"
+              // onConfirm={this.deletesub()}
             >
               <Icon type="delete" style={{ color: "red" }} />
             </Popconfirm>
           )
         }
       ];
-
-      const data = [
+for(var i=0;i<5;i++){
+      const data6 = [
         {
-          key: this.state.key,
-          date: this.state.date,
-          name: this.state.name
-        },
+          key: i,
+          date: expanded.subModule[i].subModuleId,
+          name: expanded.subModule[i].subModuleName
+        }
 
-      ];
-      return <Table columns={columns} dataSource={this.state.data1} pagination={false} />;
+      ]
+      // this.setState({data6})
+      return <Table columns={columns} dataSource={data6} pagination={false} />;
+    }
+
+// const modulelist = Object.assign([], this.state.data1);
+//         for (let i = 0; i < 5; i++) {
+//           modulelist[i] = {
+//             key: i,
+//             date: expanded.subModule[i].subModuleId,
+//             name: expanded.subModule[i].subModuleName
+//           };
+
+          
+//         }
+        // return <Table columns={columns} dataSource={modulelist} pagination={false} />;
     };
 
     const text = "Are you sure to delete this item?";
@@ -525,6 +518,10 @@ class Modulesubmodule extends Component {
         console.log(selected, selectedRows, changeRows);
       }
     };
+
+   
+
+
     return (
       <div>
         <div style={{ paddingBottom: "20px" }}>
@@ -535,7 +532,7 @@ class Modulesubmodule extends Component {
         <Table
           className="components-table-demo-nested"
           columns={columns}
-          expandedRowRender={index => this.openRow(index)}
+           expandedRowRender={expanded=>expandedRowRender(expanded)}
           dataSource={this.state.data}
 
           expandRowByClick={value => this.openRow(value)}
@@ -645,11 +642,11 @@ class Modulesubmodule extends Component {
                 onChange={this.onChangemoduleName}
               />
             </Form.Item>
-            <Form.Item>
+            <Form.Item label="Project Name:">
               <Select
                 showSearch
                 style={{ width: 200 }}
-                placeholder="Select ProjectID"
+                placeholder="Select ProjectName"
                 optionFilterProp="children"
                 onChange={(e) => this.onChangeprojectId(e)} value={this.state.projectId}
                 onFocus={onFocus}
