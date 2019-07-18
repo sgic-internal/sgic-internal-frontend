@@ -32,7 +32,6 @@ export class Allocate extends Component {
     
         this.fetchProjects();
         console.log("mounting");
-        // this.GetAllproject();
         this.fetchEmployee();
       }
 
@@ -47,7 +46,6 @@ export class Allocate extends Component {
       
         });
       }
-
 
       
       fetchEmployee() {
@@ -76,6 +74,11 @@ export class Allocate extends Component {
                 title: 'Employee Name',
                 dataIndex: 'name',
                 key: 'name'
+            },
+            {
+                title: 'Employee FirstName',
+                dataIndex: 'firstname',
+                key: 'firstname'
             },
             {
                 title: 'Designation',
@@ -119,10 +122,6 @@ export class Allocate extends Component {
                         <OptGroup label="Projects">
                         {this.state.project.map(function(item, index){
                       return <Option key={index} value={item.pid}> {item.projectName}</Option> })}
-                            {/* <Option value="School Management System">School Management System</Option>
-                            <Option value="Defect Tracker System">Defect Tracker System</Option>
-                            <Option value="Library Management System">Library Management System</Option>
-                            <Option value="Wedding Hall System">Wedding Hall System</Option> */}
                         </OptGroup>
                     </Select></div>
 

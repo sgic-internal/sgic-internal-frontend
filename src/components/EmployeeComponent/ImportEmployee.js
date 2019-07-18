@@ -1,46 +1,20 @@
 import React from "react";
 import { Modal, Button, message, Upload, Icon } from "antd";
 
+
+const props = {
+  name: "uploadfile",
+  action: "http://localhost:8084/employeeservice/database",
+  headers: {
+    authorization: "authorization-text"
+  }
+};
 export default class ImportEmployee extends React.Component {
-  state = {
-    loading: false,
-    visible: false,
-    fileList: [],
-    uploading: false
-  };
-
-  handleUpload = () => {
-    const { fileList } = this.state;
-    const formData = new FormData();
-    fileList.forEach(file => {
-      formData.append("files[]", file);
-    });
-
+  state = { visible: false, value: undefined };
+  showModal = () => {
     this.setState({
-      uploading: true
+      visible: true
     });
-
-    // You can use any AJAX library you like
-    // reqwest({
-    //   name: "uploadfile",
-    //   url: "http://localhost:8084/employeeservice/database",
-    //   method: "post",
-    //   processData: false,
-    //   data: formData,
-    //   success: () => {
-    //     this.setState({
-    //       fileList: [],
-    //       uploading: false
-    //     });
-    //     message.success("upload successfully.");
-    //   },
-    //   error: () => {
-    //     this.setState({
-    //       uploading: false
-    //     });
-    //     message.error("upload failed.");
-    //   }
-    // });
   };
 
   onChange(info) {
@@ -54,22 +28,19 @@ export default class ImportEmployee extends React.Component {
     }
   }
 
-  showModal = () => {
+  handleOk = e => {
+    console.log(e);
     this.setState({
-      visible: true
+      visible: false
     });
   };
 
-  // handleOk = () => {
-  //   console.log("ok");
-  //   this.setState({ loading: true });
-  //   setTimeout(() => {
-  //     this.setState({ loading: false, visible: false });
-  //   }, 3000);
-  // };
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false
+    });
 
-  handleCancel = () => {
-    this.setState({ visible: false });
   };
   handleSubmit = e => {
     e.preventDefault();
@@ -81,71 +52,32 @@ export default class ImportEmployee extends React.Component {
   };
 
   render() {
-    const { uploading, fileList } = this.state;
-    const props = {
-      onRemove: file => {
-        this.setState(state => {
-          const index = state.fileList.indexOf(file);
-          const newFileList = state.fileList.slice();
-          newFileList.splice(index, 1);
-          return {
-            fileList: newFileList
-          };
-        });
-      },
-      beforeUpload: file => {
-        this.setState(state => ({
-          fileList: [...state.fileList, file]
-        }));
-        return false;
-      },
-      fileList
-    };
-    const { visible } = this.state;
+
+    //const {props}=this.props;
     return (
-      <div>
+      <React.Fragment>
         <Button type="primary" onClick={this.showModal}>
-          Import Employee
+          <Icon />
+          Import Employees
         </Button>
+
         <Modal
-          visible={visible}
-          title="Import Employee"
+          title="Import Employees"
+          visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
-          footer={[
-            <Button key="back" onClick={this.handleCancel}>
-              Return
-            </Button>,
-
-            <Button
-              type="primary"
-              onClick={this.handleUpload}
-              disabled={fileList.length === 0}
-              loading={uploading}
-              style={{ marginTop: 16 }}
-            >
-              {uploading ? "Uploading" : "Start Upload"}
-            </Button>
-          ]}
+          width="600px"
         >
-          {/* <Upload {...props}>
-            <p style={{ color: "red", margin: "0 ", display: "inline" }}>* </p>{" "}
-            <p style={{ argin: "0 ", display: "inline" }} align="right">
-              Upload .xls file only.
-            </p>
-            <br />
-            <br />
-            <Button>
-              <Icon type="upload" /> Select File
-            </Button>
-          </Upload> */}
+
           <Upload {...props}>
             <Button>
               <Icon type="upload" /> Click to Upload
             </Button>
           </Upload>
         </Modal>
-      </div>
+
+      </React.Fragment>
+
     );
   }
 }

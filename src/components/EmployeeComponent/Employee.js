@@ -188,7 +188,7 @@ export default class App extends React.Component {
       body: JSON.stringify(this.state)
     });
     console.log(empId);
-    confirm(empId);
+    // confirm(empId);
     const employees = this.state.employees.filter(employees => {
       return employees.empId !== empId;
     });

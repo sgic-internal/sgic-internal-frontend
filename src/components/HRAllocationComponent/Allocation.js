@@ -9,6 +9,13 @@ import difference from 'lodash/difference';
 const { Option, OptGroup } = Select;
 
 
+
+// axios.get("http://localhost:8081/defectservices/GetAllresources")
+//   .then(function (response) {
+//     console.log(response.data);
+//   });
+
+
 const employee = []
 const originTargetKeys = employee.filter(item => +item.key % 5 > 1).map(item => item.key);
 
@@ -84,6 +91,18 @@ const rightTableColumns = [
 
 
 export default class Allocation extends React.Component {
+
+
+  // constructor(props){
+  //   super(props);
+
+  //   this.state = {
+  //     resourceId:"",
+  //     employeeId:"",
+  //     projectId:""
+  //   }
+  //   this.handleOk = this.handleOk.bind(this);
+  // }
 
     state = {
         loading: false,
@@ -172,15 +191,9 @@ export default class Allocation extends React.Component {
           projectId:this.state.projectId
         }
        // console.log(this.state.filteredItems)
-        axios
-        .post(
-          "http://localhost:8081/defectservices/saveresource",
-          this.state.data
-        )
-        .then(res => console.log(res.data))
-        .catch(error => {
-          console.log(error);
-        });
+
+       
+
     };
 
     handleCancel = () => {
@@ -245,18 +258,28 @@ export default class Allocation extends React.Component {
       console.log(_this.state.list);
       _this.state.employee.map((post,index)=>{
         console.log(post.key)
-        if(targetKeys==index){
+
+        for(var i=0;i<11;i++){
+        if(targetKeys[i]==index){
           console.log(post.empId)
-         let data1={
+         let data1=[{ empId:post.empId,
+          projectId:this.state.value1 }]
             
-            empId:post.empId,
-            projectId:this.state.value1 
-          }
-         
+          
           console.log(data1)
+          axios
+          .post(
+            "http://localhost:8081/defectservices/saveresourceTable",
+            data1
+          )
+          .then(res => console.log(res.data))
+          .catch(error => {
+            console.log(error);
+          });
          
         }
-       
+      }
+
        });
       
     }
