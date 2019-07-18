@@ -2,51 +2,79 @@ import React from 'react';
 import { Breadcrumb, Statistic, Card, Row, Col, Icon, Timeline, Divider, Progress, Table, Button } from 'antd';
 import ChartBar from './assets/ChartBar';
 import ChartPolar from './assets/ChartPolar';
+import { Chart } from 'primereact/chart';
+
 //import PrimeReact from './PrimeReact';
 import DashboardConfig from './DashboardConfig';
+import axios from 'axios';
 
 //table data
-const data = [
-    {
-        id: '1',
-        key: '1',
-        name: 'Task Management System',
-        member: 'Thuva, Kishanth, Romi',
-    },
-    {
-        id: '2',
-        key: '2',
-        name: 'Hospital Management System',
-        member: 'thuva, kishanth, romi',
-    },
-    {
-        id: '3',
-        key: '3',
-        name: 'School Management System',
-        member: 'Thuva',
-    },
-
-    {
-        id: '4',
-        key: '4',
-        name: 'Defect Tracker',
-        member: 'Thuviyan, Pratheepan, Romi',
 
 
-    },
-];
+
 // Table data end
 
 class ProjectManagerDashboard extends React.Component {
     // Chart Component
 
+    
+getHigh(){
+
+        axios
+        .get('http://localhost:8081/defectservices/gethightcount')
+        .then(res=>{
+            console.log(res.data)
+            this.setState({
+                highsev:res.data
+            })
+        })
+}
+
+getMedium(){
+    axios
+    .get('http://localhost:8081/defectservices/getcountmedium')
+    .then(res=>{
+        console.log(res.data)
+        this.setState({
+            mediumsev:res.data
+        })
+    })
+}
+
+getLow(){
+    axios
+    .get('http://localhost:8081/defectservices/getlowcount')
+    .then(res=>{
+        console.log(res.data)
+        this.setState({
+            lowsev:res.data
+        })
+    })
+}
 
 
+
+    constructor(props) {
+        super(props)
+        this.state = {
+              value:'',
+             density:'',
+          
+        }
+        // this.componentWillMount = this.componentWillMount.bind(this);
+      };
+    
 
     //Table Declaration
     state = {
         filteredInfo: null,
         sortedInfo: null,
+        color:'',
+        highsev:'',
+        mediumsev:'',
+        lowsev:'',
+      DefectCount: [],
+
     };
 
     handleChange = (pagination, filters, sorter) => {
@@ -84,12 +112,131 @@ class ProjectManagerDashboard extends React.Component {
 
     Note: Please do necessary commenting and follow code standard.
       */
+getHigh1(){
+    axios
+        .get('http://localhost:8081/defectservices/gethightcount')
+        .then(res=> {
+            let color=""
+            if(3>res.data){
+               color='#12cc1f'
+            }else{
+                color='#d60f0f'
+            }
+            
+            console.log(res.data)
+              this.setState({
+                  high:res.data,
+                  color
+              })  
+              console.log(this.state.color)
+            })
+}
 
+getLow1(){
+    axios
+        .get('http://localhost:8081/defectservices/getlowcount')
+        .then(res=> {
+            let color=""
+            if(3>res.data){
+               color='#12cc1f'
+            }else{
+                color='#d60f0f'
+            }
+            
+            console.log(res.data)
+              this.setState({
+                  low:res.data,
+                  color
+              })  
+              console.log(this.state.color)
+            })
+}
+
+getMedium1(){
+    axios
+        .get('http://localhost:8081/defectservices/getcountmedium')
+        .then(res=> {
+            let color=""
+            if(3>res.data){
+               color='#12cc1f'
+            }else{
+                color='#d60f0f'
+            }
+            
+            console.log(res.data)
+              this.setState({
+                  medium:res.data,
+                  color
+              })  
+              console.log(this.state.color)
+            })
+}
+
+getSeverityIndex(){
+    axios
+        .get('http://localhost:8081/defectservices/getseverityindex')
+        .then(res=> {
+            let color=""
+            if(3>res.data){
+               color='#12cc1f'
+            }else{
+                color='#d60f0f'
+            }
+            
+            console.log(res.data)
+              this.setState({
+                  severityindex:res.data,
+                  color
+              })  
+              console.log(this.state.color)
+            })
+}
 
     componentDidMount() {
+       this.getHigh1();
+       this.getHigh();
+       this.getMedium();
+       this.getLow();
+       this.getLow1();
+       this.getMedium1();
+       this.getSeverityIndex();
+
+     getdefectcount() {
+        const url = 'http://localhost:8081/defectservices/getCount';
+        axios.get(url)
+    
+          .then(response => this.setState({
+            value: response.data,
+          }))
+          .catch(function (error) {
+            console.log(error);
+          });
+    
+      }
+       getdefectdensity(){
+        const url = 'http://localhost:8081/defectservices/getDefectDensity';
+        axios.get(url)
+    
+          .then(response => this.setState({
+            density: response.data,
+          }))
+          .catch(function (error) {
+            console.log(error);
+          });
+    
+      }
+
+      componentDidMount() {
+        this.getdefectdensity()
+        this.getdefectcount()
+
     }
 
+    
+
     render() {
+
+        console.log(this.state.highsev)
         // For Table functions
         let { sortedInfo, filteredInfo } = this.state;
         sortedInfo = sortedInfo || {};
@@ -139,7 +286,25 @@ class ProjectManagerDashboard extends React.Component {
 
         ];
 
-
+        const data5 = {
+            labels: ['High', 'Medium', 'Low'],
+            datasets: [
+              {
+                data: [this.state.highsev, this.state.mediumsev,this.state.lowsev],
+                backgroundColor: [
+                  "#FF6384",
+                  "#4CAF50",
+                  "#FFCE56",
+                  
+                ],
+                hoverBackgroundColor: [
+                  "#FF6384",
+                  "#4CAF50",
+                  "#FFCE56",
+              
+                ]
+              }]
+          };
 
         // Table functions End
         //Chart data
@@ -176,11 +341,18 @@ class ProjectManagerDashboard extends React.Component {
                         <Col span={6}>
                             <Card style={{ margin: "10px 5px 0 -2px", borderRadius: "5px" }}>
                                 <Statistic
-                                    title="Success Ratio"
-                                    value={11.28}
+                                    title="High Severity"
+                                    value={this.state.high}
+                                    // precision={2}
+                                    valueStyle={{ color: this.state.color }}
+                                    prefix={<Icon type="arrow-up" style={{color:"red"}}/>}
+
+                                    title="Defect to Remarks Ratio"
+                                    value={this.state.value}
                                     precision={2}
                                     valueStyle={{ color: '#3f8600' }}
                                     prefix={<Icon type="safety-certificate" theme="filled" />}
+
                                     suffix="%"
                                 />
                             </Card>
@@ -193,35 +365,44 @@ class ProjectManagerDashboard extends React.Component {
                         <Col span={6}>
                             <Card style={{ margin: "10px 5px", borderRadius: "5px" }}>
                                 <Statistic
-                                    title="Defects Ratio"
-                                    value={9.3}
+
+                                    title="Medium Severity"
+                                    value={this.state.medium}
+                                    // precision={2}
+                                    valueStyle={{ color: this.state.color  }}
+                                    prefix={<Icon type="arrow-up" style={{color:"orange"}}/>}
+
+                                    title="Defect Density"
+                                    value={this.state.density}
                                     precision={2}
-                                    valueStyle={{ color: '#cf1322' }}
+                                    valueStyle={{ color: '#3f8600' }}
                                     prefix={<Icon type="fund" theme="filled" />}
+
                                     suffix="%"
                                 />
                             </Card></Col>
+                              
 
                         <Col span={6}>
                             <Card style={{ margin: "10px 5px", borderRadius: "5px" }}>
                                 <Statistic
-                                    title="Software Engineers"
-                                    value={11}
+                                    title="Low Severity"
+                                    value={this.state.low}
 
-                                    valueStyle={{ color: '#333333' }}
-                                    prefix={<Icon type="play-circle" />}
+                                    valueStyle={{ color: this.state.color }}
+                                    prefix={<Icon type="arrow-down" style={{color:"green"}}/>}
+                                    suffix="%"
 
                                 />
                             </Card></Col>
                         <Col span={6}>
                             <Card style={{ margin: "10px 2px", borderRadius: "5px" }}>
                                 <Statistic
-                                    title="QA Engineers"
-                                    value={9}
-
+                                    title="Severity Index"
+                                    value={this.state.severityindex}
                                     valueStyle={{ color: '#007673' }}
                                     prefix={<Icon type="sync" spin />}
-
+                                    // suffix="%"
 
                                 />
                             </Card></Col>
@@ -237,7 +418,11 @@ class ProjectManagerDashboard extends React.Component {
 
                     <Row style={{ margin: "-20px 0 0 0 " }}>
                         <Col span={12}>
+                        <div className="content-section implementation" >
+
+
                             <ChartBar />
+                            </div>
                         </Col>
                         <Col span={12}>
                             <Card title="Defects Status" style={{ borderRadius: "5px", margin: "0 0 0 5px" }}>
@@ -307,7 +492,10 @@ class ProjectManagerDashboard extends React.Component {
                     </div>
                     <Row style={{ margin: "-10px 0 0 0 " }}>
                         <Col span={12}>
-                            <ChartPolar />
+                            {/* <ChartPolar /> */}<div style={{ padding: 30, background: '#fff', minHeight: 307 }} >
+                            <Chart type="pie" data={data5} />
+                            </div>
+                            
                         </Col>
                         <Col span={12}>
 
@@ -361,7 +549,7 @@ class ProjectManagerDashboard extends React.Component {
                                 <div>
                                     <br />
                                 </div>
-                                <Table columns={columns} dataSource={data} onChange={this.handleChange} style={{ textAlign: "center", alignContent: "center", alignItems: "center" }} />
+                                
 
 
                             </Col>

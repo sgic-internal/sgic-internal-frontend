@@ -13,55 +13,44 @@ import {
 import { SketchPicker } from "react-color";
 import reactCSS from "reactcss";
 import { Row, Col } from "antd";
-import Axios from "axios";
-import { error } from "util";
+import DefectTypeConfigController from "./DefectTypeConfigController";
 const { Option } = Select;
 
 const data = [
-  // {
-  //   key: '1',
-  //   name: 'UI',
-  //   Description: 'UI',
-  //   Colour: "#ff5e57",
-  // },
-  // {
-  //   key: '2',
-  //   name: 'Functionality',
-  //   Description: 'Functionality',
-  //   Colour: "#0be881",
-  // },
-  // {
-  //   key: '3',
-  //   name: 'Enhancement',
-  //   Description: 'Enhancement',
-  //   Colour: "#ffdd59",
-  // },
-  // {
-  //   key: '4',
-  //   name: 'Performance',
-  //   Description: 'Performance',
-  //   Colour: "#00d8d6",
-  // },
+  {
+    key: "1",
+    name: "UI",
+    Description: "UI",
+    Colour: "#ff5e57"
+  },
+  {
+    key: "2",
+    name: "Functionality",
+    Description: "Functionality",
+    Colour: "#0be881"
+  },
+  {
+    key: "3",
+    name: "Enhancement",
+    Description: "Enhancement",
+    Colour: "#ffdd59"
+  },
+  {
+    key: "4",
+    name: "Performance",
+    Description: "Performance",
+    Colour: "#00d8d6"
+  }
 ];
 
 export default class DefectTypeConfic extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      defectTypeName: "Type",
-      defectTypeValue: "",
-      defectTypes: []
-    };
-
-    this.handleOk = this.handleOk.bind(this);
-    this.onChangeDefectTypeName = this.onChangeDefectTypeName.bind(this);
-    this.onChangeDefectTypeValue = this.onChangeDefectTypeValue.bind(this);
-  }
-
   state = {
     visible: false,
-    visibleEditModal: false
+    visibleEditModal: false,
+    typeId: "",
+    typeName: "",
+    typeValue: "",
+    getAllType: []
   };
 
   showModal = () => {
@@ -77,38 +66,54 @@ export default class DefectTypeConfic extends React.Component {
     });
   };
 
-  onChangeDefectTypeName(e) {
-    this.setState({
-      defectTypeName: e.target.value
-    });
-  }
-
-  onChangeDefectTypeValue(e) {
-    this.setState({
-      defectTypeValue: e.target.value
-    });
-  }
-
   handleOk = e => {
     console.log(e);
-    this.setState({
-      visible: false
-    });
-
     e.preventDefault();
-    const defectData = {
-      typeName: this.state.defectTypeName,
-      typeValue: this.state.defectTypeValue
+    const DefectType = {
+      typeName: this.state.typeName,
+      typeValue: this.state.typeValue
     };
+    DefectTypeConfigController.AddTypeApi(DefectType);
+    console.log(DefectType);
 
-    Axios.post("http://localhost:8083/productservice/Type", defectData)
-      .then(res => console.log(res.data))
-      .catch(error => {
-        console.log(error);
-      });
+    this.setState({
+      visible: false,
+      typeValue: ""
+    });
   };
 
-  state = { visible: false };
+  txtOnChange = e => {
+    this.setState({
+      [e.target.id]: e.target.value
+    });
+    console.log(e.target.value);
+  };
+
+  fetchAllType = () => {
+    fetch(`http://localhost:8083/productservice/Types`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          getAllType: data
+        });
+        console.log(data);
+      });
+  };
+  componentDidMount() {
+    this.fetchAllType();
+  }
+
+  handleDelete = typeId => {
+    DefectTypeConfigController.DeleteTypeApi(typeId);
+    console.log(" Successfully deleted " + typeId);
+    const getAllType = this.state.getAllType.filter(getAllType => {
+      return getAllType.typeId != typeId;
+    });
+
+    this.setState({
+      getAllType
+    });
+  };
 
   handleCancel = e => {
     console.log(e);
@@ -124,62 +129,34 @@ export default class DefectTypeConfic extends React.Component {
     });
   };
 
-  // state = {
-  //   displayColorPicker: false,
-  //   color: {
-  //     r: "241",
-  //     g: "112",
-  //     b: "19",
-  //     a: "1"
-  //   }
-  // };
-
-  // handleClick = () => {
-  //   this.setState({ displayColorPicker: !this.state.displayColorPicker });
-  // };
-
-  // handleClose = () => {
-  //   this.setState({ displayColorPicker: false });
-  // };
-
-  // handleChange = color => {
-  //   this.setState({ color: color.rgb });
-  // };
-
-  componentDidMount() {
-    this.getAllDefectTypes();
-  }
-
-  async getAllDefectTypes() {
-    const url = "http://localhost:8083/productservice/Types";
-    const response = await fetch(url);
-    const data = await response.json();
-    console.log(data);
-    this.setState({
-      defectTypes: data
-    });
-    console.log(this.state.defectTypes);
-  }
-
-  handleSubmit = e => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log("Received values of form: ", values);
-      }
-    });
+  state = {
+    displayColorPicker: false,
+    color: {
+      r: "241",
+      g: "112",
+      b: "19",
+      a: "1"
+    }
   };
 
-  handleDelete = typeId => {
-    fetch("http://localhost:8083/productservice/Type/" + typeId, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(this.state)
-    });
-    console.log(typeId);
+  handleClick = () => {
+    this.setState({ displayColorPicker: !this.state.displayColorPicker });
+  };
+
+  handleClose = () => {
+    this.setState({ displayColorPicker: false });
+  };
+
+  handleChange = color => {
+    this.setState({ color: color.rgb });
+  };
+  handleSubmit = e => {
+    e.preventDefault();
+    // this.props.form.validateFields((err, values) => {
+    //   if (!err) {
+    //     console.log("Received values of form: ", values);
+    //   }
+    // });
   };
 
   normFile = e => {
@@ -193,38 +170,33 @@ export default class DefectTypeConfic extends React.Component {
   render() {
     const columns = [
       {
-        title: "Defect Type ID",
-        dataIndex: "typeId",
-        key: "typeId"
-      },
-      {
-        title: "Defect Type Name",
+        title: "DefectType",
         dataIndex: "typeName",
         key: "typeName"
       },
       {
-        title: "Defect Type Value",
+        title: "Value",
         dataIndex: "typeValue",
         key: "typeValue"
       },
       {
         title: "Action",
         key: "action",
-        render: () => (
+        render: (data = this.state.getAllType) => (
           <span>
-            <a>
+            {/* <a onClick={this.showEditModal}>
               <Icon type="edit" style={{ fontSize: "17px", color: "blue" }} />
             </a>
-            <Divider type="vertical" />
+            <Divider type="vertical" /> */}
             <Popconfirm
               title="Are you sure, Do you want to delete this ?"
               icon={<Icon type="delete" style={{ color: "red" }} />}
+              onConfirm={() => this.handleDelete(data.typeId)}
             >
-              <a>
+              <a href="#">
                 <Icon
                   type="delete"
                   style={{ fontSize: "17px", color: "red" }}
-                  onClick={this.handleDelete.bind(this, data.typeId)}
                 />
               </a>
             </Popconfirm>
@@ -235,14 +207,14 @@ export default class DefectTypeConfic extends React.Component {
 
     const styles = reactCSS({
       default: {
-        // color: {
-        //   width: "36px",
-        //   height: "14px",
-        //   borderRadius: "2px",
-        //   background: `rgba(${this.state.color.r}, ${this.state.color.g}, ${
-        //     this.state.color.b
-        //   }, ${this.state.color.a})`
-        // },
+        color: {
+          width: "36px",
+          height: "14px",
+          borderRadius: "2px",
+          background: `rgba(${this.state.color.r}, ${this.state.color.g}, ${
+            this.state.color.b
+          }, ${this.state.color.a})`
+        },
         swatch: {
           padding: "5px",
           background: "#fff",
@@ -322,22 +294,19 @@ export default class DefectTypeConfic extends React.Component {
                 minHeight: "150px"
               }}
             >
-              <Form labelCol={{ span: 8 }} wrapperCol={{ span: 9 }}>
-                <Form.Item label="DefectTypeName">
+              <Form
+                labelCol={{ span: 5 }}
+                wrapperCol={{ span: 12 }}
+                onSubmit={this.handleSubmit}
+              >
+                {/* <Form.Item label="TypeName">
+                  <Input />
+                </Form.Item> */}
+                <Form.Item label="Value">
                   <Input
-                    placeholder="TypeName"
-                    value={this.state.defectTypeName}
-                    onChange={this.onChangeDefectTypeName}
-                    name="typeName"
-                    readOnly
-                  />
-                </Form.Item>
-                <Form.Item label="DefectTypeValue">
-                  <Input
-                    placeholder="Typevalue"
-                    value={this.state.defectTypeValue}
-                    onChange={this.onChangeDefectTypeValue}
-                    name="typeValue"
+                    id="typeValue"
+                    value={this.state.typeValue}
+                    onChange={e => this.txtOnChange(e)}
                   />
                 </Form.Item>
 
@@ -347,7 +316,10 @@ export default class DefectTypeConfic extends React.Component {
                   </div>
                   {this.state.displayColorPicker ? (
                     <div style={styles.popover}>
-                      <div style={styles.cover} onClick={this.handleClose} />
+                      <div
+                        style={styles.cover}
+                        onClick={this.handleClose}
+                      />
                       <SketchPicker
                         color={this.state.color}
                         onChange={this.handleChange}
@@ -378,31 +350,38 @@ export default class DefectTypeConfic extends React.Component {
                 wrapperCol={{ span: 12 }}
                 onSubmit={this.handleSubmit}
               >
-                <Form.Item label="TypeName">
+                {/* <Form.Item label="TypeName">
                   <Input />
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item label="Description">
-                  <Input />
+                  <Input
+                    id="priorityValue"
+                    value={this.state.typeValue}
+                    onChange={e => this.txtOnChange(e)}
+                  />
                 </Form.Item>
 
-                <Form.Item label="Colour">
+                {/* <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color} />
                   </div>
                   {this.state.displayColorPicker ? (
                     <div style={styles.popover}>
-                      <div style={styles.cover} onClick={this.handleClose} />
+                      <div
+                        style={styles.cover}
+                        onClick={this.handleClose}
+                      />
                       <SketchPicker
                         color={this.state.color}
                         onChange={this.handleChange}
                       />
                     </div>
                   ) : null}
-                </Form.Item>
+                </Form.Item> */}
               </Form>
             </div>
           </Modal>
-          <Table columns={columns} dataSource={this.state.defectTypes} />
+          <Table columns={columns} dataSource={this.state.getAllType} />
 
           <Icon type="square" />
         </div>

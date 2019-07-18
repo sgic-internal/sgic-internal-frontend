@@ -18,51 +18,6 @@ import StatusConfigController from "./StatusConfigController";
 
 const { Option } = Select;
 
-const data = [
-  {
-    key: "1",
-    name: "New",
-    Description: "New",
-    Colour: "#4bcffa"
-  },
-  {
-    key: "2",
-    name: "Open",
-    Description: "Open",
-    Colour: "#0be881"
-  },
-  {
-    key: "3",
-    name: "Closed",
-    Description: "Low",
-    Colour: "#ffdd59"
-  },
-  {
-    key: "4",
-    name: "Fixed",
-    Description: "Low",
-    Colour: "#d3f261"
-  },
-  {
-    key: "5",
-    name: "Reopened",
-    Description: "Reopened",
-    Colour: "#faad14"
-  },
-  {
-    key: "6",
-    name: "Rejected",
-    Description: "Rejected",
-    Colour: "red"
-  },
-  {
-    key: "7",
-    name: "Deffered",
-    Description: "Deffered",
-    Colour: "#13c2c2"
-  }
-];
-
 export default class StatusConfig extends React.Component {
   state = {
     visible: false,
@@ -88,9 +43,9 @@ export default class StatusConfig extends React.Component {
 
   handleOk = e => {
     console.log(e);
-    // this.setState({
-    //   visible: false
-    // });
+    this.setState({
+      visible: false
+    });
     e.preventDefault();
     const Status = {
       statusName: this.state.statusName,
@@ -198,15 +153,20 @@ export default class StatusConfig extends React.Component {
         dataIndex: "statusValue",
         key: "Description"
       },
+      // {
+      //   title: "Color",
+      //   dataIndex: "statusColor",
+      //   key: "statusColor"
+      // },
       {
         title: "Action",
         key: "action",
         render: (data = this.state.getAllSeverity) => (
           <span>
-            <a onClick={this.showEditModal}>
+            {/* <a onClick={this.showEditModal}>
               <Icon type="edit" style={{ fontSize: "17px", color: "blue" }} />
             </a>
-            <Divider type="vertical" />
+            <Divider type="vertical" /> */}
             <Popconfirm
               title="Are you sure, Do you want to delete this ?"
               icon={<Icon type="delete" style={{ color: "red" }} />}
@@ -334,7 +294,7 @@ export default class StatusConfig extends React.Component {
                   />
                 </Form.Item>
 
-                {/* <Form.Item label="Colour">
+                <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color} />
                   </div>
@@ -347,7 +307,7 @@ export default class StatusConfig extends React.Component {
                       />
                     </div>
                   ) : null}
-                </Form.Item> */}
+                </Form.Item>
               </Form>
             </div>
           </Modal>
@@ -371,14 +331,14 @@ export default class StatusConfig extends React.Component {
                 wrapperCol={{ span: 12 }}
                 onSubmit={this.handleSubmit}
               >
-                <Form.Item label="Name">
+                {/* <Form.Item label="Name">
                   <Input />
-                </Form.Item>
-                <Form.Item label="Description">
+                </Form.Item> */}
+                <Form.Item label="Value">
                   <Input />
                 </Form.Item>
 
-                <Form.Item label="Colour">
+                {/* <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color} />
                   </div>
@@ -391,7 +351,7 @@ export default class StatusConfig extends React.Component {
                       />
                     </div>
                   ) : null}
-                </Form.Item>
+                </Form.Item> */}
               </Form>
             </div>
           </Modal>
