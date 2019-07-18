@@ -1,10 +1,10 @@
-import { Table, Icon, Popconfirm, message, Input, Button } from "antd";
+import { Table, Icon, Popconfirm, message, Input, Button ,Pagination } from "antd";
 import Highlighter from "react-highlight-words";
 import React from "react";
 import EditModel from "./EditModel";
 import axios from "axios";
 
-function confirm(e){
+function confirm(e) {
   console.log(e)
   message.success("Delete Successfully!");
 }
@@ -18,20 +18,20 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
-  
+
   }
   state = {
     searchText: "",
     projects: [],
     projectId: this.props.projectId,
-    projectName:this.props.projectName,
-    duration:this.props.duration,
-    status:this.props.status,
-    startDate:this.props.startDate,
-    endDate:this.props.endDate,
-    type:this.props.type
+    projectName: this.props.projectName,
+    duration: this.props.duration,
+    status: this.props.status,
+    startDate: this.props.startDate,
+    endDate: this.props.endDate,
+    type: this.props.type
   };
-  
+
 
   handleSubmit = event => {
     console.log(this.state.handleSubmit);
@@ -40,14 +40,10 @@ export default class App extends React.Component {
   showEditModal = () => {
     console.log("showEditModal");
     this.setState({
-      visibleEditModal:true,
+      visibleEditModal: true,
     });
   }
   componentDidMount() {
-    // fetch api method
-
-    // axios method
-
     // page refresh
     this.getAllProjects();
   }
@@ -65,31 +61,18 @@ export default class App extends React.Component {
     });
     message.success("Delete Successfully");
   };
-  // handleEditOk = (projectId) => {
-  //   const obj = {
-  //     projectId:this.state.projectId,
-  //     projectName:this.state.projectName,
-  //     duration:this.state.duration,
-  //     status:this.state.status,
-  //     startDate:this.state.startDate,
-  //     endDate:this.state.endDate,
-  //     type:this.state.type
-  //   }
-  // }
-  /*END OF DELETE METHOD = 1*/
 
- 
 
   getAllProjects() {
     const obj = {
-      projectName:this.state.projectName,
-      duration:this.state.duration,
-      status:this.state.status,
-      startDate:this.state.startDate,
-      endDate:this.state.endDate,
-      type:this.state.type
-    
-      
+      projectName: this.state.projectName,
+      duration: this.state.duration,
+      status: this.state.status,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate,
+      type: this.state.type
+
+
     }
     axios
       .get(`http://localhost:8081/defectservices/GetAllproject`)
@@ -99,7 +82,7 @@ export default class App extends React.Component {
 
         console.log(this.state.projects);
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
   }
@@ -110,37 +93,37 @@ export default class App extends React.Component {
       confirm,
       clearFilters
     }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={node => {
-            this.searchInput = node;
-          }}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
-          style={{ width: 188, marginBottom: 8, display: "block" }}
-        />
-        <Button
-          type="primary"
-          onClick={() => this.handleSearch(selectedKeys, confirm)}
-          icon="search"
-          size="small"
-          style={{ width: 90, marginRight: 8 }}
-        >
-          Search
+        <div style={{ padding: 8 }}>
+          <Input
+            ref={node => {
+              this.searchInput = node;
+            }}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={e =>
+              setSelectedKeys(e.target.value ? [e.target.value] : [])
+            }
+            onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+            style={{ width: 188, marginBottom: 8, display: "block" }}
+          />
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm)}
+            icon="search"
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            Search
         </Button>
-        <Button
-          onClick={() => this.handleReset(clearFilters)}
-          size="small"
-          style={{ width: 90 }}
-        >
-          Reset
+          <Button
+            onClick={() => this.handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
         </Button>
-      </div>
-    ),
+        </div>
+      ),
 
     filterIcon: filtered => (
       <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
@@ -175,7 +158,7 @@ export default class App extends React.Component {
     this.setState({ searchText: "" });
   };
 
- 
+
   render() {
     const columns = [
       {
@@ -219,7 +202,6 @@ export default class App extends React.Component {
         dataIndex: "duration",
         key: "duration",
         width: "20%",
-        // ...this.getColumnSearchProps("duration")
       },
 
       {
@@ -230,12 +212,6 @@ export default class App extends React.Component {
         ...this.getColumnSearchProps("status")
       },
 
-      // {
-      //   title: "ConfigId",
-      //   dataIndex: "configId",
-      //   key: "configId",
-      //   width: "20%"
-      // },
 
       {
         title: "Edit ",
@@ -245,7 +221,7 @@ export default class App extends React.Component {
         render: (text, data = this.state.patients) => (
           <span>
             <a>
-              <EditModel projectProps= {data.projectId}/>
+              <EditModel projectProps={data.projectId} />
             </a>
           </span>
         )
@@ -277,21 +253,16 @@ export default class App extends React.Component {
           </span>
         )
       }
-      //   {
-      //     title: "View More ",
-      //     dataIndex: "viewmore",
-      //     key: "viewmore",
-      //     width: "10%",
-      //     render: (text, record) => (
-      //       <span>
-      //         <a>
-      //           <ViewModel />
-      //         </a>
-      //       </span>
-      //     )
-      //   }
     ];
 
-    return <Table columns={columns} dataSource={this.state.projects} />;
+    return <Table columns={columns} dataSource={this.state.projects} pagination={{
+      total: this.state.Total,
+      showTotal: (total, range) =>
+        `${range[0]}-${range[1]} of ${total} items`,
+      pageSize: 10,
+      showSizeChanger: true
+      // showQuickJumper: true
+    }} />;
   }
 }
+// ReactDOM.render(<Pagination defaultCurrent={1} total={50} />, document.getElementById('container'));

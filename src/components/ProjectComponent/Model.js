@@ -1,25 +1,30 @@
-import { Modal, Button, Form, Row, Col, Input, DatePicker, Select,message } from "antd";
+import {
+  Modal,
+  Button,
+  Form,
+  Row,
+  Col,
+  Input,
+  DatePicker,
+  message
+} from "antd";
 import React from "react";
 import axios from "axios";
 
-import { object } from "prop-types";
-
-function confirm(e){
-  console.log(e)
+function confirm(e) {
+  console.log(e);
   message.success("Delete Successfully!");
 }
-
-
-//import ProjectDataService from './ProjectDataService';
 const { MonthPicker, RangePicker } = DatePicker;
 
 const NameRegex = RegExp(/^[a-zA-Z]+$/);
 const ValidRegex = RegExp(/^[0-9a-zA-Z]+$/);
+const DurationRegex = RegExp(/^[0-9]+$/);
 const config = {
-  rules: [{ type: 'object', required: true, message: 'Please select time!' }],
+  rules: [{ type: "object", required: true, message: "Please select time!" }]
 };
 const rangeConfig = {
-  rules: [{ type: 'array', required: true, message: 'Please select time!' }],
+  rules: [{ type: "array", required: true, message: "Please select time!" }]
 };
 
 const formValid = ({ formerrors, ...rest }) => {
@@ -38,9 +43,7 @@ const formValid = ({ formerrors, ...rest }) => {
   return valid;
 };
 
-
-
-export default class Model extends React.Component {
+class Model extends React.Component {
   constructor(props) {
     super(props);
 
@@ -64,11 +67,7 @@ export default class Model extends React.Component {
         endDate: "",
         duration: "",
         status: ""
-
-
       }
-      // configId: "",
-
     };
   }
 
@@ -108,7 +107,6 @@ export default class Model extends React.Component {
         }
         break;
 
-
       case "startDate":
         if (!NameRegex.test(value)) {
           formerrors.startDate = "Invalid start date";
@@ -130,13 +128,11 @@ export default class Model extends React.Component {
         break;
 
       case "duration":
-        if (!ValidRegex.test(value)) {
+        if (!DurationRegex.test(value)) {
           formerrors.duration = "Invalid Duration";
-        } 
-        else if (value.length > 30) {
+        } else if (value.length > 30) {
           formerrors.duration = "Should be less than 30 characters";
-       } 
-        else {
+        } else {
           formerrors.duration = "";
         }
         break;
@@ -173,22 +169,8 @@ export default class Model extends React.Component {
       console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
     }
   };
-  onChangeprojectId(e) {
-    this.setState({
-      projectId: e.target.value
-    });
-  }
-  onChangeprojectName(e) {
-    this.setState({
-      projectName: e.target.value
-    });
-  }
-  onChangeType(e) {
-    this.setState({
-      type: e.target.value
-    });
-  }
-  onChangeStartDate=(date, dateString)=> {
+
+  onChangeStartDate = (date, dateString) => {
     // this.setState({startDate: dateString});
 
     this.setState({ startDate: dateString }, () =>
@@ -196,30 +178,14 @@ export default class Model extends React.Component {
     );
 
     console.log(this.state.startDate);
-  }
-  onChangeEndDate=(date, dateString)=> {
+  };
+  onChangeEndDate = (date, dateString) => {
     this.setState({ endDate: dateString }, () =>
       console.log(this.state.endDate)
     );
 
     console.log(this.state.endDate);
-  }
-  onChangeDuration=(e) =>{
-    this.setState({
-      duration: e.target.value
-    });
-  }
-  onChangeStatus(e) {
-    this.setState({
-      status: e.target.value
-    });
-  }
-  // onChangeconfigId(e) {
-  //   this.setState({
-  //     configId: e.target.value
-  //   });
-  // }
-
+  };
   state = {
     disabled: true,
     visible: false
@@ -242,72 +208,76 @@ export default class Model extends React.Component {
     });
   };
 
+  getall() {}
+
   handleOk = e => {
     e.preventDefault();
 
-    const projectData = {
-      projectId: this.state.projectId,
-      projectName: this.state.projectName,
-      type: this.state.type,
-      startDate: this.state.startDate,
-      endDate: this.state.endDate,
-      duration: this.state.duration,
-      status: this.state.status
-      // configId: this.state.configId
-    };
-    console.log("dddddddddddddddddddd"+projectData)
-    axios
-      .post("http://localhost:8081/defectservices/createproject/", projectData)
-      .then(res => console.log(res.data));
-
-    this.setState({
-      projectId: "",
-      projectName: "",
-      type: "",
-      startDate: "",
-      endDate: "",
-      duration: "",
-      status: "",
-
-      visible: false
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log("Received values of form: ", values);
+        message.success("Successfully Added!!!");
+        this.setState({ visible: false });
+      } else {
+      }
     });
-    message.success("Added Successfully!");
+    if (formValid(this.state)) {
+      console.info(`
+        --SUBMITTING--
+        Project Id: ${this.state.projectId}
+        Project Name: ${this.state.projectName}
+        Project Type:${this.state.type}
+        Project Start Date: ${this.state.startDate}
+        Project End Date: ${this.state.endDate}
+        Project Duration: ${this.state.duration}
+        Project Status : ${this.state.status}
+ `);
+
+      const projectData = {
+        projectId: this.state.projectId,
+        projectName: this.state.projectName,
+        type: this.state.type,
+        startDate: this.state.startDate,
+        endDate: this.state.endDate,
+        duration: this.state.duration,
+        status: this.state.status
+      };
+
+      axios
+        .post(
+          "http://localhost:8081/defectservices/createproject/",
+          projectData
+        )
+        .then(res => {
+          console.log(res.data);
+          this.getall();
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    } else {
+      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+    }
   };
+  state = { visible: false };
 
   handleCancel = e => {
     console.log(e);
     this.setState({
       visible: false
     });
-   
   };
 
   handleChange = e => {
     e.preventDefault();
     const { name, value } = e.target;
     let formErrors = { ...this.state.formErrors };
-
-    switch (name) {
-      case "projectName":
-        formErrors.projectName =
-          value.length < 3 ? "minimum 3 characaters required" : "";
-        break;
-      case "type":
-        formErrors.type =
-          value.length < 3 ? "minimum 3 characaters required" : "";
-        break;
-      default:
-        break;
-    }
-
     this.setState({ formErrors, [name]: value }, () => console.log(this.state));
   };
 
   render() {
-
+    const { getFieldDecorator } = this.props.form;
     const { formerrors } = this.state;
-
-    // const { getFieldDecorator } = this.props.form;
     return (
       <div>
         <Button type="primary" onClick={this.showModal}>
@@ -326,15 +296,27 @@ export default class Model extends React.Component {
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item label="Project Id">
-                  <Input
-                    className={
-                      formerrors.projectId.length > 0 ? "error" : null}
-                    placeholder="Project Id"
-                    name="projectId"
-                    value={this.state.projectId}
-                    // onChange={this.onChangeprojectId}
-                    onChange={this.handlechange}
-                  />
+                  <div>
+                    {getFieldDecorator("projectId", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input ProjectId!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        className={
+                          formerrors.projectId.length > 0 ? "error" : null
+                        }
+                        placeholder="Project Id"
+                        name="projectId"
+                        value={this.state.projectId}
+                        // onChange={this.onChangeprojectId}
+                        onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
                   {formerrors.projectId.length > 0 && (
                     <span
                       className="error"
@@ -349,18 +331,31 @@ export default class Model extends React.Component {
 
             <Row gutter={16}>
               <Col span={24}>
-                <Form.Item label="Project Name"
+                <Form.Item
+                  label="Project Name"
                   validateStatus={this.state.projectName.validateStatus}
-                  help={this.state.projectName.errorMsg}>
-                  <Input
-                    className={
-                      formerrors.projectName.length > 0 ? "error" : null}
-                    placeholder="Project Name"
-                    name="projectName"
-                    value={this.state.projectName}
-                    // onChange={this.onChangeprojectName}
-                    onChange={this.handlechange}
-                  />
+                  help={this.state.projectName.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("projectName", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input projectName!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        className={
+                          formerrors.projectName.length > 0 ? "error" : null
+                        }
+                        placeholder="Project Name"
+                        name="projectName"
+                        value={this.state.projectName}
+                        onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
                   {formerrors.projectName.length > 0 && (
                     <span
                       className="error"
@@ -375,19 +370,33 @@ export default class Model extends React.Component {
 
             <Row gutter={16}>
               <Col span={8}>
-                <Form.Item label="Type">
-                  <Input
-                    placeholder="Type"
-                    name="type"
-                    value={this.state.type}
-                    // onChange={this.onChangeType}
-                    onChange={this.handlechange}
-                  />
-
+                <Form.Item
+                  label="Type"
+                  validateStatus={this.state.type.validateStatus}
+                  help={this.state.type.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("type", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input Project Type!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        placeholder="Type"
+                        name="type"
+                        value={this.state.type}
+                        onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
                   {formerrors.type.length > 0 && (
                     <span
                       className="error"
-                      style={{ color: "red", fontSize: "14px" }}>
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
                       {formerrors.type}
                     </span>
                   )}
@@ -395,60 +404,99 @@ export default class Model extends React.Component {
               </Col>
 
               <Col span={8}>
-                <Form.Item label="Start Date">
-                  <Form.Item>
-                    <DatePicker
-                      placeholder="Start Date"
-                      name="startDate"
-                      startDate={this.state.startDate}
-                      onChange={this.onChangeStartDate}
-                    
-                    />
-                    {formerrors.startDate.length > 0 && (
-                      <span
-                        className="error"
-                        style={{ color: "red", fontSize: "14px" }}
-                      >
-                        {formerrors.startDate}
-                      </span>
+                <Form.Item
+                  label="Start Date"
+                  validateStatus={this.state.startDate.validateStatus}
+                  help={this.state.startDate.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("startDate", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input startDate!"
+                        }
+                      ]
+                    })(
+                      <DatePicker
+                        placeholder="Start Date"
+                        name="startDate"
+                        startDate={this.state.startDate}
+                        onChange={this.onChangeStartDate}
+                      />
                     )}
-                  </Form.Item>
+                  </div>
+                  {formerrors.startDate.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formerrors.startDate}
+                    </span>
+                  )}
+                  {/* </Form.Item> */}
                 </Form.Item>
               </Col>
 
               <Col span={8}>
-                <Form.Item label="End Date">
-                  <Form.Item>
-                    <DatePicker
-                      placeholder="End Date"
-                      name="endDate"
-                      endDate={this.state.endDate}
-                      onChange={this.onChangeEndDate}
-                      // onChange={this.handlechange}
-                    />
-                    {formerrors.endDate.length > 0 && (
-                      <span
-                        className="error"
-                        style={{ color: "red", fontSize: "14px" }}
-                      >
-                        {formerrors.endDate}
-                      </span>
+                {/* <Form.Item label="End Date"> */}
+                <Form.Item
+                  label="End Date"
+                  validateStatus={this.state.endDate.validateStatus}
+                  help={this.state.endDate.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("endDate", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input Project End Date!"
+                        }
+                      ]
+                    })(
+                      <DatePicker
+                        placeholder="End Date"
+                        name="endDate"
+                        onChange={this.onChangeEndDate}
+                      />
                     )}
-                  </Form.Item>
+                  </div>
+                  {formerrors.endDate.length > 0 && (
+                    <span
+                      className="error"
+                      style={{ color: "red", fontSize: "14px" }}
+                    >
+                      {formerrors.endDate}
+                    </span>
+                  )}
                 </Form.Item>
               </Col>
             </Row>
 
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Duration">
-                  <Input
-                    placeholder="Duration"
-                    name="duration"
-                    value={this.state.duration}
-                    onChange={this.onChangeDuration}
-                    // onChange={this.handlechange}
-                  />
+                <Form.Item
+                  label="Duration"
+                  validateStatus={this.state.duration.validateStatus}
+                  help={this.state.duration.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("duration", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input Project Duration!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        placeholder="Duration"
+                        name="duration"
+                        value={this.state.duration}
+                        onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
                   {formerrors.duration.length > 0 && (
                     <span
                       className="error"
@@ -461,14 +509,28 @@ export default class Model extends React.Component {
               </Col>
 
               <Col span={12}>
-                <Form.Item label="Status">
-                  <Input
-                    placeholder="Status"
-                    name="status"
-                    value={this.state.status}
-                    // onChange={this.onChangeStatus}
-                    onChange={this.handlechange}
-                  />
+                <Form.Item
+                  label="Status"
+                  validateStatus={this.state.status.validateStatus}
+                  help={this.state.status.errorMsg}
+                >
+                  <div>
+                    {getFieldDecorator("status", {
+                      rules: [
+                        {
+                          required: true,
+                          message: "Please input Project Status!"
+                        }
+                      ]
+                    })(
+                      <Input
+                        placeholder="Status"
+                        name="status"
+                        value={this.state.status}
+                        onChange={this.handlechange}
+                      />
+                    )}
+                  </div>
                   {formerrors.status.length > 0 && (
                     <span
                       className="error"
@@ -479,16 +541,6 @@ export default class Model extends React.Component {
                   )}
                 </Form.Item>{" "}
               </Col>
-
-              {/* <Col span={8}>
-                <Form.Item label="Config Id">
-                  <Input
-                    placeholder="Config Id"
-                    value={this.state.configId}
-                    onChange={this.onChangeconfigId}
-                  />
-                </Form.Item>{" "}
-              </Col> */}
             </Row>
           </form>
         </Modal>
@@ -496,3 +548,4 @@ export default class Model extends React.Component {
     );
   }
 }
+export default Form.create()(Model);

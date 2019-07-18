@@ -1,9 +1,13 @@
-import { Modal, Form, Row, Col, Input, Icon, DatePicker } from "antd";
+import { Modal, Form, Row, Col, message,Input, Icon, DatePicker } from "antd";
 import Table from "./Table"
 import React from "react";
 import axios from "axios";
 import moment from "moment";
 
+function confirm(e) {
+  console.log(e)
+  message.success("Edit Successfully!");
+}
 function onChange(e) {
   console.log(`checked = ${e.target.checked}`);
 }
@@ -151,6 +155,7 @@ export default class Model extends React.Component {
       type: '',
       visibleEditModal: false
     });
+    message.success("Edit Successfully!");
   });
   };
 
