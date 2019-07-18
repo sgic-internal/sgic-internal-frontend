@@ -17,8 +17,8 @@ import {
   List,
   Popconfirm,
   message,
-  Typography,
-  Divider
+  Divider,
+  
 } from "antd";
 import moment from "moment";
 import axios from "axios";
@@ -32,13 +32,15 @@ const Option = Select.Option;
 const { TextArea } = Input;
 const id = 1;
 const props = {
-  name: "files",
+ name: "files",
   action:
     "http://localhost:8081/defectservices/uploadMultipleFiles?defectId=" + id,
   headers: {
     authorization: "authorization-text"
   },
   multiple: true
+
+  
 };
 
 function confirm(e) {
@@ -92,9 +94,9 @@ class TableFilter extends React.Component {
       defectId: "",
       abbre: "",
       projectId: "",
-      moduleId: "",
-      priority: "",
-      severity: "",
+      //moduleId: "",
+      priority: "Medium",
+      severity: "Medium",
       type: "",
       status: "",
       defectDescription: "",
@@ -115,22 +117,23 @@ class TableFilter extends React.Component {
       },
       images: [],
       user: "",
-      status: "",
+     // status: "",
       audit: "",
       comment: [],
       photoIndex: 0,
       isOpen: false,
       count: 0,
-      filteredInfo: null,
-      sortedInfo: null,
+      //filteredInfo: null,
+     // sortedInfo: null,
       visible: false,
       visible1: false,
       showModalView: false,
       comments: [],
       submitting: false,
       value: ""
-      //fileList: [],
-      //uploading: false,
+      
+     
+     
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.refreshDefect = this.refreshDefect.bind(this);
@@ -191,6 +194,9 @@ class TableFilter extends React.Component {
       message.error("Can't add more than 5 comments");
     }
   }
+  
+
+
   componentWillMount() {
     this.getAllDefect();
   }
@@ -278,14 +284,14 @@ class TableFilter extends React.Component {
       status: this.state.status,
       fixedIn: "Release3",
       abbre: "gg",
-      defectDescription: "gg",
+      defectDescription: this.state.defectDescription,
       stepsToRecreate: "gggggggggggggggggggggggg",
       assignTo: "gg",
       reassignTo: "gg",
       enteredBy: "gg",
       fixedBy: "gg",
       availableIn: "gg",
-      foundIn: "Release3",
+      foundIn: this.state.foundIn,
       dateAndTime: "2015-05-05"
     };
 
@@ -305,10 +311,12 @@ class TableFilter extends React.Component {
       projectId: "",
       severity: "",
       priority: "",
+      defectDescription: "",
       type: "",
       status: "",
       foundIn: "",
       fixedIn: "",
+      
 
       visible1: false
     });
@@ -424,9 +432,12 @@ class TableFilter extends React.Component {
   handleChangeStatus = value => {
     this.setState({ status: value });
   };
-  //handleChangeFoundIn = value => {
-  //  this.setState({ type: value });
-  //};
+ // handleChangeDefectDescription= value => {
+ //   this.setState({ defectDescription: value });
+ // };
+  handleChangeFoundIn = value => {
+    this.setState({ foundIn: value });
+  };
   // handleChangeFixedIn = value => {
   //    this.setState({ type: value });
   //};
@@ -434,6 +445,7 @@ class TableFilter extends React.Component {
   handleChangeAssignTo = value => {
     this.setState({ assignTo: value });
   };
+  
 
   remove = id => {
     console.log(id);
@@ -544,13 +556,17 @@ class TableFilter extends React.Component {
   };
   //fetching the employee with get all employee
   getAllDefect = () => {
+   
     const _this = this;
+    
     axios
       .get("http://localhost:8081/defectservices/getAllDefects")
       .then(function(response) {
         // handle success
         console.log(response);
+
         var data = response.data;
+        console.log("gjhgjhg"+response.data.length);
         for (let a = 0; a < data.length; a++) {
           _this.state.defect.push({
             defectId: data[a].defectId,
@@ -563,13 +579,17 @@ class TableFilter extends React.Component {
             status: data[a].status
           });
         }
-        console.log(_this.state.defect);
+        console.log(this.state.defect);
+        alert(this.state.defect.length)
       });
 
-    this.setState({ state: this.state });
+    this.setState({ state: this.state,
+     
+     });
   };
 
   render() {
+    const departureValidationMessage = 'Please select a departure country!';
     const { photoIndex, isOpen, images } = this.state;
     const { comments, submitting, value, defect } = this.state;
     let { sortedInfo, filteredInfo } = this.state;
@@ -581,30 +601,37 @@ class TableFilter extends React.Component {
         dataIndex: "defectId",
         key: "defectId",
         //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
-        filteredValue: filteredInfo.defectId || null,
-        onFilter: (value, record) => record.defectId.includes(value),
-        sorter: (a, b) => a.defectId.length - b.defectId.length,
-        sortOrder: sortedInfo.columnKey === "defectId" && sortedInfo.order
+        //filteredValue: filteredInfo.defectId || null,
+        //onFilter: (value, record) => record.defectId.includes(value),
+        //sorter: (a, b) => a.defectId.length - b.defectId.length,
+        //sortOrder: sortedInfo.columnKey === "defectId" && sortedInfo.order
       },
       {
         title: "Project Name",
         dataIndex: "projectName",
         key: "projectName",
-        //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
+        filters: [
+          { text: "Leave", value: "leave" },
+          { text: "Defect", value: "defect" },
+          
+        ],
+        
         filteredValue: filteredInfo.projectName || null,
         onFilter: (value, record) => record.projectName.includes(value),
-        sorter: (a, b) => a.projectName.length - b.projectName.length,
-        sortOrder: sortedInfo.columnKey === "projectId" && sortedInfo.order
-      },
+        },
       {
         title: "Module Name",
         dataIndex: "moduleName",
         key: "moduleName",
-        //filters: [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }],
-        filteredValue: filteredInfo.moduleId || null,
-        onFilter: (value, record) => record.moduleId.includes(value),
-        sorter: (a, b) => a.moduleId.length - b.moduleId.length,
-        sortOrder: sortedInfo.columnKey === "moduleId" && sortedInfo.order
+        filters: [
+          { text: "Login", value: "login" },
+          { text: "Defect", value: "defect" },
+          
+        ],
+      
+        filteredValue: filteredInfo.moduleName || null,
+        onFilter: (value, record) => record.moduleName.includes(value),
+       
       },
       {
         title: "Severity",
@@ -629,8 +656,7 @@ class TableFilter extends React.Component {
         ],
         filteredValue: filteredInfo.priority || null,
         onFilter: (value, record) => record.priority.includes(value)
-        // sorter: (a, b) => a.priority.length - b.priority.length,
-        // sortOrder: sortedInfo.columnKey === "priority" && sortedInfo.order
+        
       },
       {
         title: "Type",
@@ -643,8 +669,7 @@ class TableFilter extends React.Component {
         ],
         filteredValue: filteredInfo.type || null,
         onFilter: (value, record) => record.type.includes(value)
-        // sorter: (a, b) => a.type.length - b.type.length,
-        // sortOrder: sortedInfo.columnKey === "type" && sortedInfo.order
+        
       },
       {
         title: "Status",
@@ -680,8 +705,7 @@ class TableFilter extends React.Component {
         ],
         filteredValue: filteredInfo.status || null,
         onFilter: (value, record) => record.status.includes(value),
-        sorter: (a, b) => a.status.length - b.status.length,
-        sortOrder: sortedInfo.columnKey === "status" && sortedInfo.order
+      
       },
       {
         title: "Found In",
@@ -694,8 +718,7 @@ class TableFilter extends React.Component {
         ],
         filteredValue: filteredInfo.fixedIn || null,
         onFilter: (value, record) => record.status.includes(value),
-        sorter: (a, b) => a.status.length - b.status.length,
-        sortOrder: sortedInfo.columnKey === "fixedIn" && sortedInfo.order
+      
       },
       {
         title: "Fixed In",
@@ -732,23 +755,9 @@ class TableFilter extends React.Component {
         ],
         filteredValue: filteredInfo.fixedIn || null,
         onFilter: (value, record) => record.status.includes(value),
-        sorter: (a, b) => a.status.length - b.status.length,
-        sortOrder: sortedInfo.columnKey === "fixedIn" && sortedInfo.order
+        
       },
-      // {
-      //   title: "Status",
-      //   dataIndex: "status",
-      //   key: "status",
-      //   filters: [
-      //     { text: "Open", value: "Open" },
-      //     { text: "Re-opened", value: "Re-opened" },
-      //     { text: "Defrred", value: "Defrred" }
-      //   ],
-      //   filteredValue: filteredInfo.status || null,
-      //   onFilter: (value, record) => record.status.includes(value),
-      //   sorter: (a, b) => a.status.length - b.status.length,
-      //   sortOrder: sortedInfo.columnKey === "statusId" && sortedInfo.order
-      // },
+      
       {
         title: "Action",
         key: "action",
@@ -789,6 +798,7 @@ class TableFilter extends React.Component {
                 />
               </a>
             </Popconfirm>
+            
           </span>
         )
       },
@@ -804,6 +814,9 @@ class TableFilter extends React.Component {
             />
           </span>
         )
+      },
+      {
+
       }
     ];
     return (
@@ -812,6 +825,7 @@ class TableFilter extends React.Component {
         <Button type="primary" onClick={this.showModal1}>
           Add Defect
         </Button>
+        
         <br />
         <br />
         {/* Add Defects Part */}
@@ -862,9 +876,15 @@ class TableFilter extends React.Component {
                 className="defectDescription"
                 name="defectDescription"
                 autosize={{ minRows: 4, maxRows: 10 }}
-                onChange={this.handleChangeState}
-                placeholder="Description"
-              />
+                onChange={event => this.handleChangeState(event)}
+                placeholder="Description"   
+                required={true}
+                validationMessage={departureValidationMessage}
+                />
+                
+               
+                                    
+            
             </Form.Item>
 
             <Form.Item label="Steps to Re-create: ">
@@ -878,9 +898,9 @@ class TableFilter extends React.Component {
             </Form.Item>
             <Row>
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="type: ">
+                <Form.Item label="Type: ">
                   <Select
-                    defaultValue="UI"
+                    placeholder="Type"
                     style={{ width: "100%" }}
                     onChange={this.handleChangeType}
                   >
@@ -892,11 +912,12 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="severity">
-                  <Select
-                    defaultValue="high"
+                <Form.Item label="Severity">
+                  <Select                    
                     style={{ width: "100%" }}
                     onChange={this.handleChangeSeverity}
+                    defaultValue="Medium"
+                    
                   >
                     <Option value="High">High</Option>
                     <Option value="Medium">Medium</Option>
@@ -905,9 +926,9 @@ class TableFilter extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={8} style={{ padding: "5px" }}>
-                <Form.Item label="priority:  ">
+                <Form.Item label="Priority:  ">
                   <Select
-                    defaultValue="high"
+                    defaultValue="Medium"
                     style={{ width: "100%" }}
                     onChange={this.handleChangePriority}
                   >
@@ -924,7 +945,7 @@ class TableFilter extends React.Component {
                   <Select
                     defaultValue="Release"
                     style={{ width: "100%" }}
-                    //onChange={this.handleChangeFoundIn}
+                    onChange={this.handleChangeFoundIn}
                   >
                     <Option value="Release1">Release1</Option>
                     <Option value="Release2">Release2</Option>
@@ -961,11 +982,13 @@ class TableFilter extends React.Component {
               </Form.Item>
             </Row>
           </Form>
-          <Upload {...this.state.addAttachment}>
-            <Button>
-              <Icon type="upload" /> Click to Upload
-            </Button>
-          </Upload>
+         
+              <Upload {...this.state.addAttachment}>
+                <Button>
+                  <Icon type="upload" /> Click to Upload
+                </Button>
+              </Upload>
+            
         </Modal>
         <Table
           columns={columns}
@@ -973,7 +996,9 @@ class TableFilter extends React.Component {
           onChange={this.handleChange}
           scroll={{ x: 1300 }}
         />
-
+                  
+          <p>Total Defects :- {this.state.defect.length}</p>
+          
         {/* Edit Defects Part  */}
         <Modal
           title="Edit Defects"
@@ -1103,8 +1128,9 @@ class TableFilter extends React.Component {
             <Form.Item label=" Description: ">
               <TextArea
                 placeholder="Description"
-                autosize={{ minRows: 3, maxRows: 12 }}
+                autosize={{ minRows: 3, maxRows: 12 }} 
               />
+              
             </Form.Item>
 
             <Form.Item label=" Steps to Re-create: ">
@@ -1141,7 +1167,7 @@ class TableFilter extends React.Component {
                 <b>Description:</b>
               </p>
               <p>
-                <b>Steps to re-create:</b>
+                <b>Steps to Recreate:</b>
               </p>
               <p>
                 <b>Severity:</b>
@@ -1288,6 +1314,7 @@ class TableFilter extends React.Component {
             }
           />
         </Modal>
+        
       </div>
     );
   }
