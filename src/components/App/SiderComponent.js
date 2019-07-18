@@ -213,6 +213,9 @@ class SiderComponent extends React.Component {
             <Menu.Item key="26">
               <Link to="/privilege/techlead">Tech Lead Privileges</Link>
             </Menu.Item>
+            <Menu.Item key="27">
+              <Link to="/privilege/projectConfig">Project Configure Privilege</Link>
+            </Menu.Item>
             </SubMenu>
             <SubMenu
             key="sub8"

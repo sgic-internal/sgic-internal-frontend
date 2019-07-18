@@ -127,6 +127,7 @@ export default class StatusConfig extends React.Component {
         });
         }
 
+
         getCountDefectStatus() {
           const url = 'http://localhost:8081/defectservice/countdefectstatus';
           axios.get(url)
@@ -141,6 +142,7 @@ export default class StatusConfig extends React.Component {
     //   //Simple Axios
     //   const url ='http://localhost:8081/defectservice/defectstatuses';
     //   axios.get(url)
+
       
     //   .then(response => this.setState({
     //   DefectStatus: response.data,
@@ -160,7 +162,9 @@ export default class StatusConfig extends React.Component {
     this.showEditModal();
     this.setState({id:id})
     console.log(id);
-    axios.get('http://localhost:8081/defectservice/defectstatus/' + id)
+
+    axios.get('http://localhost:8081/defectservices/defectstatus/' + id)
+
     .then(response => {
         this.setState({ 
           name: response.data.name, 
@@ -175,7 +179,9 @@ export default class StatusConfig extends React.Component {
   deleteDefect = id => {
 
     console.log(id)
-    fetch(`http://localhost:8081/defectservice/defectstatus/` + id, {
+
+    fetch(`http://localhost:8081/defectservices/defectstatus/` + id, {
+
     method: "DELETE",
     headers: {
     "Content-Type": "application/json"
@@ -229,6 +235,7 @@ export default class StatusConfig extends React.Component {
    
    
     }
+
     this.setState({
     name: '',
     value: '',
@@ -243,6 +250,7 @@ export default class StatusConfig extends React.Component {
         name: this.state.name,
         value: this.state.value
       }
+
       if(this.state.name===""||this.state.value===""||(!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value)))
     {
       message.warn("Invalid Data");
@@ -262,6 +270,7 @@ export default class StatusConfig extends React.Component {
         message.warn("Defect Status Already Exist");
         });
       }
+
       this.setState({
         name: '',
         value: '',

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Table, Divider, Modal, Button, Icon, Form, Input, Popconfirm, message } from 'antd';
 // import { SketchPicker } from 'react-color';
@@ -31,8 +30,10 @@ export default class DefectTypeConfic extends React.Component {
     visible: false,
     visibleEditModal: false,
     DefectType: [],
+
     def: [],
     CountDefectType: []
+
   };
 
 
@@ -57,6 +58,7 @@ export default class DefectTypeConfic extends React.Component {
       }
     }
   };
+
 
   componentDidMount() {
     //this.componentWillMount();
@@ -83,7 +85,7 @@ export default class DefectTypeConfic extends React.Component {
   };
 
   getdefectType() {
-    const url = 'http://localhost:8081/defectservice/defecttypes';
+    const url = 'http://localhost:8081/defectservices/defecttypes';
     axios.get(url)
 
       .then(response => this.setState({
@@ -112,7 +114,9 @@ export default class DefectTypeConfic extends React.Component {
     this.showEditModal();
     this.setState({ id: id })
     console.log(id);
-    axios.get('http://localhost:8081/defectservice/defecttype/' + id)
+
+    axios.get('http://localhost:8081/defectservices/defecttype/' + id)
+
       .then(response => {
         this.setState({
           name: response.data.name,
@@ -128,7 +132,9 @@ export default class DefectTypeConfic extends React.Component {
   deleteDefect(id) {
 
     console.log(id)
-    fetch(`http://localhost:8081/defectservice/defecttype/` + id, {
+
+    fetch(`http://localhost:8081/defectservices/defecttype/` + id, {
+
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -155,6 +161,7 @@ export default class DefectTypeConfic extends React.Component {
     if (this.state.name === "" || this.state.value === "" || (!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value))) {
       message.warn("Invalid Data");
     }
+
     else if (NameRegex.test(this.state.name) && NameRegex.test(this.state.value)) {
       // axios.post('http://localhost:8081/defectservice/defecttype/', obj)
       //   .then(res => this.getdefectType());
@@ -177,6 +184,7 @@ export default class DefectTypeConfic extends React.Component {
     //   message.warn("aaaa");
     // }
 
+
     this.setState({
       formErrors: {
         name: "",
@@ -196,6 +204,7 @@ export default class DefectTypeConfic extends React.Component {
       name: this.state.name,
       value: this.state.value
     }
+
     if (this.state.name === "" || this.state.value === "" || (!NameRegex.test(this.state.name) || !NameRegex.test(this.state.value))) {
       message.warn("Invalid Data");
     }
@@ -214,6 +223,7 @@ export default class DefectTypeConfic extends React.Component {
           message.warn("Invalid Data");
         });
     }
+
 
     this.setState({
       name: '',
@@ -571,3 +581,4 @@ export default class DefectTypeConfic extends React.Component {
   }
 
 }
+

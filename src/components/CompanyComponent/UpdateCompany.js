@@ -1,69 +1,40 @@
 import React from "react";
-import { Modal, Button, Icon, Form, Input, Select, DatePicker } from "antd";
+import { Modal, Button, Icon, Form, Input, Radio, DatePicker } from "antd";
 import { InputNumber } from "antd";
 // import moment from "moment";
 import { Row, Col } from "antd";
 import "./index.css";
 import axios from "axios";
-import CompanyController from "./CompanyController";
-import { Link } from "react-router-dom";
-
-// import AllApi from ".AllApi";
-
-//import { getFieldDecorator } from "antd";
 
 // const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY"];
 
 const { TextArea } = Input;
-const { Option } = Select;
 //dropdown for Lisence period s Function
 function onChange(value) {
   console.log("changed", value);
 }
 
-export default class AddCompany extends React.Component {
+export default class UpdateCompany extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      companyId: "",
       companyName: "",
       companyAbbrivation: "",
       companyRegNo: "",
       companyAdminName: "",
       companyAdminEmail: "",
-      companyLicenseTypeId: "",
-      licenseTypeCompany: "",
+      companyLicenseType: "",
       companyLicensePeriod: "",
       LicenseStartDate: "",
       LicenseEndDate: "",
       companyDescription: "",
       visible: false,
-      loading: false,
-      getCompany: [],
-      getLicenseTypes: []
+      loading: false
     };
     this.onSubmit = this.onSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
   }
-
-  //-----------------------------------------------------------------
-  fetchAllLicenseType = () => {
-    fetch(`http://localhost:8083/productservice/Licenses`)
-      .then(res => res.json())
-      .then(data => {
-        this.setState({
-          getLicenseTypes: data
-        });
-        // console.log(data);
-      });
-  };
-
-  componentDidMount() {
-    this.fetchAllLicenseType();
-  }
-
-  //--------------------------------------------------------------
 
   //Get All Method
   onChange(event) {
@@ -72,21 +43,7 @@ export default class AddCompany extends React.Component {
     this.setState({
       [name]: value
     });
-    this.fetchAllLicenseType();
   }
-
-  //Get All Method
-  onChangeLicenseSelect = value => {
-    this.setState({
-      licenseTypeCompany: value
-    });
-    console.log(this.state.licenseTypeCompany);
-    //this.fetchAllLicenseType();
-  };
-
-  // function onChange(date, dateString) {
-  //   console.log(date, dateString);
-  // }
 
   showModal = () => {
     this.setState({
@@ -115,57 +72,69 @@ export default class AddCompany extends React.Component {
   //On submit form method
   onSubmit(e) {
     e.preventDefault();
-    const Company = {
+    const updateCompany = {
       companyName: this.state.companyName,
       companyAbbrivation: this.state.companyAbbrivation,
       companyRegNo: this.state.companyRegNo,
       companyAdminName: this.state.companyAdminName,
       companyAdminEmail: this.state.companyAdminEmail,
-      companyLicenseTypeId: this.state.licenseTypeCompany,
+      companyLicenseType: this.state.companyLicenseType,
       companyLicensePeriod: this.state.companyLicensePeriod,
+      LicenseStartDate: this.state.LicenseStartDate,
+      LicenseEndDate: this.state.LicenseEndDate,
       companyDescription: this.state.companyDescription
     };
+    console.log(updateCompany);
+    axios
+      .post("http://localhost:8083/productservice/Company", updateCompany)
+      .then(res => {
+        if (res.status === 200) {
+          alert("Company Update Successfylly...!");
+          console.log(res.data);
+        }
+      });
 
-    CompanyController.AddCompanyApi(Company);
-    console.log(Company);
-    console.log(Company.licenseTypeCompany);
+    this.setState({
+      companyName: "",
+      companyAbbrivation: "",
+      companyRegNo: "",
+      companyAdminName: "",
+      companyAdminEmail: "",
+      companyLicenseType: "",
+      companyLicensePeriod: "",
+      LicenseStartDate: "",
+      LicenseEndDate: "",
+      companyDescription: ""
+    });
+
+    console.log(
+      JSON.stringify({
+        companyName: this.setState.companyName,
+        companyAbbrivation: this.setState.companyAbbrivation,
+        companyRegNo: this.setState.companyRegNo,
+        companyAdminName: this.setState.companyAdminName,
+        companyAdminEmail: this.setState.companyAdminEmail,
+        companyLicenseType: this.setState.companyLicenseType,
+        companyLicensePeriod: this.setState.companyLicensePeriod,
+        LicenseStartDate: this.setState.LicenseStartDate,
+        LicenseEndDate: this.setState.LicenseEndDate,
+        companyDescription: this.setState.companyDescription
+      })
+    );
   }
-
-  //-------------------------------------------------------------------------------------------------
-
-  // this.setState({ loading: true });
-  // setTimeout(() => {
-  //   this.setState({ loading: false, visible: false });
-  // }, 1000);
-
-  // handleCancel = () => {
-  //   this.setState({ visible: false });
-  // };
-
   //Rendering Pattern
   render() {
     const { visible, loading } = this.state;
     return (
       <div>
-        <Row>
-          <Col span={6}>
-            <Button type="primary" onClick={this.showModal}>
-              Add Company
-            </Button>
-          </Col>
-          <Col span={6} />
-          <Col span={9} />
-          <Col span={3}>
-            <Link to="/config">
-              <Button type="primary">configuration</Button>
-            </Link>
-          </Col>
-        </Row>
+        <Button type="primary" onClick={this.showEditModal}>
+          Update Company
+        </Button>
         <Modal
           variant="contained"
           width="675px"
           visible={visible}
-          title="Add Company"
+          title="Update Company"
           onOk={this.handleOk}
           onCancel={this.handleCancel}
           footer={[
@@ -183,7 +152,7 @@ export default class AddCompany extends React.Component {
               //loading={loading}
               onClick={this.onSubmit}
             >
-              Add
+              Update
             </Button>
           ]}
         >
@@ -245,6 +214,7 @@ export default class AddCompany extends React.Component {
                     min={1}
                     max={150}
                     // defaultValue={3}
+
                     onChange={this.onChangeLicense}
                     placeholder="In Months"
                     style={{ width: "100%" }}
@@ -255,21 +225,21 @@ export default class AddCompany extends React.Component {
               </Col>
 
               <Col span={15} style={{ padding: "5px" }}>
-                <Form.Item label="License Type">
-                  <Select
-                    name="licenseType"
-                    id="licenseType"
-                    value={this.state.licenseTypeCompany}
-                    defaultValue="Select License Type"
-                    style={{ width: 120 }}
-                    onChange={this.onChangeLicenseSelect}
+                <Form.Item
+                  label="Lisence Type"
+                  className="collection-create-form_last-form-item"
+                >
+                  <Radio.Group
+                    onChange={event => this.onChange(event)}
+                    type="radio"
+                    name="companyLicenseType"
+                    value={this.state.companyLicenseType}
                   >
-                    {this.state.getLicenseTypes.map(e => (
-                      <Option key={e.licenseId} value={e.licenseId}>
-                        {e.licenseType}
-                      </Option>
-                    ))}
-                  </Select>
+                    <Radio value="basic">Basic</Radio>
+                    <Radio value="medium">Medium</Radio>
+                    <Radio value="advanced">Advanced</Radio>
+                    <Radio value="customized">Customized</Radio>
+                  </Radio.Group>
                 </Form.Item>
               </Col>
             </Row>
