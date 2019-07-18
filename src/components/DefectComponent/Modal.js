@@ -15,6 +15,7 @@ const props = {
     }
   }
 export default class ModalB extends React.Component {
+  
   state = { visible: false , value: undefined };
 
   showModal = () => {

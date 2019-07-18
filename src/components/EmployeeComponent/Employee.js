@@ -1,70 +1,200 @@
-import { Table, Input, Button, Icon } from "antd";
+import {
+  Table,
+  Input,
+  Button,
+  Icon,
+  Modal,
+  Form,
+  Select,
+  Row,
+  Col,
+  Popconfirm,
+  message
+} from "antd";
 import Highlighter from "react-highlight-words";
 import React from "react";
-import EmployeeView from "./EmployeeViewModal";
-import EmployeeEdit from "./EmployeeEditModal";
+import axios from "axios";
 
-const data = [
-  {
-    key: "1",
-    EmployeeId: "0001",
-    name: "Rammiya Narayanasamy",
-    role: "Software Engineer",
-    emailid: "ramminarayanan7@gmai.com",
-    contactno: "0764345676",
-    edit: <EmployeeEdit />,
-    delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-    view: <EmployeeView />
-  },
-  {
-    key: "2",
-    EmployeeId: "0002",
-    name: "Saranya Narayanasamy",
-    role: "Software Engineer",
-    emailid: "saranyanarayanan7@gmail.com",
-    contactno: "0764345676",
-    edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
-    delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-    view: (
-      <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
-    )
-  },
-  {
-    key: "3",
-    EmployeeId: "0003",
-    name: "Abira Thavalingam",
-    role: "Software Engineer",
-    emailid: "abithavan@gmail.com",
-    contactno: "0764345676",
-    edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
-    delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-    view: (
-      <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
-    )
-  },
-  {
-    key: "4",
-    EmployeeId: "0004",
-    name: "Piriyanka Arulantham",
-    role: "Software Engineer",
-    emailid: "piriyasiva@gmail.com",
-    contactno: "0764345676",
-    edit: <Icon type="edit" style={{ fontSize: "18px", color: "green" }} />,
-    delete: <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />,
-    view: (
-      <Icon type="fullscreen" style={{ fontSize: "18px", color: "black" }} />
-    )
-  }
-];
+const { Option } = Select;
+
+function confirm(e) {
+  console.log(e);
+  message.success("Successfully Deleted");
+}
+
+function cancel(e) {
+  console.log(e);
+  // message.error('Click on No');
+}
+
+function onChange(sorter) {
+  console.log("params", sorter);
+}
+
+
 
 export default class App extends React.Component {
-  state = {
-    searchText: ""
-  };
+  constructor(props) {
+    super(props);
+    this.onChangeEmployeeId = this.onChangeEmployeeId.bind(this);
+    this.onChangeEmployeeName = this.onChangeEmployeeName.bind(this);
+    this.onChangeEmployeeFirstName = this.onChangeEmployeeFirstName.bind(this);
+    this.onChangeEmployeeEmail = this.onChangeEmployeeEmail.bind(this);
+    this.onChangeEmployeeDesignation = this.onChangeEmployeeDesignation.bind(this);
+    this.handleOk = this.handleOk.bind(this);
+    this.fetchDesignations = this.fetchDesignations.bind(this);
+
+    this.state = {
+      employeeautoId: "",
+      employeeId: "",
+      employeeName: "",
+      employeeFirstName:"",
+      employeeDesignation: "",
+      employeeEmail: ""
+    };
+
+    this.state = {
+      searchText: "",
+      employees: [],
+      patients: [],
+      Total: ""
+    };
+  }
+
+  onChangeEmployeeId(e) {
+    this.setState({
+      employeeId: e.target.value
+    });
+  }
+  onChangeEmployeeName(e) {
+    this.setState({
+      employeeName: e.target.value
+    });
+  }
+
+  onChangeEmployeeFirstName(e){
+    this.setState({
+      employeeFirstName:e.target.value
+    });
+  }
+
+  onChangeEmployeeDesignation(value) {
+    this.setState({
+      employeeDesignation: `${value}`
+    });
+    console.log(this.state.employeeDesignation);
+  }
+
+  onChangeEmployeeEmail(e) {
+    this.setState({
+      employeeEmail: e.target.value
+    });
+  }
 
   state1 = {
     filteredInfo: null,
     sortedInfo: null
+  };
+
+  state = { visible: false };
+
+  showModal = () => {
+    this.setState({
+      visible: true
+    });
+  };
+
+  componentDidMount() {
+    this.fetchDesignations();
+    console.log("mounting");
+    this.getAllEmployees();
+    this.getTotalEmployee();
+  }
+
+  fetchDesignations() {
+    var _this = this;
+    axios
+      .get("http://localhost:8084/employeeservice/getAllDesignation")
+      .then(function(response) {
+        // handle success
+        console.log(response.data);
+        _this.setState({ designations: response.data });
+        console.log(_this.state.designations);
+      });
+  }
+
+  handleOk = empId => {
+    console.log(empId);
+    const obj = {
+      empId: this.state.employeeautoId,
+      employeeid: this.state.employeeId,
+      name: this.state.employeeName,
+      firstname:this.state.employeeFirstName,
+      designationid: this.state.employeeDesignation,
+      email: this.state.employeeEmail
+    };
+    axios
+      .put("http://localhost:8084/employeeservice/update/" + empId, obj)
+      .then(response => this.getAllEmployees());
+    this.setState({
+      employeeautoId: "",
+      employeeId: "",
+      employeeName: "",
+      employeeFirstName:"",
+      employeeDesignation: "",
+      employeeEmail: "",
+      visible: false
+    });
+
+    message.success("Updated Successfully!!!");
+  };
+
+  handleCancel = e => {
+    console.log(e);
+
+    this.setState({
+      visible: false
+    });
+  };
+
+  //fetching the employee with get all employee
+  async getAllEmployees() {
+    const url = "http://localhost:8084/employeeservice/getallemployee";
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data);
+    this.setState({
+      employees: data
+    });
+    console.log(this.state.employees);
+  }
+  async getTotalEmployee() {
+    const url = "http://localhost:8084/employeeservice/getcount";
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data);
+    this.setState({
+      Total: data
+    });
+    console.log(this.state.Total);
+  }
+  handleDelete = empId => {
+    fetch("http://localhost:8084/employeeservice/deletebyid/" + empId, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(this.state)
+    });
+    console.log(empId);
+    confirm(empId);
+    const employees = this.state.employees.filter(employees => {
+      return employees.empId !== empId;
+    });
+    this.setState({
+      employees
+    });
   };
 
   handleChange = (pagination, filters, sorter) => {
@@ -73,6 +203,30 @@ export default class App extends React.Component {
       filteredInfo: filters,
       sortedInfo: sorter
     });
+  };
+
+  handleEdit = empId => {
+    this.showModal();
+    console.log(empId);
+    this.setState({
+      empId: empId
+    });
+    axios
+      .get("http://localhost:8084/employeeservice/getempolyeebyid/" + empId)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          employeeautoId: response.data.empId,
+          employeeId: response.data.employeeid,
+          employeeName: response.data.name,
+          employeeFirstName:response.data.firstname,
+          employeeDesignation: response.data.designationid,
+          employeeEmail: response.data.email
+        });
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   };
 
   getColumnSearchProps = dataIndex => ({
@@ -131,7 +285,7 @@ export default class App extends React.Component {
         highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
         searchWords={[this.state.searchText]}
         autoEscape
-        textToHighlight={text.toString()}
+        textToHighlight={text}
       />
     )
   });
@@ -147,19 +301,18 @@ export default class App extends React.Component {
   };
 
   render() {
-    let { sortedInfo, filteredInfo } = this.state1;
+    // For Table functions
+    let { sortedInfo, filteredInfo } = this.state;
     sortedInfo = sortedInfo || {};
     filteredInfo = filteredInfo || {};
     const columns = [
       {
         title: "Emp Id",
-        dataIndex: "EmployeeId",
-        key: "EmployeeId",
+        dataIndex: "employeeid",
+        key: "employeeid",
         width: "10%",
-        filteredValue: filteredInfo.EmployeeId || null,
-        onFilter: (value, record) => record.EmployeeId.includes(value),
-        sorter: (a, b) => a.EmployeeId.length - b.EmployeeId.length,
-        sortOrder: sortedInfo.columnKey === "EmployeeId" && sortedInfo.order
+        defaultSortOrder: "descend",
+        sorter: (a, b) => a.employeeid.length - b.employeeid.length
       },
       {
         title: "Employee Name",
@@ -168,41 +321,163 @@ export default class App extends React.Component {
         width: "25%",
         ...this.getColumnSearchProps("name")
       },
+      {
+        title: "Employee FirstName",
+        dataIndex: "firstname",
+        key: "firstname",
+        width: "25%",
+        ...this.getColumnSearchProps("firstname")
+      },
 
       {
-        title: "Role",
-        dataIndex: "role",
-        key: "role",
+        title: "Designation",
+        dataIndex: "designationname",
+        key: "designationname",
         width: "25%",
-        ...this.getColumnSearchProps("role")
+        ...this.getColumnSearchProps("designationname")
       },
 
       {
         title: "Email Id",
-        dataIndex: "emailid",
-        key: "emailid"
+        dataIndex: "email",
+        key: "email",
+        ...this.getColumnSearchProps("email")
       },
 
       {
         title: "Edit",
-        dataIndex: "edit",
+        render: (text, data = this.state.patients) => (
+          <a>
+            <Icon
+              type="edit"
+              onClick={this.handleEdit.bind(this, data.empId)}
+              style={{ fontSize: "18px", color: "green" }}
+            />
+          </a>
+        ),
         key: "edit",
         width: "7%"
       },
       {
         title: "Delete",
-        dataIndex: "delete",
+        dataIndex: "empId",
+        key: "empId",
+        // ...this.getColumnSearchProps("empId"),
+        render: (text, data = this.state.patients) => (
+          <Popconfirm
+            title="Are you sure delete this Row?"
+            onConfirm={this.handleDelete.bind(this, data.empId)}
+            onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          >
+            <a>
+              <Icon type="delete" style={{ fontSize: "18px", color: "red" }} />
+            </a>
+          </Popconfirm>
+        ),
         key: "delete",
         width: "8%"
-      },
-      {
-        title: "More Details",
-        dataIndex: "view",
-        key: "view",
-
-        width: "8%"
       }
+
+      // {
+      //   title: "More Details",
+      //   render: () => (
+      //     <a>
+      //       <EmployeeView />
+      //     </a>
+      //   ),
+      //   key: "view",
+
+      //   width: "8%"
+      // }
     ];
-    return <Table columns={columns} dataSource={data} />;
+    return (
+      <React.Fragment>
+        <div>
+          <Modal
+            title="Edit Employee"
+            visible={this.state.visible}
+            onOk={this.handleOk.bind(this, this.state.empId)}
+            onCancel={this.handleCancel}
+            width="500px"
+          >
+            <Form>
+              <Row>
+                <Col span={8} style={{ padding: "5px" }}>
+                  <Form.Item label="Employee Id">
+                    <Input
+                      placeholder="Employee Id"
+                      value={this.state.employeeId}
+                      onChange={this.onChangeEmployeeId}
+                      disabled
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8} style={{ padding: "5px" }}>
+                  <Form.Item label="Employee Name">
+                    <Input
+                      placeholder="Employee Name"
+                      value={this.state.employeeName}
+                      onChange={this.onChangeEmployeeName}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8} style={{ padding: "5px" }}>
+                  <Form.Item label="Employee FirstName">
+                    <Input
+                      placeholder="Employee FirstName"
+                      value={this.state.employeeFirstName}
+                      onChange={this.onChangeEmployeeFirstName}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={8} style={{ padding: "5px" }}>
+                  <Form.Item label="Designation">
+                    <Select
+                      // defaultValue="Select Designation"
+                      onChange={this.onChangeEmployeeDesignation}
+                      value={this.state.employeeDesignation}
+                    >
+                      {this.state.employees.map(function(item, index) {
+                        return (
+                          <Option key={index} value={item.designationid}>
+                            {item.designationname}
+                          </Option>
+                        );
+                      })}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={16} style={{ padding: "5px" }}>
+                  <Form.Item label="Email Id">
+                    <Input
+                      placeholder="Email Id"
+                      value={this.state.employeeEmail}
+                      onChange={this.onChangeEmployeeEmail}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          </Modal>
+        </div>
+        <Table
+          columns={columns}
+          dataSource={this.state.employees}
+          pagination={{
+            total: this.state.Total,
+            //  showTotal: total => `Total ${total} employees`
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`,
+            pageSize: 10,
+            showSizeChanger: true
+            // showQuickJumper: true
+          }}
+        />
+      </React.Fragment>
+    );
   }
 }
