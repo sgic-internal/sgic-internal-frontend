@@ -187,6 +187,26 @@ getMedium1(){
             })
 }
 
+getSeverityIndex(){
+    axios
+        .get('http://localhost:8081/defectservices/getseverityindex')
+        .then(res=> {
+            let color=""
+            if(3>res.data){
+               color='#12cc1f'
+            }else{
+                color='#d60f0f'
+            }
+            
+            console.log(res.data)
+              this.setState({
+                  severityindex:res.data,
+                  color
+              })  
+              console.log(this.state.color)
+            })
+}
+
     componentDidMount() {
        this.getHigh1();
        this.getHigh();
@@ -194,6 +214,7 @@ getMedium1(){
        this.getLow();
        this.getLow1();
        this.getMedium1();
+       this.getSeverityIndex();
     }
 
     render() {
@@ -344,12 +365,11 @@ getMedium1(){
                         <Col span={6}>
                             <Card style={{ margin: "10px 2px", borderRadius: "5px" }}>
                                 <Statistic
-                                    title="QA Engineers"
-                                    value={9}
-
+                                    title="Severity Index"
+                                    value={this.state.severityindex}
                                     valueStyle={{ color: '#007673' }}
                                     prefix={<Icon type="sync" spin />}
-
+                                    suffix="%"
 
                                 />
                             </Card></Col>
