@@ -5,17 +5,35 @@ import axios from 'axios';
 
 export default class ChartBar extends Component {
 
-    state={
-        highsev:'',
-        mediumsev:'',
-        lowsev:''
+    constructor(props) {
+        super(props)
+        this.state = {
+            highsev:'',
+            mediumsev:'',
+            lowsev:'',
+            count:'',
+          
+        }
+        // this.componentWillMount = this.componentWillMount.bind(this);
+      };
 
-    }
-
-getHigh(){
+      
+      getdefectcount(){
 
         axios
-        .get('http://localhost:8081/defectservices/gethightcount')
+        .get('http://localhost:8081/defectservices/gettoatalcount')
+        .then(res=>{
+            console.log(res.data)
+            this.setState({
+                count:res.data
+            })
+        })
+}
+getHigh(){
+
+
+        axios
+        .get('http://localhost:8081/defectservices/getseverityhigcount')
         .then(res=>{
             console.log(res.data)
             this.setState({
@@ -26,7 +44,7 @@ getHigh(){
 
 getMedium(){
     axios
-    .get('http://localhost:8081/defectservices/getcountmedium')
+    .get('http://localhost:8081/defectservices/getseveritymediumcount')
     .then(res=>{
         console.log(res.data)
         this.setState({
@@ -35,27 +53,33 @@ getMedium(){
     })
 }
 
-getLow(){
-    axios
-    .get('http://localhost:8081/defectservices/getlowcount')
-    .then(res=>{
-        console.log(res.data)
-        this.setState({
-            lowsev:res.data
-        })
-    })
-}
+
+
+getlow() {
+    const url = 'http://localhost:8081/defectservices/getseveritylowcount';
+    axios.get(url)
+
+      .then(response => this.setState({
+        lowsev: response.data,
+      }))
+      .catch(function (error) {
+        console.log(error);
+      }); } 
+
+
+
 componentDidMount(){
-    this.getHigh();
-    this.getMedium();
-    this.getLow();
+    this.getHigh()
+    this.getMedium()
+    this.getlow()
+    this.getdefectcount()
 }
 
 
     render() {
-console.log(this.state.highsev)
+console.log()
 
-        const multiAxisData = {
+        /*const multiAxisData = {
             labels: ['High', 'Medium', 'Low '],
             datasets: [{
                 label: 'Severity',
@@ -68,6 +92,24 @@ console.log(this.state.highsev)
                 ],
                 yAxisID: 'y-axis-1',
                 data: [this.state.highsev, this.state.mediumsev, this.state.lowsev]
+            }]
+        };*/
+        const multiAxisData = {
+            labels: ['High', 'Medium', 'Low '],
+            datasets: [{
+                label: 'Defects',
+                backgroundColor: [
+                    '#EC407A',
+                    '#AB47BC',
+                    '#42A5F5'
+                
+
+                ],
+                yAxisID: 'y-axis-1',
+               data:[this.state.highsev,this.state.mediumsev,this.state.lowsev]
+             
+
+                
             }]
         };
 
@@ -85,7 +127,7 @@ console.log(this.state.highsev)
                     id: 'y-axis-1',
                     ticks: {
                         min: 0,
-                        max: 100
+                        max:100
                     }
                 }]
             }
@@ -95,7 +137,7 @@ console.log(this.state.highsev)
 
         return (
             <div>
-                <Card title="Defects By Projects" style={{ margin: "0 5px 0 -2px", borderRadius: "5px" }}>
+                <Card title="Total Defect By Severity" style={{ margin: "0 5px 0 -2px", borderRadius: "5px" }}>
 
 
 
@@ -103,8 +145,9 @@ console.log(this.state.highsev)
 
 
                 </Card>
+                
 
-
+               
 
             </div>
         )
