@@ -143,8 +143,10 @@ console.log()
 
                     <Chart type="bar" data={multiAxisData} options={multiAxisOptions} style={{ padding: "0 0 50px 0" }} />
 
-
                 </Card>
+                
+
+                
                 
 
                
