@@ -995,6 +995,14 @@ class TableFilter extends React.Component {
           dataSource={this.state.defect}
           onChange={this.handleChange}
           scroll={{ x: 1300 }}
+          pagination={{
+            total: this.state.Total,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`,
+            pageSize: 10,
+            showSizeChanger: true
+            // showQuickJumper: true
+          }} 
         />
                   
           <p>Total Defects :- {this.state.defect.length}</p>

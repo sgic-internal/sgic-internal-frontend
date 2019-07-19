@@ -137,7 +137,7 @@ console.log()
 
         return (
             <div>
-                <Card title="Total Defect By Severity" style={{ margin: "0 5px 0 -2px", borderRadius: "5px" }}>
+                <Card title="Total " style={{ margin: "0 5px 0 -2px", borderRadius: "5px" }}>
 
 
 

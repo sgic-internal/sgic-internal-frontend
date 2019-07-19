@@ -3,15 +3,40 @@ import { Breadcrumb, Statistic, Card, Row, Col, Icon, Timeline, Divider, Progres
 import ChartBar from './assets/ChartBar';
 import ChartPolar from './assets/ChartPolar';
 import { Chart } from 'primereact/chart';
-
 //import PrimeReact from './PrimeReact';
 import DashboardConfig from './DashboardConfig';
 import axios from 'axios';
 
 //table data
+const data = [
+    {
+        id: '1',
+        key: '1',
+        name: 'Task Management System',
+        member: 'Thuva, Kishanth, Romi',
+    },
+    {
+        id: '2',
+        key: '2',
+        name: 'Hospital Management System',
+        member: 'thuva, kishanth, romi',
+    },
+    {
+        id: '3',
+        key: '3',
+        name: 'School Management System',
+        member: 'Thuva',
+    },
+
+    {
+        id: '4',
+        key: '4',
+        name: 'Defect Tracker',
+        member: 'Thuviyan, Pratheepan, Romi',
 
 
-
+    },
+];
 // Table data end
 
 class ProjectManagerDashboard extends React.Component {
@@ -21,7 +46,7 @@ class ProjectManagerDashboard extends React.Component {
 getHigh(){
 
         axios
-        .get('http://localhost:8081/defectservices/gethightcount')
+        .get('http://localhost:8081/defectservices/getcounthigh')
         .then(res=>{
             console.log(res.data)
             this.setState({
@@ -32,7 +57,7 @@ getHigh(){
 
 getMedium(){
     axios
-    .get('http://localhost:8081/defectservices/getcountmedium')
+    .get('http://localhost:8081/defectservices/getcountmudium')
     .then(res=>{
         console.log(res.data)
         this.setState({
@@ -54,16 +79,7 @@ getLow(){
 
 
 
-    constructor(props) {
-        super(props)
-        this.state = {
-              value:'',
-             density:'',
-          
-        }
-        // this.componentWillMount = this.componentWillMount.bind(this);
-      };
-    
+
 
     //Table Declaration
     state = {
@@ -72,8 +88,7 @@ getLow(){
         color:'',
         highsev:'',
         mediumsev:'',
-        lowsev:'',
-      DefectCount: [],
+        lowsev:''
 
     };
 
@@ -114,7 +129,7 @@ getLow(){
       */
 getHigh1(){
     axios
-        .get('http://localhost:8081/defectservices/gethightcount')
+        .get('http://localhost:8081/defectservices/getcounthigh')
         .then(res=> {
             let color=""
             if(3>res.data){
@@ -199,40 +214,8 @@ getSeverityIndex(){
        this.getLow();
        this.getLow1();
        this.getMedium1();
-       this.getSeverityIndex();}
-
-     getdefectcount() {
-        const url = 'http://localhost:8081/defectservices/getCount';
-        axios.get(url)
-    
-          .then(response => this.setState({
-            value: response.data,
-          }))
-          .catch(function (error) {
-            console.log(error);
-          });
-    
-      }
-       getdefectdensity(){
-        const url = 'http://localhost:8081/defectservices/getDefectDensity';
-        axios.get(url)
-    
-          .then(response => this.setState({
-            density: response.data,
-          }))
-          .catch(function (error) {
-            console.log(error);
-          });
-    
-      }
-
-      componentDidMount() {
-        this.getdefectdensity()
-        this.getdefectcount()
-
+       this.getSeverityIndex();
     }
-
-    
 
     render() {
 
@@ -338,9 +321,7 @@ getSeverityIndex(){
 
                 }}>
                     <Row>
-                        
-
-                            <Col span={6}>
+                        <Col span={6}>
                             <Card style={{ margin: "10px 5px 0 -2px", borderRadius: "5px" }}>
                                 <Statistic
                                     title="High Severity"
@@ -348,7 +329,6 @@ getSeverityIndex(){
                                     // precision={2}
                                     valueStyle={{ color: this.state.color }}
                                     prefix={<Icon type="arrow-up" style={{color:"red"}}/>}
-                                  
                                     suffix="%"
                                 />
                             </Card>
@@ -356,21 +336,19 @@ getSeverityIndex(){
 
 
                         </Col>
+
+
                         <Col span={6}>
                             <Card style={{ margin: "10px 5px", borderRadius: "5px" }}>
                                 <Statistic
-
                                     title="Medium Severity"
                                     value={this.state.medium}
                                     // precision={2}
                                     valueStyle={{ color: this.state.color  }}
                                     prefix={<Icon type="arrow-up" style={{color:"orange"}}/>}
-
-                                    
                                     suffix="%"
                                 />
                             </Card></Col>
-                              
 
                         <Col span={6}>
                             <Card style={{ margin: "10px 5px", borderRadius: "5px" }}>
@@ -393,40 +371,6 @@ getSeverityIndex(){
                                     prefix={<Icon type="sync" spin />}
                                     // suffix="%"
 
-                                />
-                            </Card></Col>
-                            <Col span={6}>
-                            <Card style={{ margin: "10px 5px 0 -2px", borderRadius: "5px" }}>
-                                <Statistic
-                                    
-                                    title="Defect to Remarks Ratio"
-                                    value={this.state.value}
-                                    precision={2}
-                                    valueStyle={{ color: '#3f8600' }}
-                                    prefix={<Icon type="safety-certificate" theme="filled" />}
-
-                                    suffix="%"
-                                />
-                            </Card>
-
-
-
-                        </Col>
-
-
-                        <Col span={6}>
-                            <Card style={{ margin: "10px 5px", borderRadius: "5px" }}>
-                                <Statistic
-
-                                    
-
-                                    title="Defect Density"
-                                    value={this.state.density}
-                                    precision={2}
-                                    valueStyle={{ color: '#3f8600' }}
-                                    prefix={<Icon type="fund" theme="filled" />}
-
-                                    suffix="%"
                                 />
                             </Card></Col>
                     </Row>
@@ -572,7 +516,7 @@ getSeverityIndex(){
                                 <div>
                                     <br />
                                 </div>
-                                
+                                <Table columns={columns} dataSource={data} onChange={this.handleChange} style={{ textAlign: "center", alignContent: "center", alignItems: "center" }} />
 
 
                             </Col>
