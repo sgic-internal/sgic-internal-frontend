@@ -199,7 +199,10 @@ getSeverityIndex(){
        this.getLow();
        this.getLow1();
        this.getMedium1();
-       this.getSeverityIndex();}
+       this.getSeverityIndex();
+       this.getdefectdensity();
+       this.getdefectcount();
+    }
 
      getdefectcount() {
         const url = 'http://localhost:8081/defectservices/getCount';
@@ -226,11 +229,11 @@ getSeverityIndex(){
     
       }
 
-      componentDidMount() {
-        this.getdefectdensity()
-        this.getdefectcount()
+//       componentDidMount() {
+//         this.getdefectdensity()
+//         this.getdefectcount()
 
-    }
+//     }
 
     
 
