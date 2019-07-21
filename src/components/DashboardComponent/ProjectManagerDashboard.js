@@ -393,6 +393,7 @@ getSeverityIndex(){
                                     title="Severity Index"
                                     value={this.state.severityindex}
                                     valueStyle={{ color: '#007673' }}
+                                    precision={2}
                                     prefix={<Icon type="sync" spin />}
                                     // suffix="%"
 
