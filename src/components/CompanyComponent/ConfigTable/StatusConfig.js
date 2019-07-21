@@ -294,7 +294,7 @@ export default class StatusConfig extends React.Component {
                   />
                 </Form.Item>
 
-                <Form.Item label="Colour">
+                {/* <Form.Item label="Colour">
                   <div style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color} />
                   </div>
@@ -307,7 +307,7 @@ export default class StatusConfig extends React.Component {
                       />
                     </div>
                   ) : null}
-                </Form.Item>
+                </Form.Item> */}
               </Form>
             </div>
           </Modal>
