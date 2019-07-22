@@ -61,7 +61,7 @@ export default class PriorityConfig extends React.Component {
     visible: false,
     visibleEditModal: false,
     priorityId: "",
-    priorityName: "",
+    priorityName: "Priority",
     priorityValue: "",
     priorityIcon: "",
     priorityColor: "",

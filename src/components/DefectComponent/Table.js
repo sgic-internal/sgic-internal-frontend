@@ -201,6 +201,8 @@ class TableFilter extends React.Component {
     this.getAllDefect();
   }
   componentDidMount() {
+    // this.getAllDefect();
+    this.refreshDefect()
     this.forceUpdate();
   }
   refreshDefect() {
@@ -579,7 +581,7 @@ class TableFilter extends React.Component {
             status: data[a].status
           });
         }
-        console.log(this.state.defect);
+        // console.log(this.state.defect);
         alert(this.state.defect.length)
       });
 

@@ -16,7 +16,27 @@ import axios from 'axios';
 
 class ProjectManagerDashboard extends React.Component {
     // Chart Component
+    state = {
+        filteredInfo: null,
+        sortedInfo: null,
+        color:'',
+        highsev:'',
+        mediumsev:'',
+        lowsev:'',
+      DefectCount: [],
+      value:'',
+      density:'',
+      StatusNew:'',
+      StatusOpen:'',
+      StatusClose:'',
+      StatusRejected:'',
+      StatusReOpen:'',
+      StatusFixed:'',
+      StatusDefered:'',
 
+
+
+    };
     
 getHigh(){
 
@@ -54,28 +74,19 @@ getLow(){
 
 
 
-    constructor(props) {
-        super(props)
-        this.state = {
-              value:'',
-             density:'',
+    // constructor(props) {
+    //     super(props)
+    //     this.state = {
+    //           value:'',
+    //          density:'',
           
-        }
-        // this.componentWillMount = this.componentWillMount.bind(this);
-      };
+    //     }
+    //     // this.componentWillMount = this.componentWillMount.bind(this);
+    //   };
     
 
     //Table Declaration
-    state = {
-        filteredInfo: null,
-        sortedInfo: null,
-        color:'',
-        highsev:'',
-        mediumsev:'',
-        lowsev:'',
-      DefectCount: [],
-
-    };
+    
 
     handleChange = (pagination, filters, sorter) => {
         console.log('Various parameters', pagination, filters, sorter);
@@ -105,6 +116,79 @@ getLow(){
         });
     };
 
+
+    getStatusNew(){
+        axios
+        .get('http://localhost:8081/defectservices/getStatusNew')
+        .then(res=> {
+            this.setState({
+                StatusNew:res.data
+            })
+
+        })
+    }
+
+    getStatusOpen(){
+        axios
+        .get('http://localhost:8081/defectservices/getStatusOpen')
+        .then(res=> {
+            this.setState({
+                StatusOpen:res.data
+            })
+        })
+    }
+
+    getStatusClose(){
+        axios
+        .get('http://localhost:8081/defectservices/getStatusClose')
+        .then(res=> {
+            this.setState({
+                StatusClose:res.data
+            })
+        })
+
+    }
+    getStatusRejected(){
+        axios
+        .get('http://localhost:8081/defectservices/getStatusRejected')
+        .then(res=> {
+            this.setState({
+              StatusRejected:res.data  
+            })
+        })
+
+    }
+    getStatusReOpen(){
+        axios
+        .get('http://localhost:8081/defectservices/getStatusReOpen')
+        .then(res=> {
+            this.setState({
+                StatusReOpen:res.data
+            })
+        })
+
+    }
+
+    getStatusFixed(){
+        axios
+        .get('http://localhost:8081/defectservices/getStatusFixed')
+        .then(res=> {
+            this.setState({
+                StatusFixed:res.data
+            })
+        })
+
+    }
+    getStatusDefered(){
+        axios
+        .get('http://localhost:8081/defectservices/getStatusDefered')
+        .then(res=> {
+            this.setState({
+              StatusDefered:res.data  
+            })
+        })
+
+    }
     // table decalration End
     /*
     Author: 
@@ -131,6 +215,7 @@ getHigh1(){
               console.log(this.state.color)
             })
 }
+
 
 getLow1(){
     axios
@@ -199,7 +284,19 @@ getSeverityIndex(){
        this.getLow();
        this.getLow1();
        this.getMedium1();
-       this.getSeverityIndex();}
+       this.getSeverityIndex();
+       this.getdefectdensity()
+       this.getdefectcount()
+
+       this.getStatusClose();
+       this.getStatusDefered();
+       this.getStatusFixed();
+       this.getStatusNew();
+       this.getStatusOpen();
+       this.getStatusReOpen();
+    this.getStatusRejected();
+    this.gettotaldefectwithRe();
+}
 
      getdefectcount() {
         const url = 'http://localhost:8081/defectservices/getCount';
@@ -225,13 +322,32 @@ getSeverityIndex(){
           });
     
       }
+      gettotaldefectwithRe(){
+          var _this=this
+        axios
+        .get("http://localhost:8081/defectservices/getAllDefects")
+        .then(response => {
+          console.warn(response.data);
+             var openHigh=0;
+          response.data.map((post,index)=>{
+            // var openHigh=0;
+              if(post.severity=="High" && post.status=="Open"){
+                  openHigh=openHigh+1;
+                  
+              }
+              
+          })
+          console.log(openHigh)
+          _this.setState({ openHigh });
 
-      componentDidMount() {
-        this.getdefectdensity()
-        this.getdefectcount()
+          console.log(this.state.openHigh)
 
+           
+        });
+       
     }
 
+     
     
 
     render() {
@@ -408,9 +524,6 @@ getSeverityIndex(){
                                     suffix="%"
                                 />
                             </Card>
-
-
-
                         </Col>
 
 
@@ -429,6 +542,35 @@ getSeverityIndex(){
                                     suffix="%"
                                 />
                             </Card></Col>
+                            <Col span={6}>
+                            <Card style={{ margin: "10px 5px 0 -2px", borderRadius: "5px" }}>
+                                <Statistic
+                                    
+                                    title="Total Defect"
+                                    value={this.state.value}
+                                    
+                                    valueStyle={{ color: '#3f8600' }}
+                                    prefix={<Icon type="safety-certificate" theme="filled" />}
+
+                                    
+                                />
+                            </Card>
+                        </Col>
+
+                        <Col span={6}>
+                            <Card style={{ margin: "10px 5px 0 -2px", borderRadius: "5px" }}>
+                                <Statistic
+                                    
+                                    title="Total Open High"
+                                    value={this.state.openHigh}
+                                    
+                                    valueStyle={{ color: '#3f8600' }}
+                                    prefix={<Icon type="safety-certificate" theme="filled" style={{color:'#e30931'}} />}
+
+                                    
+                                />
+                            </Card>
+                        </Col>
                     </Row>
                 </div>
                 <div>
@@ -441,10 +583,10 @@ getSeverityIndex(){
 
                     <Row style={{ margin: "-20px 0 0 0 " }}>
                         <Col span={12}>
-                        <div className="content-section implementation" >
+                        <div className="content-section implementation" style={{ borderRadius: "5px", margin: "0 0 0 5px" }} >
 
 
-                            <ChartBar />
+                            <ChartBar  />
                             </div>
                         </Col>
                         <Col span={12}>
@@ -456,7 +598,7 @@ getSeverityIndex(){
                                             '0%': '#108ee9',
                                             '100%': '#87d068',
                                         }}
-                                        percent={70} status="active"
+                                        percent={this.state.StatusNew} status="active"
                                     />
                                     <label>Opened</label>
                                     <Progress
@@ -464,7 +606,7 @@ getSeverityIndex(){
                                             '0%': '#eee000',
                                             '100%': '#766766',
                                         }}
-                                        percent={20} status="active"
+                                        percent={this.state.StatusOpen} status="active"
                                     />
                                     <label>Fixed</label>
                                     <Progress
@@ -472,7 +614,7 @@ getSeverityIndex(){
                                             '0%': '#11FF00',
                                             '100%': '#91C8F9',
                                         }}
-                                        percent={60} status="active"
+                                        percent={this.state.StatusFixed} status="active"
                                     />
                                     <label>Reopen</label>
                                     <Progress
@@ -480,7 +622,7 @@ getSeverityIndex(){
                                             '0%': '#F60C0C',
                                             '100%': '#171515',
                                         }}
-                                        percent={25} status="active"
+                                        percent={this.state.StatusReOpen} status="active"
                                     />
                                     <label>Closed</label>
                                     <Progress
@@ -488,7 +630,7 @@ getSeverityIndex(){
                                             '0%': '#095725',
                                             '100%': '#B1FF29',
                                         }}
-                                        percent={50} status="active"
+                                        percent={this.state.StatusClose} status="active"
                                     />
                                     <label>Rejected</label>
                                     <Progress
@@ -496,7 +638,7 @@ getSeverityIndex(){
                                             '0%': '#FFF700',
                                             '100%': '#4BF90C',
                                         }}
-                                        percent={10} status="active"
+                                        percent={this.state.StatusRejected} status="active"
                                     />
                                     <label>Deferred</label>
                                     <Progress
@@ -504,7 +646,7 @@ getSeverityIndex(){
                                             '0%': '#0A0A00',
                                             '100%': '#FF5500',
                                         }}
-                                        percent={30} status="active"
+                                        percent={this.state.StatusDefered} status="active"
                                     />
                                 </div>
                             </Card>
@@ -516,7 +658,7 @@ getSeverityIndex(){
                     <Row style={{ margin: "-10px 0 0 0 " }}>
                         <Col span={12}>
                             {/* <ChartPolar /> */}<div style={{ padding: 30, background: '#fff', minHeight: 307 }} >
-                            <Chart type="pie" data={data5} />
+                            <Chart type="pie" data={data5} style={{ padding: "0 0 120px 0" }} />
                             </div>
                             
                         </Col>
@@ -550,7 +692,7 @@ getSeverityIndex(){
                         <br />
                     </div>
 
-                    <div
+                    {/* <div
                         style={{
 
                             padding: 24,
@@ -582,7 +724,7 @@ getSeverityIndex(){
 
 
 
-                    </div>
+                    </div> */}
                 </div>
 
             </React.Fragment>

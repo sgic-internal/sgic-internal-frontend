@@ -95,11 +95,11 @@ console.log(this.state.highsev)
 
         return (
             <div>
-                <Card title="Defects By Projects" style={{ margin: "0 5px 0 -2px", borderRadius: "5px" }}>
+                <Card title="Defects By Projects" style={{ borderRadius: "5px", margin: "0 0 0 7px" }}>
 
 
 
-                    <Chart type="bar" data={multiAxisData} options={multiAxisOptions} style={{ padding: "0 0 50px 0" }} />
+                    <Chart type="bar" data={multiAxisData} options={multiAxisOptions} style={{ padding: "0 0 115px 0", }} />
 
 
                 </Card>
