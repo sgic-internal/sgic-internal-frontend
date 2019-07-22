@@ -41,7 +41,7 @@ class ProjectManagerDashboard extends React.Component {
 getHigh(){
 
         axios
-        .get('http://localhost:8081/defectservices/gethightcount')
+        .get('http://localhost:8081/defectservices/getseverityhigcount')
         .then(res=>{
             console.log(res.data)
             this.setState({
@@ -52,7 +52,7 @@ getHigh(){
 
 getMedium(){
     axios
-    .get('http://localhost:8081/defectservices/getcountmedium')
+    .get('http://localhost:8081/defectservices/getseveritymediumcount')
     .then(res=>{
         console.log(res.data)
         this.setState({
@@ -63,7 +63,7 @@ getMedium(){
 
 getLow(){
     axios
-    .get('http://localhost:8081/defectservices/getlowcount')
+    .get('http://localhost:8081/defectservices/getseveritylowcount')
     .then(res=>{
         console.log(res.data)
         this.setState({
@@ -285,18 +285,9 @@ getSeverityIndex(){
        this.getLow1();
        this.getMedium1();
        this.getSeverityIndex();
-       this.getdefectdensity()
-       this.getdefectcount()
-
-       this.getStatusClose();
-       this.getStatusDefered();
-       this.getStatusFixed();
-       this.getStatusNew();
-       this.getStatusOpen();
-       this.getStatusReOpen();
-    this.getStatusRejected();
-    this.gettotaldefectwithRe();
-}
+       this.getdefectdensity();
+       this.getdefectcount();
+    }
 
      getdefectcount() {
         const url = 'http://localhost:8081/defectservices/getCount';
@@ -336,19 +327,19 @@ getSeverityIndex(){
                   
               }
               
-          })
+          });
           console.log(openHigh)
           _this.setState({ openHigh });
 
-          console.log(this.state.openHigh)
+//       componentDidMount() {
+//         this.getdefectdensity()
+//         this.getdefectcount()
 
-           
-        });
-       
+//     }
+
+        })
     }
-
-     
-    
+        
 
     render() {
 
@@ -506,6 +497,7 @@ getSeverityIndex(){
                                     title="Severity Index"
                                     value={this.state.severityindex}
                                     valueStyle={{ color: '#007673' }}
+                                    precision={2}
                                     prefix={<Icon type="sync" spin />}
                                     // suffix="%"
 
