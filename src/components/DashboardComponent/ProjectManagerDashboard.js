@@ -33,6 +33,7 @@ class ProjectManagerDashboard extends React.Component {
       StatusReOpen:'',
       StatusFixed:'',
       StatusDefered:'',
+      ratio:''
 
 
 
@@ -294,12 +295,23 @@ getSeverityIndex(){
        this.getStatusOpen();
        this.getStatusReOpen();
        this.getStatusRejected();
-    
+        this.getDefectRatio();
 
+    }
+    getDefectRatio(){
+        axios
+        .get('http://localhost:8081/defectservices/getCount')
+        .then(res=>{
+
+            this.setState({
+                ratio:res.data
+            })
+            
+        })
     }
 
      getdefectcount() {
-        const url = 'http://localhost:8081/defectservices/getCount';
+        const url = 'http://localhost:8081/defectservices/getTotalDefectCount';
         axios.get(url)
     
           .then(response => this.setState({
@@ -339,6 +351,10 @@ getSeverityIndex(){
           });
           console.log(openHigh)
           _this.setState({ openHigh });
+
+          console.log(this.state.op)
+
+
 
 //       componentDidMount() {
 //         this.getdefectdensity()
@@ -517,7 +533,7 @@ getSeverityIndex(){
                                 <Statistic
                                     
                                     title="Defect to Remarks Ratio"
-                                    value={this.state.value}
+                                    value={this.state.ratio}
                                     precision={2}
                                     valueStyle={{ color: '#3f8600' }}
                                     prefix={<Icon type="safety-certificate" theme="filled" />}
