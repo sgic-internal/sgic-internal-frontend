@@ -296,6 +296,7 @@ getSeverityIndex(){
        this.getStatusReOpen();
        this.getStatusRejected();
         this.getDefectRatio();
+        this.gettotaldefectwithRe();
 
     }
     getDefectRatio(){
@@ -352,7 +353,7 @@ getSeverityIndex(){
           console.log(openHigh)
           _this.setState({ openHigh });
 
-          console.log(this.state.op)
+          console.log(this.state.openHigh)
 
 
 
