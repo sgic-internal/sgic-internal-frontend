@@ -287,6 +287,15 @@ getSeverityIndex(){
        this.getSeverityIndex();
        this.getdefectdensity();
        this.getdefectcount();
+       this.getStatusClose();
+       this.getStatusDefered();
+       this.getStatusFixed();
+       this.getStatusNew();
+       this.getStatusOpen();
+       this.getStatusReOpen();
+       this.getStatusRejected();
+    
+
     }
 
      getdefectcount() {
