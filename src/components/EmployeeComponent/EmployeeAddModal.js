@@ -116,9 +116,16 @@ class EmployeeAddModal extends React.Component {
         }
         break;
       case "employeeEmail":
-        formerrors.employeeEmail = emailRegex.test(value)
-          ? ""
-          : "Invalid email address";
+        if(!emailRegex.test(value)){
+          formerrors.employeeEmail = "Invalid email address"
+        } else if(value.length>32){
+          formerrors.employeeEmail = "Should be less than 32 characters"
+        } else{
+          formerrors.employeeEmail="";
+        }
+        // formerrors.employeeEmail = emailRegex.test(value)
+        //   ? ""
+        //   : "Invalid email address";
         break;
       default:
         break;
@@ -247,12 +254,12 @@ class EmployeeAddModal extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={9} style={{ padding: "5px" }}>
-                <Form.Item label="Employee Name">
+                <Form.Item label="Employee Firstname">
                   {getFieldDecorator("employeeName", {
                     rules: [
                       {
                         required: true,
-                        message: "Please input employeeName!"
+                        message: "Please input Employee Firstname!"
                       }
                     ]
                   })(
@@ -278,12 +285,12 @@ class EmployeeAddModal extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={9} style={{ padding: "5px" }}>
-                <Form.Item label="Employee FirstName">
+                <Form.Item label="Employee Lastname">
                   {getFieldDecorator("employeeFirstName", {
                     rules: [
                       {
                         required: true,
-                        message: "Please input employeeFirstName!"
+                        message: "Please input Employee Lastname!"
                       }
                     ]
                   })(
@@ -291,7 +298,7 @@ class EmployeeAddModal extends React.Component {
                       className={
                         formerrors.employeeFirstName.length > 0 ? "error" : null
                       }
-                      placeholder="Employee FirstName"
+                      placeholder="Employee Lastname"
                       value={this.state.employeeFirstName}
                       onChange={this.handlechange}
                       name="employeeFirstName"

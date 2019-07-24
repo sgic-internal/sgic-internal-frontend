@@ -42,6 +42,7 @@ import DefectTypeConfigcom from '../../CompanyComponent/ConfigTable/DefectTypeCo
 import PriorityConfigcom from '../../CompanyComponent/ConfigTable/PriorityConfig';
 import SeverityConfigcom from '../../CompanyComponent/ConfigTable/SeverityConfig';
 import DefectStatusConfigcom from '../../CompanyComponent/ConfigTable/StatusConfig';
+import Designation from '../../EmployeeComponent/Designation';
 
 // Company Components
 
@@ -145,6 +146,10 @@ class Dashboard extends React.Component {
                             {/* Employee Route*/}
                             <Route path='/company/employee'>
                                 <EmployeeComponent/>
+                            </Route>
+
+                            <Route path='/Designation'>
+                                <Designation/>
                             </Route>
 
                             {/* Module Route*/}

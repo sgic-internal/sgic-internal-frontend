@@ -96,25 +96,28 @@ class SiderComponent extends React.Component {
             <Menu.Item key="10"> 
               <Link to="/company/employee">Employee</Link>
             </Menu.Item>
+            <Menu.Item key="11"> 
+              <Link to="/Designation">Designation</Link>
+            </Menu.Item>
           </SubMenu>
 
           {/* Module Menu -----------------------------------------------------------------*/ }
         
-            <Menu.Item key="11">
+            <Menu.Item key="12">
               <Link to="/module">
                 <Icon type="code-sandbox" /><span>Module</span></Link>
             </Menu.Item>
 
           {/* Project Allocation Menu -----------------------------------------------------------------*/ }
         
-            <Menu.Item key="12">
+            <Menu.Item key="13">
               <Link to="/projectallocation">
                 <Icon type="project" /><span>Project Allocation</span></Link>
             </Menu.Item>
 
           {/* Project Menu -----------------------------------------------------------------*/ }
         
-            <Menu.Item key="13">
+            <Menu.Item key="14">
               <Link to="/project">
                 <Icon type="project" /><span>Manage Project</span></Link>
             </Menu.Item>
@@ -130,7 +133,7 @@ class SiderComponent extends React.Component {
               </span>
             }
           >
-            <Menu.Item key="14">
+            <Menu.Item key="15">
               <Link to="/defect">Defect</Link>
             </Menu.Item>
           </SubMenu>
@@ -145,13 +148,13 @@ class SiderComponent extends React.Component {
               </span>
             }
           >
-             <Menu.Item key="15">
+             <Menu.Item key="16">
               <Link to="/settings/generalsetting">General Configuration</Link>
             </Menu.Item>
-             <Menu.Item key="16">
+             <Menu.Item key="17">
                 <Link to="/settings/lookandfeel">Look and Feel</Link>
             </Menu.Item>
-            <Menu.Item key="17">
+            <Menu.Item key="18">
               <Link to="/settings/profilescreen">Profile Setting</Link>
             </Menu.Item>
             <SubMenu
@@ -165,16 +168,16 @@ class SiderComponent extends React.Component {
           >
 
            
-            <Menu.Item key="18">
+            <Menu.Item key="19">
               <Link to="/config/priority">Priority</Link>
             </Menu.Item>
-            <Menu.Item key="19">
+            <Menu.Item key="20">
               <Link to="/config/severity">Severity</Link>
             </Menu.Item>
-            <Menu.Item key="20">
+            <Menu.Item key="21">
               <Link to="/config/defecttype">Defect Type</Link>
             </Menu.Item>
-            <Menu.Item key="21">
+            <Menu.Item key="22">
               <Link to="/config/defectstatus">Defect Status</Link>
             </Menu.Item>
           </SubMenu>
@@ -187,7 +190,7 @@ class SiderComponent extends React.Component {
                 </span>
               }
             >
-              <Menu.Item key="22">
+              <Menu.Item key="23">
                 <Link to="/settings/auditlog">Audit Log</Link>
               </Menu.Item>
               </SubMenu>
@@ -201,19 +204,19 @@ class SiderComponent extends React.Component {
               </span>
             }
           >
-            <Menu.Item key="23">
+            <Menu.Item key="24">
               <Link to="/privilege/company">Company Privileges</Link>
             </Menu.Item>
-            <Menu.Item key="24">
+            <Menu.Item key="25">
               <Link to="/privilege/project">Project Privileges</Link>
             </Menu.Item>
-            <Menu.Item key="25">
+            <Menu.Item key="26">
               <Link to="/privilege/qalead">QA Lead Privileges</Link>
             </Menu.Item>
-            <Menu.Item key="26">
+            <Menu.Item key="27">
               <Link to="/privilege/techlead">Tech Lead Privileges</Link>
             </Menu.Item>
-            <Menu.Item key="27">
+            <Menu.Item key="28">
               <Link to="/privilege/projectConfig">Project Configure Privilege</Link>
             </Menu.Item>
             </SubMenu>
@@ -226,10 +229,10 @@ class SiderComponent extends React.Component {
               </span>
             }
           >
-            <Menu.Item key="27">
+            <Menu.Item key="29">
               <Link to="/workflow/defectroles">Defect Roles Flow</Link>
             </Menu.Item>
-            <Menu.Item key="28">
+            <Menu.Item key="30">
               <Link to="/workflow/defectstatus">Defect Status Flow</Link>
             </Menu.Item>
             </SubMenu>

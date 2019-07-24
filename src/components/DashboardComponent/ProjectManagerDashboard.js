@@ -200,8 +200,11 @@ getSeverityIndex(){
        this.getLow1();
        this.getMedium1();
        this.getSeverityIndex();
-
-     getdefectcount() {
+       this.getdefectdensity()
+       this.getdefectcount()
+      }
+      
+      getdefectcount() {
         const url = 'http://localhost:8081/defectservices/getCount';
         axios.get(url)
     
@@ -211,8 +214,8 @@ getSeverityIndex(){
           .catch(function (error) {
             console.log(error);
           });
-    
-      }
+        }
+
        getdefectdensity(){
         const url = 'http://localhost:8081/defectservices/getDefectDensity';
         axios.get(url)
@@ -225,14 +228,7 @@ getSeverityIndex(){
           });
     
       }
-
-      componentDidMount() {
-        this.getdefectdensity()
-        this.getdefectcount()
-
-    }
-
-    
+  
 
     render() {
 

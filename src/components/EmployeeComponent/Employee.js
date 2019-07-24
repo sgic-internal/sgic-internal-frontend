@@ -118,8 +118,17 @@ export default class App extends React.Component {
       .then(function(response) {
         // handle success
         console.log(response.data);
-        _this.setState({ designations: response.data });
-        console.log(_this.state.designations);
+
+
+       let des= response.data.map((item, index)=> {
+          return (
+            <Option key={index} value={item.designationid}>
+              {item.designationname}
+            </Option>
+          );
+        })
+        _this.setState({ des });
+        // console.log(_this.state.designations);
       });
   }
 
@@ -315,14 +324,14 @@ export default class App extends React.Component {
         sorter: (a, b) => a.employeeid.length - b.employeeid.length
       },
       {
-        title: "Employee Name",
+        title: "Employee Fisrtname",
         dataIndex: "name",
         key: "name",
         width: "25%",
         ...this.getColumnSearchProps("name")
       },
       {
-        title: "Employee FirstName",
+        title: "Employee Lastname",
         dataIndex: "firstname",
         key: "firstname",
         width: "25%",
@@ -415,18 +424,18 @@ export default class App extends React.Component {
                   </Form.Item>
                 </Col>
                 <Col span={8} style={{ padding: "5px" }}>
-                  <Form.Item label="Employee Name">
+                  <Form.Item label="Employee Firstname">
                     <Input
-                      placeholder="Employee Name"
+                      placeholder="Employee Firstname"
                       value={this.state.employeeName}
                       onChange={this.onChangeEmployeeName}
                     />
                   </Form.Item>
                 </Col>
                 <Col span={8} style={{ padding: "5px" }}>
-                  <Form.Item label="Employee FirstName">
+                  <Form.Item label="Employee Lastname">
                     <Input
-                      placeholder="Employee FirstName"
+                      placeholder="Employee Lastname"
                       value={this.state.employeeFirstName}
                       onChange={this.onChangeEmployeeFirstName}
                     />
@@ -441,13 +450,7 @@ export default class App extends React.Component {
                       onChange={this.onChangeEmployeeDesignation}
                       value={this.state.employeeDesignation}
                     >
-                      {this.state.employees.map(function(item, index) {
-                        return (
-                          <Option key={index} value={item.designationid}>
-                            {item.designationname}
-                          </Option>
-                        );
-                      })}
+                     {this.state.des}
                     </Select>
                   </Form.Item>
                 </Col>
