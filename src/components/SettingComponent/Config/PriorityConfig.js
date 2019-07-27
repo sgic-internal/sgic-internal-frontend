@@ -123,7 +123,7 @@ export default class PriorityConfig extends React.Component {
 
 
   getDefectPriority() {
-    const url = 'http://localhost:8081/defectservice/defectpriorities';
+    const url = 'http://localhost:8081/defectservices/defectpriorities';
     axios.get(url)
       .then(response => this.setState({
         DefectPriority: response.data,
@@ -135,7 +135,7 @@ export default class PriorityConfig extends React.Component {
 
   deleteDefectPriority(id) {
     console.log(id)
-    fetch(`http://localhost:8081/defectservice/defectpriority/` + id, {
+    fetch(`http://localhost:8081/defectservices/defectpriority/` + id, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -168,7 +168,7 @@ export default class PriorityConfig extends React.Component {
     this.showEditModal();
     this.setState({ id: id })
     console.log(id);
-    axios.get('http://localhost:8081/defectservice/defectpriority/' + id)
+    axios.get('http://localhost:8081/defectservices/defectpriority/' + id)
       .then(response => {
         let colorRGBValue = hexRgb(response.data.color);
         //alert(colorRGBValue.red, colorRGBValue.green, colorRGBValue.blue);
@@ -200,7 +200,7 @@ export default class PriorityConfig extends React.Component {
       icon: this.state.icon,
       color: colorStringValue
     }
-    axios.post('http://localhost:8081/defectservice/defectpriority/', obj)
+    axios.post('http://localhost:8081/defectservices/defectpriority/', obj)
       .then(res => this.getDefectPriority());
     console.log(obj);
     this.setState({
@@ -220,7 +220,7 @@ export default class PriorityConfig extends React.Component {
       icon: this.state.icon,
       color: colorString
     }
-    axios.put(`http://localhost:8081/defectservice/defectpriority/${id}`, obj)
+    axios.put(`http://localhost:8081/defectservices/defectpriority/${id}`, obj)
       .then(res => this.getDefectPriority());
     this.setState({
       name: '',
