@@ -117,7 +117,7 @@ export default class SeverityConfig extends React.Component {
   };
 
   getDefectSeverity() {
-    const url = 'http://localhost:8081/defectservice/defectseverities';
+    const url = 'http://localhost:8081/defectservices/defectseverities';
     axios.get(url)
       .then(response => this.setState({
         DefectSeverity: response.data,
@@ -129,7 +129,7 @@ export default class SeverityConfig extends React.Component {
 
   deleteDefectSeverity(id) {
     console.log(id)
-    fetch(`http://localhost:8081/defectservice/defectseverity/` + id, {
+    fetch(`http://localhost:8081/defectservices/defectseverity/` + id, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -161,7 +161,7 @@ export default class SeverityConfig extends React.Component {
       icon: this.state.icon,
       color: colorStringValue
     }
-    axios.post('http://localhost:8081/defectservice/defectseverity/', obj)
+    axios.post('http://localhost:8081/defectservices/defectseverity/', obj)
       .then(res => this.getDefectSeverity());
     console.log(obj);
     this.setState({
@@ -179,7 +179,7 @@ export default class SeverityConfig extends React.Component {
     this.showEditModal();
     this.setState({ id: id })
     console.log(id);
-    axios.get('http://localhost:8081/defectservice/defectseverity/' + id)
+    axios.get('http://localhost:8081/defectservices/defectseverity/' + id)
       .then(response => {
         let colorRGBValue = hexRgb(response.data.color);
         //alert(colorRGBValue.red, colorRGBValue.green, colorRGBValue.blue);
@@ -217,7 +217,7 @@ export default class SeverityConfig extends React.Component {
       icon: this.state.icon,
       color: colorString
     }
-    axios.put(`http://localhost:8081/defectservice/defectseverity/${id}`, obj)
+    axios.put(`http://localhost:8081/defectservices/defectseverity/${id}`, obj)
       .then(res => this.getDefectSeverity());
     this.setState({
       name: '',
