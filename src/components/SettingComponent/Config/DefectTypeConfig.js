@@ -98,7 +98,7 @@ export default class DefectTypeConfic extends React.Component {
   }
 
   getCountDefectType() {
-    const url = 'http://localhost:8081/defectservice/countdefecttype';
+    const url = 'http://localhost:8081/defectservices/countdefecttype';
     axios.get(url)
       .then(response => this.setState({
         CountDefectType: response.data,
@@ -165,7 +165,7 @@ export default class DefectTypeConfic extends React.Component {
     else if (NameRegex.test(this.state.name) && NameRegex.test(this.state.value)) {
       // axios.post('http://localhost:8081/defectservice/defecttype/', obj)
       //   .then(res => this.getdefectType());
-      axios.post('http://localhost:8081/defectservice/defecttype/', obj).then((response) => {
+      axios.post('http://localhost:8081/defectservices/defecttype/', obj).then((response) => {
         // console.log(response);
         this.setState({ events: response.data })
         if (response.data.status === "OK") {
@@ -209,7 +209,7 @@ export default class DefectTypeConfic extends React.Component {
       message.warn("Invalid Data");
     }
     else if (NameRegex.test(this.state.name) && NameRegex.test(this.state.value)) {
-      axios.put(`http://localhost:8081/defectservice/defecttype/${id}`, obj)
+      axios.put(`http://localhost:8081/defectservices/defecttype/${id}`, obj)
         .then((response) => {
           //console.log(response.data);
           this.setState({ events: response.data })
