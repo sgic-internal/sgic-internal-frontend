@@ -117,7 +117,7 @@ export default class StatusConfig extends React.Component {
     //   };
 
       getdefectStatus() {
-        const url = 'http://localhost:8081/defectservice/defectstatuses';
+        const url = 'http://localhost:8081/defectservices/defectstatuses';
         axios.get(url)
         .then(response => this.setState({
         DefectStatus: response.data,
@@ -129,7 +129,7 @@ export default class StatusConfig extends React.Component {
 
 
         getCountDefectStatus() {
-          const url = 'http://localhost:8081/defectservice/countdefectstatus';
+          const url = 'http://localhost:8081/defectservices/countdefectstatus';
           axios.get(url)
           .then(response => this.setState({
           TotalDefectStatus: response.data,
@@ -218,7 +218,7 @@ export default class StatusConfig extends React.Component {
        message.warn("Invalid Data");
     }
      else if(NameRegex.test(this.state.name) && NameRegex.test(this.state.value)){
-    axios.post('http://localhost:8081/defectservice/defectstatus/', obj).then((response) => {
+    axios.post('http://localhost:8081/defectservices/defectstatus/', obj).then((response) => {
       console.log(response);
       this.setState({ events: response.data })
       if (response.status === 200) {
@@ -256,7 +256,7 @@ export default class StatusConfig extends React.Component {
       message.warn("Invalid Data");
     }
     else if(NameRegex.test(this.state.name) && NameRegex.test(this.state.value)){
-      axios.put(`http://localhost:8081/defectservice/defectstatus/${id}`, obj).then((response) => {
+      axios.put(`http://localhost:8081/defectservices/defectstatus/${id}`, obj).then((response) => {
 //  console.log(response);
         this.setState({ events: response.data })
         if (response.status === 200) {
