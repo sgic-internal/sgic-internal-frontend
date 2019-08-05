@@ -607,7 +607,7 @@ export default class App extends React.Component {
                 <b>Registration Id :</b>
               </p> */}
               <p>
-                <b>Company Name: </b>
+                <b>Company_Name: </b>
               </p>
               <p>
                 <b>Abbreviation: </b>
